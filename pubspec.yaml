@@ -69,6 +69,8 @@ flutter:
     - Assets/Images/BCC-Logo.png
     - Assets/Images/TNS-logo.png
     - Assets/Images/Powered by TNS.png
+    - Assets/Images/logo.png
+    - Assets/Images/ITEE_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

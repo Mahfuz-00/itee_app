@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:footer/footer.dart';
 
 import '../API Models(Login and Sign Up)/loginmodels.dart';
+import '../Dashboard UI/dashboardUI.dart';
 import '../Forgot Password UI/forgotpasswordUI.dart';
 import '../Sign Up UI/signupUI.dart';
 
@@ -206,10 +207,10 @@ class _LoginState extends State<Login> {
                               onPressed: () {
                                 if(validateAndsave()) {
                                   print(_loginRequest.toJSON());
-                                 /* Navigator.push(
+                                  Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => const BCCMainDashboard()));*/
+                                          builder: (context) => const Dashboard()));
                                   clearForm();
                                 }
                                 else{

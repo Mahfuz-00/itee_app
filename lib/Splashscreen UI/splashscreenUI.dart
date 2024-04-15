@@ -77,15 +77,27 @@ class _SplashScreenState extends State<SplashScreen>
               position: animatedpadding,
               child: const Padding(
                 padding: EdgeInsets.all(30),
-                child: Text(
-                  'Bangladesh IT Engineers Examination Center (BDITEC)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontFamily: 'default',
-                  ),
+                child: Column(
+                  children: [
+                    const Image(
+                      image: AssetImage(
+                        'Assets/Images/ITEE_logo.png',
+                      ),
+                      width: 200,
+                      height: 130,
+                    ),
+                    SizedBox(height: 20,),
+                    Text(
+                      'Bangladesh IT Engineers Examination Center (BDITEC)',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
