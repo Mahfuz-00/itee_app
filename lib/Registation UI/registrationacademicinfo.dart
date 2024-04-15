@@ -146,7 +146,7 @@ class _RegistrationAcademicInformationState extends State<RegistrationAcademicIn
           scrollDirection: Axis.vertical,
           child: SafeArea(
             child: Container(
-              height: screenHeight + 40,
+              //height: screenHeight + 40,
               color: Colors.grey[100],
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
               child: Column(

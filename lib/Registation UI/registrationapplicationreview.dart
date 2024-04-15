@@ -37,7 +37,7 @@ class _RegistrationApplicationReviewState
           },
         ),
         title: const Text(
-          'BKIICT',
+          'Registration Form',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -144,7 +144,7 @@ class _RegistrationApplicationReviewState
       body: SingleChildScrollView(
           child: SafeArea(
             child: Container(
-              height: screenHeight*1.35,
+              //height: screenHeight*1.35,
               color: Colors.grey[100],
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
               child: Column(
@@ -594,10 +594,11 @@ class _RegistrationApplicationReviewState
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
+                          showSliderAlert(context);
+                          /*Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const AdmitCardDownload()));
+                                  builder: (context) => const AdmitCardDownload()));*/
                         },
                         child: const Text('Procced',
                             style: TextStyle(
@@ -740,6 +741,112 @@ class _RegistrationApplicationReviewState
           ],
         ),
       ),
+    );
+  }
+
+  void showSliderAlert(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.45,
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text('Bkash Payment',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color.fromRGBO(0, 162, 222, 1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontFamily: 'default',
+                  ),),
+                ),
+              ),
+              Divider(),
+              SizedBox(height: 20,),
+              Text('Trx ID',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Color.fromRGBO(0, 162, 222, 1),
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                fontFamily: 'default',
+              ),),
+              SizedBox(height: 10,),
+              Center(
+                child: Container(
+                  width: 380,
+                  height: 70,
+                  child: TextFormField(
+                    style: const TextStyle(
+                      color: Color.fromRGBO(143, 150, 158, 1),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),
+                    decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(),
+                      labelText: 'Trx ID',
+                      labelStyle: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 2,),
+              Text('Enter the Transaction ID from Bkash Payment',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Color.fromRGBO(143, 150, 158, 1),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  fontFamily: 'default',
+                ),),
+              SizedBox(height: 45),
+              Center(
+                child: Material(
+                  elevation: 5,
+                  borderRadius: BorderRadius.circular(5),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
+                      fixedSize: Size(MediaQuery.of(context).size.width* 0.9, MediaQuery.of(context).size.height * 0.08),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const AdmitCardDownload()));
+                    },
+                    child: const Text('Confirm',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'default',
+                        )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
