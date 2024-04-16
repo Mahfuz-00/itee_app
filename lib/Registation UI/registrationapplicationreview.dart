@@ -749,7 +749,7 @@ class _RegistrationApplicationReviewState
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.45,
+          height: 400,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.all(20),
           child: Column(

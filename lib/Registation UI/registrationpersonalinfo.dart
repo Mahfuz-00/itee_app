@@ -218,7 +218,7 @@ class _RegistrationPersonalInformationState extends State<RegistrationPersonalIn
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(),
-                        labelText: 'Email ID',
+                        labelText: 'Email Address',
                         labelStyle: TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
@@ -313,7 +313,7 @@ class _RegistrationPersonalInformationState extends State<RegistrationPersonalIn
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(12.0), // Adjust the padding as needed
-                            child: Icon(Icons.calendar_today_outlined, size: 40,),
+                            child: Icon(Icons.calendar_today_outlined, size: 30,),
                           ),
                         ),
                       ),
