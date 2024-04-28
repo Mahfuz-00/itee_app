@@ -196,6 +196,7 @@ class _RegistrationApplicationReviewState
                               ),
                             ),
                           ),
+                          SizedBox(height:10),
                           Text(
                             'Profile Picture',
                             style: TextStyle(
@@ -209,7 +210,7 @@ class _RegistrationApplicationReviewState
                       ),
                     ),
                   ),
-                  SizedBox(height: 15,),
+                  SizedBox(height: 25,),
                   Center(
                       child: Container(
                         width: screenWidth * 0.85,
@@ -749,7 +750,7 @@ class _RegistrationApplicationReviewState
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 400,
+          height: 600,
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.all(20),
           child: Column(
