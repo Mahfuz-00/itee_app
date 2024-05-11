@@ -64,11 +64,13 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
         backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
         titleSpacing: 5,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white,),
-          onPressed: () {
-            _scaffoldKey.currentState!.openDrawer();
-          },
-        ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: Colors.white,
+            )),
         title: const Text(
           'Registration Form',
           style: TextStyle(
@@ -77,95 +79,6 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
             fontSize: 20,
             fontFamily: 'default',
           ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_rounded, color: Colors.white,),
-          ),
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white,),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: const Color.fromRGBO(0, 162, 222, 1),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    child: Icon(
-                      Icons.person,
-                      size: 35,
-                    ),
-                    radius: 30,
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    'User Name',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text('Home',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Dashboard())); // Close the drawer
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Text('Information',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
-              onTap: () {
-                /* Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Information()));*/
-              },
-            ),
-            Divider(),
-            ListTile(
-              title: Text('Logout',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Login())); // Close the drawer
-              },
-            ),
-            Divider(),
-          ],
         ),
       ),
       body: SingleChildScrollView(
@@ -187,7 +100,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                       ),),
                   ),
                   SizedBox(height: 15,),
-                  Text('Select a Center',
+                  Text('Select a Venue',
                     style: TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
                       fontSize: 16,
@@ -227,7 +140,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                             selectedCourseType = null;
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Center',
+                        decoration: InputDecoration(labelText: 'Venue',
                           labelStyle: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),
                             fontSize: 16,
@@ -238,7 +151,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                     ),
                   ),
                   SizedBox(height: 15,),
-                  Text('Select a Course Type',
+                  Text('Select a Exam Catagory',
                     style: TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
                       fontSize: 16,
@@ -283,7 +196,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                             }
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Course Type',
+                        decoration: InputDecoration(labelText: 'Exam Catagory',
                           labelStyle: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),
                             fontSize: 16,
@@ -294,7 +207,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                     ),
                   ),
                   SizedBox(height: 15,),
-                  Text('Select a Course',
+                  Text('Select a Exam Type',
                     style: TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
                       fontSize: 16,
@@ -338,7 +251,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                             selectedBatchNo = null;
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Course',
+                        decoration: InputDecoration(labelText: 'Exam Type',
                           labelStyle: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),
                             fontSize: 16,
@@ -349,7 +262,42 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                     ),
                   ),
                   SizedBox(height: 15,),
-                  Text('Select a Batch no',
+                  Text('Exam Fee : ',
+                    style: TextStyle(
+                      color: Color.fromRGBO(143, 150, 158, 1),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),),
+                  SizedBox(height: 5,),
+                  Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: screenWidth*0.9,
+                      height: screenHeight*0.085,
+                      padding: EdgeInsets.only(left: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20,),
+                        child: Text(
+                          selectedTutionFee ?? 'Exam Fee',
+                          style: TextStyle(
+                            color: Color.fromRGBO(143, 150, 158, 1),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+                  Text('Select a Book (If you want to)',
                     style: TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
                       fontSize: 16,
@@ -391,7 +339,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                             selectedTutionFee = tutionFeeOptions[selectedBatchNo!]?.first;
                           });
                         },
-                        decoration: InputDecoration(labelText: 'Batch No',
+                        decoration: InputDecoration(labelText: 'Book Name',
                           labelStyle: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),
                             fontSize: 16,
@@ -403,7 +351,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                     ),
                   ),
                   SizedBox(height: 15,),
-                  Text('Course Free : ',
+                  Text('Book Fee : ',
                     style: TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
                       fontSize: 16,
@@ -426,7 +374,7 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 20,),
                         child: Text(
-                          selectedTutionFee ?? 'Tution Fee',
+                          selectedTutionFee ?? 'Book Fee',
                           style: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),
                             fontWeight: FontWeight.bold,
@@ -470,135 +418,6 @@ class _RegistrationCenterState extends State<RegistrationCenter> with SingleTick
               ),
             ),
           )
-      ),
-      bottomNavigationBar: Container(
-        height: screenHeight * 0.08,
-        color: const Color.fromRGBO(0, 162, 222, 1),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard()));
-              },
-              child: Container(
-                width: screenWidth / 3,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.home,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: (){
-                /* Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SearchUser()));*/
-              },
-              behavior: HitTestBehavior.translucent,
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    )),
-                width: screenWidth / 3,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.search,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Search',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: (){
-                /*  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Information()));*/
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    )),
-                width: screenWidth / 3,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.info,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Information',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

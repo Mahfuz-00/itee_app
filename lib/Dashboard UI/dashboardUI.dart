@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:itee_exam_app/Course%20Outline%20UI/courseOutlineUI.dart';
 import 'package:itee_exam_app/Registation%20UI/registrationcenter.dart';
+import 'package:itee_exam_app/Result%20UI/resultUI.dart';
+import 'package:itee_exam_app/Syllabus%20UI/syllabusUI.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../API Service (Log Out)/apiServiceLogOut.dart';
 import '../Login UI/loginUI.dart';
+import '../Profile UI/profileUI.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,7 +17,8 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMixin{
+class _DashboardState extends State<Dashboard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -24,13 +31,16 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
         titleSpacing: 5,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white,),
+          icon: const Icon(
+            Icons.menu,
+            color: Colors.white,
+          ),
           onPressed: () {
             _scaffoldKey.currentState!.openDrawer();
           },
         ),
         title: const Text(
-          'ITEE',
+          'Student Name',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -41,11 +51,10 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_rounded, color: Colors.white,),
-          ),
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white,),
-            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_rounded,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -69,7 +78,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                   ),
                   SizedBox(height: 20),
                   Text(
-                    'User Name',
+                    'Student Name',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,
@@ -86,22 +95,57 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     color: Colors.black87,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
+                    fontFamily: 'default',
+                  )),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Dashboard())); // Close the drawer
+                        builder: (context) =>
+                            const Dashboard())); // Close the drawer
               },
             ),
             Divider(),
             ListTile(
-              title: Text('Information',
+              title: Text('Result',
                   style: TextStyle(
                     color: Colors.black87,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
+                    fontFamily: 'default',
+                  )),
+              onTap: () {
+                /* Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Information()));*/
+              },
+            ),
+            Divider(),
+            ListTile(
+              title: Text('Syllabus',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  )),
+              onTap: () {
+                /* Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Information()));*/
+              },
+            ),
+            Divider(),
+            ListTile(
+              title: Text('Course Outline',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  )),
               onTap: () {
                 /* Navigator.push(
                     context,
@@ -116,12 +160,28 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     color: Colors.black87,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'default',)),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Login())); // Close the drawer
+                    fontFamily: 'default',
+                  )),
+              onTap: () async {
+                // Clear user data from SharedPreferences
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('userName');
+                await prefs.remove('organizationName');
+                await prefs.remove('photoUrl');
+                // Create an instance of LogOutApiService
+                var logoutApiService = await LogOutApiService.create();
+
+                // Wait for authToken to be initialized
+                logoutApiService.authToken;
+
+                // Call the signOut method on the instance
+                if (await logoutApiService.signOut()) {
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Login())); // Close the drawer
+                } // Close the drawer
               },
             ),
             Divider(),
@@ -138,7 +198,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
-                  child: Text('Welcome to ITEE',
+                  child: Text(
+                    'Welcome to ITEE',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Color.fromRGBO(0, 162, 222, 1),
@@ -148,11 +209,14 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Center(
-                    child: Text('Please read the all following instructions carefully before starting the registration process',
+                    child: Text(
+                      'Please read the all following instructions carefully before starting the registration process',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color.fromRGBO(143, 150, 158, 1),
@@ -164,7 +228,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Material(
                   elevation: 5,
                   borderRadius: BorderRadius.circular(10),
@@ -205,21 +271,21 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                 horizontal: 20, vertical: 20),
                             child: Center(
                               child: Text(
-                                'পরবর্তী ITEE পরীক্ষা আগামী ২৭ এপ্রিল ২০২৪ শনিবার অনুষ্ঠিত হবে। পরীক্ষার রেজিস্ট্রেশন ০৪ ফেব্রুয়ারী ২০২৪ হতে ৩১ মার্চ ২০২৪ তারিখ পর্যন্ত চলমান থাকবে।',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(143, 150, 158, 1),
-                                  fontFamily: 'default',
-                                )
-                              ),
-                            )
-                        ),
+                                  'পরবর্তী ITEE পরীক্ষা আগামী ২৭ এপ্রিল ২০২৪ শনিবার অনুষ্ঠিত হবে। পরীক্ষার রেজিস্ট্রেশন ০৪ ফেব্রুয়ারী ২০২৪ হতে ৩১ মার্চ ২০২৪ তারিখ পর্যন্ত চলমান থাকবে।',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromRGBO(143, 150, 158, 1),
+                                    fontFamily: 'default',
+                                  )),
+                            )),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Material(
                   elevation: 5,
                   borderRadius: BorderRadius.circular(10),
@@ -254,63 +320,17 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                               ),
                             )),
                         Container(
-                          width: screenWidth * 0.9,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'SI',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    '1.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    '2.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                  SizedBox(height: 33,),
-                                  Text(
-                                    '3.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: 10,),
-                              Expanded(
-                                child: Column(
+                            width: screenWidth * 0.9,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Exam Name',
+                                      'SI',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -318,9 +338,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
-                                      'Level - 1 IT Passposrt Exam (IP)',
+                                      '1.',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -328,9 +350,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
-                                      'Level - 2 FE Exam (Morning/Afternoon)',
+                                      '2.',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -338,9 +362,11 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 33,
+                                    ),
                                     Text(
-                                      'Level - 2 FE Exam (Morning/Afternoon)',
+                                      '3.',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -350,69 +376,141 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                     ),
                                   ],
                                 ),
-                              ),
-                              SizedBox(width: 5,),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'Fees',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Exam Name',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Level - 1 IT Passposrt Exam (IP)',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Level - 2 FE Exam (Morning/Afternoon)',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Level - 2 FE Exam (Morning/Afternoon)',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    'TK 510/-',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'Fees',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontFamily: 'default',
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Text(
-                                    'TK 800/-',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                  ),
-                                  SizedBox(height: 33,),
-                                  Text(
-                                    'TK 500/-',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
+                                    Text(
+                                      'TK 510/-',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontFamily: 'default',
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'TK 800/-',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontFamily: 'default',
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 33,
+                                    ),
+                                    Text(
+                                      'TK 500/-',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontFamily: 'default',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 30,),
-                Text('Candidate can also purchase books from the following offices on cash payment',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(143, 150, 158, 1),
-                  fontFamily: 'default',
-                ),),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  'Candidate can also purchase books from the following offices on cash payment',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(143, 150, 158, 1),
+                    fontFamily: 'default',
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
                 Material(
                   elevation: 5,
                   borderRadius: BorderRadius.circular(10),
@@ -465,7 +563,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
                                       '1.',
                                       style: TextStyle(
@@ -475,7 +575,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 33,),
+                                    SizedBox(
+                                      height: 33,
+                                    ),
                                     Text(
                                       '2.',
                                       style: TextStyle(
@@ -485,7 +587,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
                                       '3.',
                                       style: TextStyle(
@@ -497,54 +601,69 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 10,),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Name of the book',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(143, 150, 158, 1),
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
                                           fontFamily: 'default',
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         'IT Passposrt Exam Preparation Book',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(143, 150, 158, 1),
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
                                           fontFamily: 'default',
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         'FE Exam Preparation Vol. 1',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(143, 150, 158, 1),
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
                                           fontFamily: 'default',
                                         ),
                                       ),
-                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
                                       Text(
                                         'FE Exam Preparation Vol. 2',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Color.fromRGBO(143, 150, 158, 1),
+                                          color:
+                                              Color.fromRGBO(143, 150, 158, 1),
                                           fontFamily: 'default',
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 5,),
+                                SizedBox(
+                                  width: 5,
+                                ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
@@ -557,7 +676,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
                                       'TK 510/-',
                                       style: TextStyle(
@@ -567,7 +688,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 33,),
+                                    SizedBox(
+                                      height: 33,
+                                    ),
                                     Text(
                                       'TK 800/-',
                                       style: TextStyle(
@@ -577,7 +700,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                         fontFamily: 'default',
                                       ),
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
                                       'TK 500/-',
                                       style: TextStyle(
@@ -590,13 +715,14 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                                   ],
                                 ),
                               ],
-                            )
-                        ),
+                            )),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Center(
                   child: Material(
                     elevation: 5,
@@ -604,7 +730,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                        fixedSize: Size(MediaQuery.of(context).size.width* 0.9, MediaQuery.of(context).size.height * 0.08),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.08),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -613,7 +740,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const RegistrationCenter()));
+                                builder: (context) =>
+                                    const RegistrationCenter()));
                       },
                       child: const Text('Registration',
                           style: TextStyle(
@@ -625,7 +753,9 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Center(
                   child: Material(
                     elevation: 5,
@@ -633,18 +763,83 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                        fixedSize: Size(MediaQuery.of(context).size.width* 0.9, MediaQuery.of(context).size.height * 0.08),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.08),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       onPressed: () {
-                       /* Navigator.push(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const RegistrationCenter()));*/
+                                builder: (context) => const Result()));
                       },
                       child: const Text('Result',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          )),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(10),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.08),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Syllabus()));
+                      },
+                      child: const Text('Syllabus',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          )),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(10),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.08),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CourseOutline()));
+                      },
+                      child: const Text('Course Outline',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -668,10 +863,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Dashboard()));
               },
               child: Container(
                 width: screenWidth / 3,
@@ -702,28 +895,28 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
               ),
             ),
             GestureDetector(
-              onTap: (){
-                /* Navigator.push(
+              onTap: () {
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const SearchUser()));*/
+                        builder: (context) => const RegistrationCenter()));
               },
               behavior: HitTestBehavior.translucent,
               child: Container(
                 decoration: BoxDecoration(
                     border: Border(
-                      left: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    )),
+                  left: BorderSide(
+                    color: Colors.black,
+                    width: 1.0,
+                  ),
+                )),
                 width: screenWidth / 3,
                 padding: EdgeInsets.all(5),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.search,
+                      Icons.add_circle_outline,
                       size: 30,
                       color: Colors.white,
                     ),
@@ -731,7 +924,8 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                       height: 5,
                     ),
                     Text(
-                      'Search',
+                      'New Registration',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -745,27 +939,25 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
             ),
             GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTap: (){
-                /*  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Information()));*/
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Profile()));
               },
               child: Container(
                 decoration: BoxDecoration(
                     border: Border(
-                      left: BorderSide(
-                        color: Colors.black,
-                        width: 1.0,
-                      ),
-                    )),
+                  left: BorderSide(
+                    color: Colors.black,
+                    width: 1.0,
+                  ),
+                )),
                 width: screenWidth / 3,
                 padding: EdgeInsets.all(5),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.info,
+                      Icons.person,
                       size: 30,
                       color: Colors.white,
                     ),
@@ -773,7 +965,7 @@ class _DashboardState extends State<Dashboard> with SingleTickerProviderStateMix
                       height: 5,
                     ),
                     Text(
-                      'Information',
+                      'Profile',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
