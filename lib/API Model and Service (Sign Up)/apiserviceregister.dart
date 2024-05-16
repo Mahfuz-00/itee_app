@@ -15,7 +15,7 @@ class APIService {
       var request = http.MultipartRequest('POST', Uri.parse(url));
 
       // Add user data fields to the request
-      request.fields['app_name'] = 'bcc';
+      request.fields['app_name'] = 'itee';
       request.fields['full_name'] = registerRequestModel.fullName;
       request.fields['email'] = registerRequestModel.email;
       request.fields['phone'] = registerRequestModel.phone;
