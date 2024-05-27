@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:itee_exam_app/Dashboard%20UI/dashboardUI.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../API Model and Service (Payment)/apiServicePayment.dart';
 import '../Login UI/loginUI.dart';
 import 'downloadadmitcard.dart';
 
@@ -13,6 +16,8 @@ class PaymentConfirmation extends StatefulWidget {
 
 class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late TextEditingController _paymentConfirmationController = TextEditingController();
+  bool buttonloading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +148,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                   width: 380,
                   height: 70,
                   child: TextFormField(
+                    controller: _paymentConfirmationController,
                     style: const TextStyle(
                       color: Color.fromRGBO(143, 150, 158, 1),
-                      fontSize: 10,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'default',
                     ),
@@ -186,13 +192,24 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      setState(() {
+                        buttonloading = true;
+                      });
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      int id = prefs.getInt('exam_registration_id') ?? 0;
+                      print(id);
+                      final apiService = await PaymentAPIService.create();
+
+                      final registrationSuccessful = await apiService.sendIdsFromSharedPreferences(_paymentConfirmationController.text, id);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AdmitCardDownload()));
+                              builder: (context) => const Dashboard(shouldRefresh: true,)));
                     },
-                    child: const Text('Confirm',
+                    child: buttonloading
+                        ? CircularProgressIndicator()
+                        : const Text('Confirm',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

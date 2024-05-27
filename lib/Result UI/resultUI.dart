@@ -3,26 +3,28 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:itee_exam_app/Template%20Models/resultDetailsTile.dart';
+import 'package:itee_exam_app/Template%20Models/templateerrorcontainerAlert.dart';
 
+import '../API Model and Service (Result)/apiserviceResult.dart';
+import '../Template Models/templateerrorcontainer.dart';
 
 class Result extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Result({Key? key, this.shouldRefresh = false})
-      : super(key: key);
+  const Result({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
   State<Result> createState() => _ResultState();
 }
 
 class _ResultState extends State<Result> {
-  var globalKey = GlobalKey<ScaffoldState>();
-  GlobalKey<FormState> globalfromkey = GlobalKey<FormState>();
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
   bool _pageLoading = true;
-
+  late TextEditingController _idcontroller = TextEditingController();
+  bool buttonClicked = false;
 
   @override
   void initState() {
@@ -37,14 +39,8 @@ class _ResultState extends State<Result> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return PopScope(
       canPop: true,
       child: Scaffold(
@@ -60,13 +56,15 @@ class _ResultState extends State<Result> {
                 Icons.arrow_back_ios_new_outlined,
                 color: Colors.white,
               )),
-          title: Text('Result',
+          title: Text(
+            'Result',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
               fontFamily: 'default',
-            ),),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: SafeArea(
@@ -87,54 +85,27 @@ class _ResultState extends State<Result> {
                         ),
                         child: Column(
                           children: [
-                            Center(
-                              child: Text('Download Results',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'default',
-                                ),
-                              ),
-                            ),
-                            Divider(),
-                            SizedBox(height: 10,),
-                            _buildDotPointItem('First item'),
-                            _buildDotPointItem('Second item'),
-                            _buildDotPointItem('Third item'),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
-                    Material(
-                      elevation: 5,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Your Student ID',
+                            Text(
+                              'Your Student ID',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'default',
-                              ),),
+                              ),
+                            ),
                             Divider(),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             Container(
                               width: 350,
                               height: 70,
                               child: TextFormField(
+                                controller: _idcontroller,
                                 style: const TextStyle(
                                   color: Color.fromRGBO(143, 150, 158, 1),
-                                  fontSize: 10,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'default',
                                 ),
@@ -159,17 +130,21 @@ class _ResultState extends State<Result> {
                                 borderRadius: BorderRadius.circular(10),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                                    fixedSize: Size(MediaQuery.of(context).size.width* 0.45, MediaQuery.of(context).size.height * 0.06),
+                                    backgroundColor:
+                                        const Color.fromRGBO(0, 162, 222, 1),
+                                    fixedSize: Size(
+                                        MediaQuery.of(context).size.width *
+                                            0.45,
+                                        MediaQuery.of(context).size.height *
+                                            0.06),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
                                   onPressed: () {
-                                    /*Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Syllabus()));*/
+                                    int Id = int.parse(_idcontroller.text);
+                                    fetchIndividualResultAndNavigate(Id);
+                                    buttonClicked = true;
                                   },
                                   child: const Text('Search',
                                       style: TextStyle(
@@ -184,7 +159,17 @@ class _ResultState extends State<Result> {
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    buttonClicked
+                        ? Center(child: CircularProgressIndicator())
+                        : alert == 1
+                        ? buildNoRequestsWidgetAlert(MediaQuery.of(context).size.width, 'Student not found')
+                        : alert == 2
+                        ? buildNoRequestsWidgetAlert(MediaQuery.of(context).size.width, 'No result')
+                        : _buildList(Results),
                   ],
                 ),
               ),
@@ -195,34 +180,90 @@ class _ResultState extends State<Result> {
     );
   }
 
+  List<Widget> Results = [];
+  int alert = 0;
 
-  Widget _buildDotPointItem(String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Future<void> fetchIndividualResultAndNavigate(int id) async {
+    setState(() {
+      _isLoading = true;
+      buttonClicked = true;
+    });
+
+    final apiService = await ResultAPIService.create();
+    final result = await apiService.getResult(id);
+
+    if (result != null) {
+      print(result);
+      final message = result['message'];
+      if (message.isNotEmpty) {
+        setState(() {
+          _isLoading = false;
+          buttonClicked = false;
+          alert = 1;
+        });
+        buildNoRequestsWidget(MediaQuery.of(context).size.width, 'Student not found');
+        return;
+      }
+      else{
+
+        final records = result['records'];
+        if (records is Map && records.containsKey('result')) {
+          final resultList = records['result'];
+          print(resultList);
+          if (resultList is List && resultList.isNotEmpty) {
+            final List<Widget> resultWidgets = resultList.map<Widget>((item) {
+              return ResultInfoCard(
+                Name: item['name'],
+                ExamName: item['subject_name'],
+                Result: item['result'].toString(),
+              );
+            }).toList();
+
+            setState(() {
+              Results = resultWidgets;
+              _isLoading = false;
+              buttonClicked = false;
+              alert = 3;
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+              buttonClicked = false;
+              alert = 2;
+            });
+            buildNoRequestsWidgetAlert(MediaQuery.of(context).size.width, 'No result');
+          }
+        } else {
+          setState(() {
+            _isLoading = false;
+            buttonClicked = false;
+            alert = 2;
+          });
+          buildNoRequestsWidgetAlert(
+              MediaQuery.of(context).size.width, 'No result');
+        }
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+        buttonClicked = false;
+        alert = 1;
+      });
+      buildNoRequestsWidgetAlert(
+          MediaQuery.of(context).size.width, 'Student not Found');
+    }
+  }
+
+  Widget _buildList(List<Widget> items) {
+    return Column(
       children: [
-        Container(
-          margin: EdgeInsets.only(top: 6),
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.black,
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            return items[index];
+          },
         ),
-        SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            //textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'default',
-            ),
-          ),
-        ),
-        SizedBox(height: 5,)
       ],
     );
   }
