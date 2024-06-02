@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:itee_exam_app/Connection%20Checker/internetconnectioncheck.dart';
 import 'package:itee_exam_app/Course%20Outline%20UI/courseOutlineUI.dart';
-import 'package:itee_exam_app/Registation%20UI/downloadadmitcard.dart';
+import 'package:itee_exam_app/AdmitCard%20UI/downloadadmitcard.dart';
 import 'package:itee_exam_app/Registation%20UI/registrationcenter.dart';
 import 'package:itee_exam_app/Result%20UI/resultUI.dart';
 import 'package:itee_exam_app/Syllabus%20UI/syllabusUI.dart';
@@ -283,22 +283,24 @@ class _DashboardState extends State<Dashboard>
                         },
                       ),
                       Divider(),
-                      ListTile(
-                        title: Text('Result',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'default',
-                            )),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Result()));
-                        },
-                      ),
-                      Divider(),
+                      if(resultcheck == 1) ...[
+                        ListTile(
+                          title: Text('Result',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'default',
+                              )),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Result()));
+                          },
+                        ),
+                        Divider(),
+                      ],
                       ListTile(
                         title: Text('Syllabus',
                             style: TextStyle(
@@ -955,7 +957,7 @@ class _DashboardState extends State<Dashboard>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Profile()));
+                                  builder: (context) => const Profile(shouldRefresh: true,)));
                         },
                         child: Container(
                           decoration: BoxDecoration(

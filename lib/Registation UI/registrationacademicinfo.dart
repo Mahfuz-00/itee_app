@@ -1,13 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Dashboard UI/dashboardUI.dart';
-import '../Login UI/loginUI.dart';
-import '../Template Models/dropdownfield.dart';
 import '../Template Models/dropdownfields.dart';
 import 'registrationapplicationreview.dart';
-import 'registrationpersonalinfo.dart';
 
 class RegistrationAcademicInformation extends StatefulWidget {
   const RegistrationAcademicInformation({super.key});
@@ -44,7 +39,7 @@ class _RegistrationAcademicInformationState
   late TextEditingController _Resultcontroller = TextEditingController();
   late TextEditingController _PassingIDcontroller = TextEditingController();
 
-  String? dummy = '';
+  late String? Qualification = '';
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +67,7 @@ class _RegistrationAcademicInformationState
             fontFamily: 'default',
           ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -126,85 +122,90 @@ class _RegistrationAcademicInformationState
                           onChanged: (value) {
                             setState(() {
                               _Qulificationcontroller.text = value!;
+                              Qualification = value!;
                             });
                           }),
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(
-                    'Decipline',
-                    style: TextStyle(
-                      color: Color.fromRGBO(143, 150, 158, 1),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(5),
-                    child: Container(
-                      width: screenWidth * 0.9,
-                      height: screenHeight * 0.075,
-                      padding: EdgeInsets.only(left: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: DropdownField(
-                          hintText: 'Decipline',
-                          dropdownItems: decipline,
-                          initialValue: null,
-                          onChanged: (value) {
-                            setState(() {
-                              _Deciplinecontroller.text = value!;
-                            });
-                          }),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Subject',
-                    style: TextStyle(
-                      color: Color.fromRGBO(143, 150, 158, 1),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    width: screenWidth * 0.9,
-                    height: 70,
-                    child: TextFormField(
-                      controller: _SubjectNamecontroller,
-                      style: const TextStyle(
+                  if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  ...[
+                    Text(
+                      'Decipline',
+                      style: TextStyle(
                         color: Color.fromRGBO(143, 150, 158, 1),
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'default',
                       ),
-                      decoration: const InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(),
-                        labelText: 'Subject Name',
-                        labelStyle: TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Material(
+                      elevation: 5,
+                      borderRadius: BorderRadius.circular(5),
+                      child: Container(
+                        width: screenWidth * 0.9,
+                        height: screenHeight * 0.075,
+                        padding: EdgeInsets.only(left: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: DropdownField(
+                            hintText: 'Decipline',
+                            dropdownItems: decipline,
+                            initialValue: null,
+                            onChanged: (value) {
+                              setState(() {
+                                _Deciplinecontroller.text = value!;
+                              });
+                            }),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                  ],
+                  if(Qualification == 'BSc or Equivalent') ...[
+                    Text(
+                      'Subject',
+                      style: TextStyle(
+                        color: Color.fromRGBO(143, 150, 158, 1),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: screenWidth * 0.9,
+                      height: 70,
+                      child: TextFormField(
+                        controller: _SubjectNamecontroller,
+                        style: const TextStyle(
+                          color: Color.fromRGBO(143, 150, 158, 1),
                           fontSize: 16,
+                          fontWeight: FontWeight.bold,
                           fontFamily: 'default',
+                        ),
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(),
+                          labelText: 'Subject Name',
+                          labelStyle: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontFamily: 'default',
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 5),
+                    const SizedBox(height: 5),
+                  ],
                   Text(
                     'Passing Year',
                     style: TextStyle(

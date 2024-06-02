@@ -65,6 +65,7 @@ class _ResultState extends State<Result> {
               fontFamily: 'default',
             ),
           ),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: SafeArea(

@@ -226,6 +226,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
             fontFamily: 'default',
           ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
           child: SafeArea(

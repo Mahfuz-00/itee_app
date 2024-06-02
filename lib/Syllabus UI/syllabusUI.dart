@@ -126,6 +126,7 @@ class _SyllabusState extends State<Syllabus> {
                 fontFamily: 'default',
               ),
             ),
+            centerTitle: true,
           ),
           body: SingleChildScrollView(
             child: SafeArea(

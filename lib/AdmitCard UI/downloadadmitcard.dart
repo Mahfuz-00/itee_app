@@ -11,8 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../API Model and Service (Admit Card)/apiserviceAdmitCard.dart';
 import '../API Model and Service (Center Selection)/apiserviceCenterSelection.dart';
 import '../API Model and Service (Center Selection)/centerModels.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../Login UI/loginUI.dart';
 import '../Template Models/dropdownfield.dart';
 
 class AdmitCardDownload extends StatefulWidget {
@@ -238,6 +236,7 @@ class _AdmitCardDownloadState extends State<AdmitCardDownload> with SingleTicker
               fontFamily: 'default',
             ),
           ),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: SafeArea(

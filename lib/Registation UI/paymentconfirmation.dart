@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../API Model and Service (Payment)/apiServicePayment.dart';
 import '../Login UI/loginUI.dart';
-import 'downloadadmitcard.dart';
+import '../AdmitCard UI/downloadadmitcard.dart';
 
 class PaymentConfirmation extends StatefulWidget {
   const PaymentConfirmation({super.key});
@@ -14,9 +14,11 @@ class PaymentConfirmation extends StatefulWidget {
   State<PaymentConfirmation> createState() => _PaymentConfirmationState();
 }
 
-class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTickerProviderStateMixin{
+class _PaymentConfirmationState extends State<PaymentConfirmation>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late TextEditingController _paymentConfirmationController = TextEditingController();
+  late TextEditingController _paymentConfirmationController =
+      TextEditingController();
   bool buttonloading = false;
 
   @override
@@ -46,6 +48,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
             fontFamily: 'default',
           ),
         ),
+        centerTitle: true,
       ),
       body: SafeArea(
         child: Column(
@@ -59,6 +62,15 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Image(
+                      image: AssetImage('Assets/Images/Success-Mark.png'),
+                      height: 150,
+                      width: 150,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                  SizedBox(height: 20,),
                   Center(
                     child: Text(
                       'Congratulations, Your Registration Successfully Submitted',
@@ -81,7 +93,9 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                          fixedSize: Size(MediaQuery.of(context).size.width* 0.85, MediaQuery.of(context).size.height * 0.08),
+                          fixedSize: Size(
+                              MediaQuery.of(context).size.width * 0.85,
+                              MediaQuery.of(context).size.height * 0.08),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -122,27 +136,35 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Text('Bkash Payment',
+                  child: Text(
+                    'Bkash Payment',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: const Color.fromRGBO(0, 162, 222, 1),
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       fontFamily: 'default',
-                    ),),
+                    ),
+                  ),
                 ),
               ),
               Divider(),
-              SizedBox(height: 20,),
-              Text('Trx ID',
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Trx ID',
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   color: const Color.fromRGBO(0, 162, 222, 1),
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   fontFamily: 'default',
-                ),),
-              SizedBox(height: 10,),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Center(
                 child: Container(
                   width: 380,
@@ -170,15 +192,19 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                   ),
                 ),
               ),
-              SizedBox(height: 2,),
-              Text('Enter the Transaction ID from Bkash Payment',
+              SizedBox(
+                height: 2,
+              ),
+              Text(
+                'Enter the Transaction ID from Bkash Payment',
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   color: Color.fromRGBO(143, 150, 158, 1),
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   fontFamily: 'default',
-                ),),
+                ),
+              ),
               SizedBox(height: 45),
               Center(
                 child: Material(
@@ -187,7 +213,8 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                      fixedSize: Size(MediaQuery.of(context).size.width* 0.9, MediaQuery.of(context).size.height * 0.08),
+                      fixedSize: Size(MediaQuery.of(context).size.width * 0.9,
+                          MediaQuery.of(context).size.height * 0.08),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -196,26 +223,31 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
                       setState(() {
                         buttonloading = true;
                       });
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
                       int id = prefs.getInt('exam_registration_id') ?? 0;
                       print(id);
                       final apiService = await PaymentAPIService.create();
 
-                      final registrationSuccessful = await apiService.sendIdsFromSharedPreferences(_paymentConfirmationController.text, id);
+                      final registrationSuccessful =
+                          await apiService.sendIdsFromSharedPreferences(
+                              _paymentConfirmationController.text, id);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Dashboard(shouldRefresh: true,)));
+                              builder: (context) => const Dashboard(
+                                    shouldRefresh: true,
+                                  )));
                     },
                     child: buttonloading
                         ? CircularProgressIndicator()
                         : const Text('Confirm',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'default',
-                        )),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
                   ),
                 ),
               ),
@@ -225,5 +257,4 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> with SingleTi
       },
     );
   }
-
 }

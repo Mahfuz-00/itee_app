@@ -125,6 +125,7 @@ class _CourseOutlineState extends State<CourseOutline> {
                 fontFamily: 'default',
               ),
             ),
+            centerTitle: true,
           ),
           body: SingleChildScrollView(
             child: SafeArea(

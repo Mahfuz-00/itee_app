@@ -75,6 +75,7 @@ class _RegistrationPersonalInformationState
             fontFamily: 'default',
           ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
           child: SafeArea(
