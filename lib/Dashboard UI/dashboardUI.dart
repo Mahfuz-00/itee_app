@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:itee_exam_app/Connection%20Checker/internetconnectioncheck.dart';
 import 'package:itee_exam_app/Course%20Outline%20UI/courseOutlineUI.dart';
 import 'package:itee_exam_app/AdmitCard%20UI/downloadadmitcard.dart';
-import 'package:itee_exam_app/Registation%20UI/registrationcenter.dart';
+import 'package:itee_exam_app/Registation%20UI/registrationvenue.dart';
 import 'package:itee_exam_app/Result%20UI/resultUI.dart';
 import 'package:itee_exam_app/Syllabus%20UI/syllabusUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';

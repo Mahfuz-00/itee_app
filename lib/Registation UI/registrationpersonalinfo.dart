@@ -12,7 +12,7 @@ import '../Login UI/loginUI.dart';
 import '../Template Models/dropdownfield.dart';
 import '../Template Models/dropdownfields.dart';
 import 'registrationacademicinfo.dart';
-import 'registrationcenter.dart';
+import 'registrationvenue.dart';
 
 class RegistrationPersonalInformation extends StatefulWidget {
   const RegistrationPersonalInformation({super.key});
@@ -204,7 +204,12 @@ class _RegistrationPersonalInformationState
                 child: TextFormField(
                   controller: _Phonecontroller,
                   keyboardType: TextInputType.phone,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    // Only allow digits
+                    LengthLimitingTextInputFormatter(11),
+                  ],
+                  // Limit input length to 11 characters
                   validator: (input) {
                     if (input == null || input.isEmpty) {
                       return 'Please enter your mobile number name';
@@ -574,16 +579,15 @@ class _RegistrationPersonalInformationState
                         ),
                       ),
                       onPressed: () {
-                        if(validateInputs()){
+                        if (validateInputs()) {
                           saveData();
                           print('validated');
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegistrationAcademicInformation()));
-                        }
-                        else{
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegistrationAcademicInformation()));
+                        } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Fill up all required fields'),
@@ -625,7 +629,6 @@ class _RegistrationPersonalInformationState
     return true;
   }
 
-
   Future<void> saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('full_name', _FullNamecontroller.text);
@@ -651,7 +654,6 @@ class _RegistrationPersonalInformationState
     print(await prefs.getString('occupation'));
     print(await prefs.getString('image_path'));
   }
-
 
   Future<void> _selectImage() async {
     final picker = ImagePicker();

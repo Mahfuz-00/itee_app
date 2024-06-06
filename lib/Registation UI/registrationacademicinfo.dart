@@ -23,6 +23,8 @@ class _RegistrationAcademicInformationState
         child: Text("HSC or Equivalent"), value: "HSC or Equivalent"),
     DropdownMenuItem(
         child: Text("BSc or Equivalent"), value: "BSc or Equivalent"),
+    DropdownMenuItem(
+        child: Text("Diploma or Equivalent"), value: "Diploma or Equivalent"),
   ];
 
   List<DropdownMenuItem<String>> decipline = [
@@ -128,7 +130,8 @@ class _RegistrationAcademicInformationState
                     ),
                   ),
                   const SizedBox(height: 5),
-                  if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  ...[
+                  if (Qualification == 'SSC or Equivalent' ||
+                      Qualification == 'HSC or Equivalent') ...[
                     Text(
                       'Decipline',
                       style: TextStyle(
@@ -166,7 +169,7 @@ class _RegistrationAcademicInformationState
                     ),
                     const SizedBox(height: 5),
                   ],
-                  if(Qualification == 'BSc or Equivalent') ...[
+                  if (Qualification == 'BSc or Equivalent' || Qualification == 'Diploma or Equivalent') ...[
                     Text(
                       'Subject',
                       style: TextStyle(
@@ -408,19 +411,21 @@ class _RegistrationAcademicInformationState
                             ),
                             onPressed: () {
                               saveData();
-                              if(validateInputs()){
+                              if (validateInputs()) {
                                 saveData();
                                 print('validated');
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                        const RegistrationApplicationReview(shouldRefresh: true,)));
-                              }
-                              else{
+                                            const RegistrationApplicationReview(
+                                              shouldRefresh: true,
+                                            )));
+                              } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Fill up all required fields'),
+                                    content:
+                                        Text('Fill up all required fields'),
                                     behavior: SnackBarBehavior.floating,
                                   ),
                                 );
@@ -446,9 +451,19 @@ class _RegistrationAcademicInformationState
   }
 
   bool validateInputs() {
+    if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  {
+      if(_Deciplinecontroller.text.isEmpty){
+        return false;
+      }
+      return true;
+    }
+    if(Qualification == 'BSc or Equivalent'  || Qualification == 'Diploma or Equivalent') {
+      if(_SubjectNamecontroller.text.isEmpty){
+        return false;
+      }
+      return true;
+    }
     if (_Qulificationcontroller.text.isEmpty ||
-        _Deciplinecontroller.text.isEmpty ||
-        _SubjectNamecontroller.text.isEmpty ||
         _PassingYearcontroller.text.isEmpty ||
         _Institutecontroller.text.isEmpty ||
         _Resultcontroller.text.isEmpty) {
@@ -460,13 +475,17 @@ class _RegistrationAcademicInformationState
   Future<void> saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('qualification', _Qulificationcontroller.text);
-    await prefs.setString('decipline', _Deciplinecontroller.text);
-    await prefs.setString('subject_name', _SubjectNamecontroller.text);
+    if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  {
+      await prefs.setString('subject_name', _Deciplinecontroller.text);
+    }
+    if(Qualification == 'BSc or Equivalent'  || Qualification == 'Diploma or Equivalent') {
+      await prefs.setString('subject_name', _SubjectNamecontroller.text);
+    }
+
     await prefs.setString('passing_year', _PassingYearcontroller.text);
     await prefs.setString('institute', _Institutecontroller.text);
     await prefs.setString('result', _Resultcontroller.text);
     await prefs.setString('passing_id', _PassingIDcontroller.text);
-
 
     print(await prefs.getString('qualification'));
     print(await prefs.getString('decipline'));
@@ -476,7 +495,4 @@ class _RegistrationAcademicInformationState
     print(await prefs.getString('result'));
     print(await prefs.getString('passing_id'));
   }
-
-
-
 }

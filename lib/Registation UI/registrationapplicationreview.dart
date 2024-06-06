@@ -34,6 +34,7 @@ class _RegistrationApplicationReviewState
   late String venueName = "";
   late String courseCategory = "";
   late String courseType = "";
+  late String examFee = "";
   late String book = "";
   late String venueID = "";
   late String courseCategoryID = "";
@@ -67,6 +68,7 @@ class _RegistrationApplicationReviewState
     courseCategory = prefs.getString('Exam Catagories_Name') ?? '';
     courseTypeID = prefs.getString('Exam Type') ?? '';
     courseType = prefs.getString('Exam Type_Name') ?? '';
+    examFee = prefs.getString('Exam Fee') ?? '';
     bookID = prefs.getString('Book') ?? '';
     book = prefs.getString('Book_Name') ?? '';
     fullName = prefs.getString('full_name') ?? '';
@@ -93,6 +95,7 @@ class _RegistrationApplicationReviewState
     print('Venue Name: $venueName');
     print('Course Category: $courseCategory');
     print('Course Type: $courseType');
+    print('Exam Fee: $examFee');
     print('Book: $book');
     print('Full Name: $fullName');
     print('Email: $email');
@@ -174,13 +177,6 @@ class _RegistrationApplicationReviewState
   void initState() {
     super.initState();
     getDataFromSharedPreferences();
-    Future.delayed(Duration(seconds: 3), () {
-      if (widget.shouldRefresh) {
-        // Refresh logic here, e.g., fetch data again
-        print('Fetching!!');
-        fetchFee(courseCategoryID, courseTypeID);
-      }
-    });
     Future.delayed(Duration(seconds: 5), () {
       if (widget.shouldRefresh) {
         // Refresh logic here, e.g., fetch data again
@@ -305,7 +301,7 @@ class _RegistrationApplicationReviewState
                                     _buildRow(
                                         'Exam Catagories', courseCategory),
                                     _buildRow('Exam Type', courseType),
-                                    _buildRow('Exam Fee', examFee),
+                                    _buildRow('Exam Fee', '$examFee TK'),
                                     _buildRow('Full Name', fullName),
                                     _buildRow('Email', email),
                                     _buildRow('Mobile Number', mobileNumber),
@@ -352,8 +348,12 @@ class _RegistrationApplicationReviewState
                                 children: [
                                   _buildRow('Education Qualification',
                                       educationQualification),
-                                  _buildRow('Decipine', discipline),
-                                  _buildRow('Subject', subject),
+                                  if(educationQualification == 'SSC or Equivalent'  || educationQualification == 'HSC or Equivalent') ...[
+                                    _buildRow('Decipine', discipline),
+                                  ],
+                                  if(educationQualification == 'BSc or Equivalent'  || educationQualification == 'Diploma or Equivalent') ...[
+                                    _buildRow('Subject', subject),
+                                  ],
                                   _buildRow('Passing Year', passingYear),
                                   _buildRow('Institute', institute),
                                   _buildRow('Result', result),
@@ -410,6 +410,9 @@ class _RegistrationApplicationReviewState
                                           const PaymentConfirmation()),
                                 );
                               } else {
+                                setState(() {
+                                  buttonloading = false;
+                                });
                                 // If registration failed, show a snackbar indicating the failure
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -440,28 +443,6 @@ class _RegistrationApplicationReviewState
               )),
             ),
           );
-  }
-
-  late String examFee = '';
-
-  Future<void> fetchFee(String Catagories, String type) async {
-    if (_isFetched) return;
-    try {
-      final apiService = await FeeAPIService.create();
-
-      final response = await apiService.fetchExamFee(Catagories, type);
-      final fee = response['records']['fee'] as String;
-
-      examFee = fee;
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('Exam fee', examFee);
-
-      _isFetched = true;
-    } catch (e) {
-      print('Error fetching connection requests: $e');
-      _isFetched = true;
-      // Handle error as needed
-    }
   }
 
   void showSliderAlert(BuildContext context) {

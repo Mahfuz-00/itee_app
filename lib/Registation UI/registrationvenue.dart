@@ -45,6 +45,8 @@ class _RegistrationCenterState extends State<RegistrationCenter>
   bool _pageLoading = true;
   bool _isLoading = false;
 
+
+
   Future<void> fetchConnectionRequests() async {
     if (_isFetched) return;
     try {
@@ -168,6 +170,31 @@ class _RegistrationCenterState extends State<RegistrationCenter>
     } catch (e) {
       print('Error handling exam types: $e');
       // Handle error
+    }
+  }
+
+  late String examFee = '';
+  bool _isFetchedFee = false;
+
+  Future<void> fetchFee(String Catagories, String type) async {
+    if (_isFetchedFee) return;
+    try {
+      final apiService = await FeeAPIService.create();
+
+      final response = await apiService.fetchExamFee(Catagories, type);
+      final fee = response['records']['fee'] as String;
+
+      setState(() {
+        examFee = fee;
+      });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('Exam fee', examFee);
+
+      _isFetchedFee = true;
+    } catch (e) {
+      print('Error fetching connection requests: $e');
+      _isFetchedFee = true;
+      // Handle error as needed
     }
   }
 
@@ -460,6 +487,9 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                               //It Takes ID Int
                               _ExamTypeID = selectedTypeObject.id.toString();
                               print(_ExamTypeID);
+                              if(_ExamCatagoriesID != '' && _ExamTypeID != '' && _ExamCatagoriesID != null && _ExamTypeID != null){
+                                fetchFee(_ExamCatagoriesID, _ExamTypeID);
+                              }
                             }
                           }
                         },
@@ -510,6 +540,43 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                       border: InputBorder.none,
                     ),
                   )*/
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Text('Exam Free : ',
+                style: TextStyle(
+                  color: Color.fromRGBO(143, 150, 158, 1),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'default',
+                ),),
+              SizedBox(height: 5,),
+              Material(
+                elevation: 5,
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  width: screenWidth*0.9,
+                  height: screenHeight*0.075,
+                  padding: EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 20,),
+                    child: Text(
+                      examFee != null && examFee.isNotEmpty ? '$examFee TK' : 'Exam Fee',
+                      style: TextStyle(
+                        color: Color.fromRGBO(143, 150, 158, 1),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ),
                 ),
               ),
               /*  if (selectedExamCategory != null && selectedExamType != null) ...[
@@ -720,12 +787,13 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                           _ExamCatagoriesID != null &&
                           _ExamTypeID != null && _VenueID != '' &&
                           _ExamCatagoriesID != '' &&
-                          _ExamTypeID != '') {
+                          _ExamTypeID != '' && examFee != null && examFee != null) {
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.setString('Venue', _VenueID);
                         await prefs.setString(
                             'Exam Catagories', _ExamCatagoriesID);
                         await prefs.setString('Exam Type', _ExamTypeID);
+                        await prefs.setString('Exam Fee', examFee);
                         await prefs.setString('Book', _BookID);
                         await prefs.setString('Venue_Name', selectedVenue.toString());
                         await prefs.setString(
@@ -733,19 +801,18 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         await prefs.setString('Exam Type_Name', selectedExamType.toString());
                         await prefs.setString('Book_Name', selectedBook.toString());
 
-                        late final String? VenueSaved;
-                        late final String? CatagoresSaved;
-                        late final String? TypeSaved;
-                        late final String? BookSaved;
+                        final String? VenueSaved = await prefs.getString('Venue');
+                        final String? CatagoresSaved = await prefs.getString('Exam Catagories');
+                        final String? TypeSaved = await prefs.getString('Exam Type');
+                        final String? BookSaved = await prefs.getString('Book');
+                        final String? FeeSaved = await prefs.getString('Exam Fee');
 
-                        VenueSaved = await prefs.getString('Venue');
-                        CatagoresSaved = await prefs.getString('Exam Catagories');
-                        TypeSaved = await prefs.getString('Exam Type');
-                        BookSaved = await prefs.getString('Book');
+
                         print(VenueSaved);
                         print(CatagoresSaved);
                         print(TypeSaved);
                         print(BookSaved);
+                        print(FeeSaved);
 
 
                         Navigator.push(
@@ -778,4 +845,5 @@ class _RegistrationCenterState extends State<RegistrationCenter>
       )),
     );
   }
+
 }

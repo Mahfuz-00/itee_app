@@ -50,8 +50,19 @@ class ExamRegistrationAPIService {
     request.fields['address'] = prefs.getString('address') ?? '';
     request.fields['post_code'] = prefs.getString('post_code') ?? '';
     request.fields['occupation'] = prefs.getString('occupation') ?? '';
-    request.fields['education_qualification'] = prefs.getString('date_of_birth') ?? '';
-    request.fields['subject_name'] = prefs.getString('subject_name') ?? '';
+    request.fields['education_qualification'] = prefs.getString('qualification') ?? '';
+
+    final String? discipline = prefs.getString('discipline');
+    final String? subjectName = prefs.getString('subject_name');
+
+    if (discipline != null && discipline.isNotEmpty) {
+      request.fields['discipline'] = discipline;
+    }
+
+    if (subjectName != null && subjectName.isNotEmpty) {
+      request.fields['subject_name'] = subjectName;
+    }
+
     request.fields['passing_year'] = prefs.getString('passing_year') ?? '';
     request.fields['institute_name'] = prefs.getString('institute') ?? '';
     request.fields['result'] = prefs.getString('result') ?? '';
