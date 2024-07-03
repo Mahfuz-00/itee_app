@@ -14,6 +14,8 @@ class RegisterRequestmodel {
   late String fullName;
   late String email;
   late String phone;
+  late String occupation;
+  late String linkedin;
   late String password;
   late String confirmPassword;
 
@@ -21,6 +23,8 @@ class RegisterRequestmodel {
     required this.fullName,
     required this.email,
     required this.phone,
+    required this.occupation,
+    required this.linkedin,
     required this.password,
     required this.confirmPassword,
   });
@@ -30,6 +34,8 @@ class RegisterRequestmodel {
       'full_name': fullName,
       'email': email,
       'phone': phone,
+      'occupation': occupation,
+      'LinkedIn': linkedin,
       'password': password,
       'password_confirmation': confirmPassword,
     };

@@ -19,6 +19,8 @@ class APIService {
       request.fields['full_name'] = registerRequestModel.fullName;
       request.fields['email'] = registerRequestModel.email;
       request.fields['phone'] = registerRequestModel.phone;
+      request.fields['occupation'] = registerRequestModel.occupation;
+      request.fields['linkedin'] = registerRequestModel.linkedin;
       request.fields['password'] = registerRequestModel.password;
       request.fields['password_confirmation'] = registerRequestModel.confirmPassword;
 
@@ -38,6 +40,7 @@ class APIService {
         // Successful registration
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
+        print(responseBody);
         print('User registered successfully!');
         return jsonResponse['message'];
       } else {

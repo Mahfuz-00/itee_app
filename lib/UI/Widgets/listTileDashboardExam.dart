@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ItemTemplate extends StatelessWidget {
+class ExamItemTemplate extends StatelessWidget {
   final String name;
+  final String Catagories;
   final String price;
 
-  ItemTemplate({
+  ExamItemTemplate({
     required this.name,
+    required this.Catagories,
     required this.price,
   });
 

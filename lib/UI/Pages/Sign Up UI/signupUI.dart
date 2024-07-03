@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:footer/footer.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:itee_exam_app/UI/Pages/Sign%20Up%20UI/accountOTPverficationUI.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Sign Up)/apiserviceregister.dart';
 import '../../../Data/Models/registermodels.dart';
@@ -22,6 +24,8 @@ class _SignupState extends State<Signup> {
   bool _isObscuredConfirmPassword = true;
   late RegisterRequestmodel _registerRequest;
   late TextEditingController _fullNameController;
+  late TextEditingController _occupationController;
+  late TextEditingController _linkedinController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _passwordController;
@@ -63,12 +67,16 @@ class _SignupState extends State<Signup> {
       phone: '',
       password: '',
       confirmPassword: '',
+      occupation: '',
+      linkedin: '',
     );
     _fullNameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
+    _occupationController = TextEditingController();
+    _linkedinController = TextEditingController();
   }
 
   @override
@@ -226,6 +234,70 @@ class _SignupState extends State<Signup> {
                                         fillColor: Colors.white,
                                         border: OutlineInputBorder(),
                                         labelText: 'Mobile Number',
+                                        labelStyle: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Container(
+                                    width: screenWidth*0.9,
+                                    height: 70,
+                                    child: TextFormField(
+                                      controller: _occupationController,
+                                      validator: (input) {
+                                        if (input == null || input.isEmpty) {
+                                          return 'Please enter your occupation';
+                                        }
+                                        return null;
+                                      },
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      ),
+                                      decoration: const InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Occupation',
+                                        labelStyle: TextStyle(
+                                          color: Colors.black87,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          fontFamily: 'default',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Container(
+                                    width: screenWidth*0.9,
+                                    height: 70,
+                                    child: TextFormField(
+                                      controller: _linkedinController,
+                                      validator: (input) {
+                                        if (input == null || input.isEmpty) {
+                                          return 'Please enter your linkedin profile';
+                                        }
+                                        return null;
+                                      },
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(143, 150, 158, 1),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      ),
+                                      decoration: const InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.white,
+                                        border: OutlineInputBorder(),
+                                        labelText: 'Linkedin Profile',
                                         labelStyle: TextStyle(
                                           color: Colors.black87,
                                           fontWeight: FontWeight.bold,
@@ -452,7 +524,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  void _registerUser() {
+  Future<void> _registerUser() async {
     setState(() {
       _isLoading = true;
     });
@@ -460,6 +532,13 @@ class _SignupState extends State<Signup> {
       content: Text(
           'Processing'),
     );
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      await prefs.setString('Email', _emailController.text);
+      print('User Name: ${_emailController.text}');
+    } catch (e) {
+      print('Error saving user profile: $e');
+    }
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     if (validateAndSave() && checkConfirmPassword()) {
       final registerRequest = RegisterRequestmodel(
@@ -468,21 +547,34 @@ class _SignupState extends State<Signup> {
         phone: _phoneController.text,
         password: _passwordController.text,
         confirmPassword: _confirmPasswordController.text,
+        occupation: _occupationController.text,
+        linkedin: _linkedinController.text,
       );
 
       final apiService = APIService();
       // Call register method passing registerRequestModel, _imageFile, and authToken
       apiService.register(registerRequest, _imageFile).then((response) {
         print("Submitted");
-        if (response != null && response == "User Registration Successfully") {
+        if (response != null && response == "User Registration Successfully. Verification is pending.") {
           clearForm();
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Login()),
-                (route) => false, // This will remove all routes from the stack
+            MaterialPageRoute(builder: (context) => AccountOPTVerfication()),
           );
+        } else if (response != null && response == "The email has already been taken."){
+          setState(() {
+            _isLoading = false;
+          });
           const snackBar = SnackBar(
-            content: Text('Registration Submitted!'),
+            content: Text('The Email is Taken!, Please Try entering a different Email'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        } else if (response != null && response == "The phone has already been taken."){
+          setState(() {
+            _isLoading = false;
+          });
+          const snackBar = SnackBar(
+            content: Text('The Phone Number is Taken!, Please Try a different Number'),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else{
@@ -490,7 +582,7 @@ class _SignupState extends State<Signup> {
             _isLoading = false;
           });
           const snackBar = SnackBar(
-            content: Text('Registration failed!'),
+            content: Text('Registration Failed!'),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
