@@ -5,15 +5,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 
-
 class ExamDetails extends StatefulWidget {
-  const ExamDetails({super.key});
+  final String details;
+  const ExamDetails({Key? key, required this.details}) : super(key: key);
 
   @override
   State<ExamDetails> createState() => _ExamDetailsState();
 }
 
-class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStateMixin{
+class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -52,105 +52,13 @@ class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStat
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ITEE in Bangladesh',
+                    widget.details,
                     style: TextStyle(
-                      color: const Color.fromRGBO(0, 162, 222, 1),
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text('Bangladesh government is conducting and implementing ITEE in Bangladesh by Bangladesh IT-engineers Examination Center (BD-ITEC) of Bangladesh Computer Council under the umbrella of ICT Division, Ministry of Posts, Telecommunications & IT. It is the national level examination for IT professionals/graduates in Bangladesh. Non-IT Professionals/graduates also can achieve international recognition for their IT knowledge & skills. BD-ITEC is conducting ITEE in Bangladesh from October 2013 regularly. The following two exams are conducted in Bangladesh now:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
                       color: Colors.black87,
                       fontSize: 20,
                       fontFamily: 'default',
-                    ),),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Level-1: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'IT Passport Exam ',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: '(IP): ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: '[This examination is suitable for IT & non-IT professionals and graduates.]',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Level-2: ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Fundamental Information Technology Engineer Examination ',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: '(FE): ',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                        TextSpan(
-                          text: '[This examination is suitable for IT professionals/graduates and 4th years’ CSE/IT related students.]',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 20,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10,)
                 ],
               ),
             ),
@@ -160,4 +68,3 @@ class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStat
     );
   }
 }
-

@@ -32,6 +32,7 @@ class _RegistrationApplicationReviewState
   late String courseType = "";
   late String examFee = "";
   late String book = "";
+  late String bookprice = "";
   late String venueID = "";
   late String courseCategoryID = "";
   late String courseTypeID = "";
@@ -41,6 +42,7 @@ class _RegistrationApplicationReviewState
   late String mobileNumber = "";
   late String dateOfBirth = "";
   late String gender = "";
+  late String linkdin = "";
   late String address = "";
   late String postCode = "";
   late String occupation = "";
@@ -67,16 +69,18 @@ class _RegistrationApplicationReviewState
     examFee = prefs.getString('Exam Fee') ?? '';
     bookID = prefs.getString('Book') ?? '';
     book = prefs.getString('Book_Name') ?? '';
+    bookprice = prefs.getString('BookPrice') ?? '';
     fullName = prefs.getString('full_name') ?? '';
     email = prefs.getString('email') ?? '';
     mobileNumber = prefs.getString('phone') ?? '';
     dateOfBirth = prefs.getString('date_of_birth') ?? '';
     gender = prefs.getString('gender') ?? '';
+    linkdin = prefs.getString('linkedin') ?? '';
     address = prefs.getString('address') ?? '';
     postCode = prefs.getString('post_code') ?? '';
     occupation = prefs.getString('occupation') ?? '';
     educationQualification = prefs.getString('qualification') ?? '';
-    discipline = prefs.getString('decipline') ?? '';
+    discipline = prefs.getString('subject_name') ?? '';
     subject = prefs.getString('subject_name') ?? '';
     passingYear = prefs.getString('passing_year') ?? '';
     institute = prefs.getString('institute') ?? '';
@@ -93,11 +97,13 @@ class _RegistrationApplicationReviewState
     print('Course Type: $courseType');
     print('Exam Fee: $examFee');
     print('Book: $book');
+    print('Book Price: $bookprice');
     print('Full Name: $fullName');
     print('Email: $email');
     print('Mobile Number: $mobileNumber');
     print('Date of Birth: $dateOfBirth');
     print('Gender: $gender');
+    print('Linkdin: $linkdin');
     print('Address: $address');
     print('Post Code: $postCode');
     print('Occupation: $occupation');
@@ -298,12 +304,18 @@ class _RegistrationApplicationReviewState
                                     _buildRow(
                                         'Exam Catagories', courseCategory),
                                     _buildRow('Exam Type', courseType),
-                                    _buildRow('Exam Fee', '$examFee TK'),
+                                    _buildRow('Exam Fee', examFee),
+                                    _buildRow('Book', book),
+                                    _buildRow('Book Price', 'TK $bookprice/-'),
                                     _buildRow('Full Name', fullName),
                                     _buildRow('Email', email),
                                     _buildRow('Mobile Number', mobileNumber),
                                     _buildRow('Date of Birth', dateOfBirth),
                                     _buildRow('Gender', gender),
+                                    _buildRow('Linkdin', linkdin),
+                                    _buildRow('Address', address),
+                                    _buildRow('Post Code', postCode),
+                                    _buildRow('Occupation', occupation),
                                   ],
                                 )),
                           ],

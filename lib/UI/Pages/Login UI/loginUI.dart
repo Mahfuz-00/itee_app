@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:footer/footer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,6 +7,7 @@ import '../../../Data/Data Sources/API Service (Login)/apiservicelogin.dart';
 import '../../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
 import '../../../Data/Models/loginmodels.dart';
 import '../../../Data/Models/profilemodel.dart';
+import '../../Bloc/auth_cubit.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../Forgot Password UI/forgotpasswordUI.dart';
 import '../Sign Up UI/signupUI.dart';
@@ -27,6 +29,7 @@ class _LoginState extends State<Login> {
   late String userType;
   bool _isLoading = false;
   bool _isButtonClicked = false;
+  late AuthCubit authCubit;
 
   IconData _getIcon() {
     return _isObscured ? Icons.visibility_off : Icons.visibility;
@@ -46,6 +49,7 @@ class _LoginState extends State<Login> {
     _passwordController = TextEditingController();
     _emailController = TextEditingController();
     _checkLoginRequest();
+    authCubit = context.read<AuthCubit>();
   }
 
   @override
@@ -437,23 +441,35 @@ class _LoginState extends State<Login> {
   Future<void> _fetchUserProfile(String token) async {
     try {
       final apiService = await APIProfileService();
+
+      // Check if the widget is still mounted
+      if (!mounted) return;
+
+      print('Mounted');
+
       final profile = await apiService.fetchUserProfile(token);
       final userProfile = UserProfile.fromJson(profile);
 
-      // Save user profile data in SharedPreferences
+      print('Mounted Again');
+
+      authCubit.login(userProfile, token);
+
+      /* // Save user profile data in SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       try {
         await prefs.setString('userName', userProfile.name);
         await prefs.setString('organizationName', userProfile.organization);
         await prefs.setString('photoUrl', userProfile.photo);
         UserName = prefs.getString('userName');
+        OrganizationName = prefs.getString('organizationName');
         PhotoURL = prefs.getString('photoUrl');
         print('User Name: $UserName');
+        print('Organization Name: $OrganizationName');
         print('Photo URL: $PhotoURL');
         print('User profile saved successfully');
       } catch (e) {
         print('Error saving user profile: $e');
-      }
+      }*/
     } catch (e) {
       print('Error fetching user profile: $e');
       // Handle error as needed

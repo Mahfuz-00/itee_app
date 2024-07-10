@@ -52,10 +52,6 @@ class APIServiceUpdateUser {
         body: {
           'userId': userData.userId,
           'name': userData.name,
-          'organization': userData.organization,
-          'designation': userData.designation,
-          'phone': userData.phone,
-          'licenseNumber': userData.licenseNumber,
         },
       );
 
@@ -80,10 +76,6 @@ class APIServiceUpdateUser {
         body: {
           'userId': userData.userId,
           'name': userData.name,
-          'organization': userData.organization,
-          'designation': userData.designation,
-          'phone': userData.phone,
-          'licenseNumber': userData.licenseNumber,
         },
       );
       print(response.body);

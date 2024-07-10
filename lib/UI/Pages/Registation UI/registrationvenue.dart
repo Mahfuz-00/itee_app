@@ -10,7 +10,20 @@ import '../../Widgets/dropdownfield.dart';
 import 'registrationpersonalinfo.dart';
 
 class RegistrationCenter extends StatefulWidget {
-  const RegistrationCenter({super.key});
+  final String Catagory;
+  final String Type;
+  final String Fee;
+  final String CatagoryId;
+  final String TypeId;
+
+  const RegistrationCenter({
+    Key? key,
+    required this.Catagory,
+    required this.Type,
+    required this.Fee,
+    required this.CatagoryId,
+    required this.TypeId,
+  }) : super(key: key);
 
   @override
   State<RegistrationCenter> createState() => _RegistrationCenterState();
@@ -39,6 +52,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
   late String _ExamCatagoriesID = '';
   late String _ExamTypeID = '';
   late String _BookID = '';
+  late String _BookPrice = '';
 
   bool _isFetched = false;
   bool _pageLoading = true;
@@ -73,7 +87,23 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         return;
       }
 
-      await handleRecords(records); // Handle each section separately
+      await handleRecords(records);
+
+      if (widget.CatagoryId.isNotEmpty || widget.CatagoryId != '') {
+        setState(() {
+          _ExamCatagoriesID = widget.CatagoryId;
+        });
+      }
+      if (widget.TypeId.isNotEmpty || widget.TypeId != '') {
+        setState(() {
+          _ExamTypeID = widget.TypeId;
+        });
+      }
+      if (widget.Fee.isNotEmpty || widget.Fee != '') {
+        setState(() {
+          examFee = widget.Fee;
+        });
+      }// Handle each section separately
 
       setState(() {
         _isFetched = true;
@@ -212,6 +242,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         fetchedBooks.add(book);
         print('Book Name: ${book.name}');
         print('Book ID: ${book.id}');
+        print('Book Price: ${book.bookprice}');
         // Further processing if needed
       }
       setState(() {
@@ -223,6 +254,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
       // Handle error
     }
   }
+
 
   @override
   void initState() {
@@ -390,7 +422,27 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: Stack(
+                  child:  widget.Catagory.isNotEmpty|| widget.Catagory != ''
+                      ? TextField(
+                    controller: TextEditingController(text: widget.Catagory),
+                    enabled: false, // Disable the text field if you want it to be read-only
+                    decoration: InputDecoration(
+                      hintText: 'Exam Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        ),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),
+                  )
+                      : Stack(
                     children: [
                       // Inside your build method or wherever appropriate
                       DropdownFormField(
@@ -464,7 +516,27 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: Stack(
+                  child:  widget.Type.isNotEmpty|| widget.Type != ''
+                      ? TextField(
+                    controller: TextEditingController(text: widget.Type),
+                    enabled: false, // Disable the text field if you want it to be read-only
+                    decoration: InputDecoration(
+                      hintText: 'Exam Type',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        ),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),
+                  )
+                      : Stack(
                     children: [
                       DropdownFormField(
                         hintText: 'Select Exam Type',
@@ -489,7 +561,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
 
                                 fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                     isFetchFeeInvoked);
-                               /* if (_ExamCatagoriesID != '' &&
+                                /* if (_ExamCatagoriesID != '' &&
                                     _ExamTypeID != '' &&
                                     _ExamCatagoriesID != null &&
                                     _ExamTypeID != null) {
@@ -571,7 +643,27 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: Container(
+                  child:  widget.Fee.isNotEmpty|| widget.Fee != ''
+                      ? TextField(
+                    controller: TextEditingController(text: widget.Fee),
+                    enabled: false, // Disable the text field if you want it to be read-only
+                    decoration: InputDecoration(
+                      hintText: 'Exam Fee',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        ),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),
+                  )
+                      : Container(
                     padding: EdgeInsets.only(top: 15, left: 15),
                     child: Text(
                       examFee != null && examFee.isNotEmpty
@@ -678,6 +770,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                             if (selectedBookObject != null) {
                               //It Takes ID Int
                               _BookID = selectedBookObject.id.toString();
+                              _BookPrice = selectedBookObject.bookprice.toString();
                               print(_BookID);
                             }
                           }
@@ -734,8 +827,8 @@ class _RegistrationCenterState extends State<RegistrationCenter>
               SizedBox(
                 height: 15,
               ),
-              /* Text(
-                'Book Fee : ',
+               Text(
+                'Book Price : ',
                 style: TextStyle(
                   color: Color.fromRGBO(143, 150, 158, 1),
                   fontSize: 16,
@@ -748,22 +841,22 @@ class _RegistrationCenterState extends State<RegistrationCenter>
               ),
               Material(
                 elevation: 5,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
                 child: Container(
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.085,
-                  padding: EdgeInsets.only(left: 10),
+                  height: screenHeight * 0.075,
+                  padding: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 20,
-                    ),
+                    padding: EdgeInsets.only(top: 15, left: 15),
                     child: Text(
-                      selectedTutionFee ?? 'Book Fee',
+                      _BookPrice != null && _BookPrice .isNotEmpty
+                          ? 'TK $_BookPrice/-'
+                          : 'Book Price',
                       style: TextStyle(
                         color: Color.fromRGBO(143, 150, 158, 1),
                         fontWeight: FontWeight.bold,
@@ -773,7 +866,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     ),
                   ),
                 ),
-              ),*/
+              ),
               SizedBox(
                 height: 25,
               ),
@@ -791,6 +884,11 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                       ),
                     ),
                     onPressed: () async {
+                      print(_VenueID);
+                      print(_ExamCatagoriesID);
+                      print(_ExamTypeID);
+                      print(_BookID);
+                      print(examFee);
                       if (_VenueID != null &&
                           _ExamCatagoriesID != null &&
                           _ExamTypeID != null &&
@@ -806,14 +904,27 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         await prefs.setString('Exam Type', _ExamTypeID);
                         await prefs.setString('Exam Fee', examFee);
                         await prefs.setString('Book', _BookID);
+                        await prefs.setString('BookPrice', _BookPrice);
                         await prefs.setString(
                             'Venue_Name', selectedVenue.toString());
-                        await prefs.setString('Exam Catagories_Name',
-                            selectedExamCategory.toString());
-                        await prefs.setString(
-                            'Exam Type_Name', selectedExamType.toString());
+                        if(widget.Catagory .isNotEmpty || widget.Catagory != ''){
+                          await prefs.setString('Exam Catagories_Name', widget.Catagory);
+                        } else {
+                          await prefs.setString('Exam Catagories_Name',
+                              selectedExamCategory.toString());
+                        }
+                        if(widget.Type.isNotEmpty || widget.Type != ''){
+                          await prefs.setString('Exam Type_Name', widget.Type);
+                        } else {
+                          await prefs.setString(
+                              'Exam Type_Name', selectedExamType.toString());
+                        }
                         await prefs.setString(
                             'Book_Name', selectedBook.toString());
+
+                        print('Catagory : $_ExamCatagoriesID');
+                        print('Type : $_ExamTypeID');
+                        print('Book $_BookID');
 
                         final String? VenueSaved =
                             await prefs.getString('Venue');
@@ -822,14 +933,16 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         final String? TypeSaved =
                             await prefs.getString('Exam Type');
                         final String? BookSaved = await prefs.getString('Book');
+                        final String? BookPriceSaved = await prefs.getString('BookPrice');
                         final String? FeeSaved =
                             await prefs.getString('Exam Fee');
 
                         print(VenueSaved);
-                        print(CatagoresSaved);
-                        print(TypeSaved);
+                        print('Exam Catagory : $CatagoresSaved');
+                        print('Exam Type : $TypeSaved');
                         print(BookSaved);
                         print(FeeSaved);
+                        print(BookPriceSaved);
 
                         Navigator.push(
                             context,

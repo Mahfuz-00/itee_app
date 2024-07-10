@@ -29,17 +29,25 @@ class DashboardAPIService {
 
   Future<Map<String, dynamic>> fetchDashboardItems() async {
     final String token = await authToken;
+    final response;
     try {
       if (token.isEmpty) {
-        throw Exception('Authentication token is empty.');
+        response = await http.get(
+            Uri.parse('$baseUrl/itee/dashboard'),
+            headers: {
+              'Accept': 'application/json',
+            },
+        );
+      }else {
+        response = await http.get(
+          Uri.parse('$baseUrl/itee/dashboard'),
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $authToken',
+          },
+        );
       }
-      final response = await http.get(
-        Uri.parse('$baseUrl/itee/dashboard'),
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $authToken',
-        },
-      );
+
 
       print(response.statusCode);
 

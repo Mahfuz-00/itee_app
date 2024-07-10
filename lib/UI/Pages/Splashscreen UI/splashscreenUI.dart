@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
+import 'package:itee_exam_app/UI/Pages/Dashboard%20UI/dashboardUI.dart';
 
 import '../Login UI/loginUI.dart';
 import '../Sign Up UI/signupUI.dart';
@@ -33,6 +34,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 5), () {
       animationController.forward();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard(shouldRefresh: true,)),
+        );
     });
 
   }
@@ -108,15 +113,15 @@ class _SplashScreenState extends State<SplashScreen>
                     alignment: Alignment.bottomCenter,
                   ),
                 ),
-                SlideTransition(
+               /* SlideTransition(
                   position: SlideAnimation,
-                  /*CurvedAnimation(
+                  *//*CurvedAnimation(
                     parent: animationController,
                     curve: Curves.easeInOutCirc, // Adjust values for desired timing
                   ).drive(Tween<Offset>(
                     begin: Offset(0, 2), // Start beyond the bottom edge
                     end: Offset(0, 0),
-                  )),*/
+                  )),*//*
                   //position: SlideAnimation,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -174,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen>
                               )))
                     ],
                   ),
-                ),
+                ),*/
               ],
             ),
           ],

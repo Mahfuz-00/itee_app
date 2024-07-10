@@ -79,7 +79,7 @@ class ExamCard extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.details, color: Colors.white),
+                        child: Icon(Icons.info, color: Colors.white),
                       ),
                     ),
                   ),

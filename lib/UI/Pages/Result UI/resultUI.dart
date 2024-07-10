@@ -193,7 +193,7 @@ class _ResultState extends State<Result> {
     });
 
     final apiService = await ResultAPIService.create();
-    final result = await apiService.getResult(id);
+    final result = await apiService.getResult('hello', 'bye');
 
     if (result != null) {
       print(result);

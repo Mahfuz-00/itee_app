@@ -36,7 +36,7 @@ class BookCard extends StatelessWidget {
                   ),
                   SizedBox(height: 10,),
                   Text(
-                    'Book Price: $bookPrice৳',
+                    'Book Price: $bookPrice',/*৳*/
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 18,

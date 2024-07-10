@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 
-class ExamItemTemplate extends StatelessWidget {
+class ApplicationItemTemplate extends StatelessWidget {
   final String name;
   final String Catagories;
-  final String price;
-  final String Details;
-  final String typeID;
-  final String CatagoryID;
+  final int result;
+  final int payment;
+  final int admitcard;
 
-  ExamItemTemplate({
+  ApplicationItemTemplate({
     required this.name,
     required this.Catagories,
-    required this.price,
-    required this.Details,
-    required this.typeID,
-    required this.CatagoryID,
+    required this.result,
+    required this.payment,
+    required this.admitcard,
   });
 
   @override
@@ -34,7 +32,7 @@ class ExamItemTemplate extends StatelessWidget {
           ),
           SizedBox(height: 5),
           Text(
-            price,
+            Catagories,
             textAlign: TextAlign.start,
             style: TextStyle(
               color: Color.fromRGBO(

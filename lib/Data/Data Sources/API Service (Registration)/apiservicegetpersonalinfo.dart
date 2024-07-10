@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ResultAPIService {
+class PersonalInfoAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
 
-  ResultAPIService._();
+  PersonalInfoAPIService._();
 
-  static Future<ResultAPIService> create() async {
-    var apiService = ResultAPIService._();
+  static Future<PersonalInfoAPIService> create() async {
+    var apiService = PersonalInfoAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;
@@ -27,16 +27,14 @@ class ResultAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>?> getResult(String Catagory, String id) async {
+  Future<Map<String, dynamic>?> getPersonalInfo() async {
     final String token = await authToken;
-    print('ID :$id');
-    print('Catagory :$Catagory');
     try {
       if (token.isEmpty) {
         throw Exception('Authentication token is empty.');
       }
       final response = await http.get(
-        Uri.parse('$baseUrl/itee/student/result/$Catagory/$id'),
+        Uri.parse('$baseUrl/itee/get-personal-info'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $authToken',
@@ -50,7 +48,7 @@ class ResultAPIService {
         print(jsonData);
         return jsonData;
       } else {
-        throw Exception('Failed to load result');
+        throw Exception('Failed to get Personal Data');
       }
     } catch (e) {
       throw Exception('Error fetching result: $e');

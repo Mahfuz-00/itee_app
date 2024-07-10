@@ -47,7 +47,7 @@ class AdmitCardAPIService {
         print(jsonData);
         return jsonData;
       } else {
-        throw Exception('Failed to load syllabus');
+        throw Exception('Failed to load Admit Card');
       }
     } catch (e) {
       throw Exception('Error fetching syllabus: $e');

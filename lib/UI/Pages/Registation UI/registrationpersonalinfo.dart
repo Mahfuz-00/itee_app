@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Data/Data Sources/API Service (Registration)/apiservicegetpersonalinfo.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/dropdownfields.dart';
 import 'registrationacademicinfo.dart';
@@ -25,14 +26,27 @@ class _RegistrationPersonalInformationState
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _Datecontroller = TextEditingController();
-  late TextEditingController _FullNamecontroller = TextEditingController();
-  late TextEditingController _Emailcontroller = TextEditingController();
-  late TextEditingController _Phonecontroller = TextEditingController();
+  late TextEditingController _FullNamecontroller =
+      TextEditingController(text: name);
+  late TextEditingController _Emailcontroller =
+      TextEditingController(text: email);
+  late TextEditingController _Phonecontroller =
+      TextEditingController(text: phone);
   late TextEditingController _Addresscontroller = TextEditingController();
   late TextEditingController _PostCodecontroller = TextEditingController();
-  late TextEditingController _Occupationcontroller = TextEditingController();
+  late TextEditingController _Occupationcontroller =
+      TextEditingController(text: occupation);
+  late TextEditingController _linkedincontroller =
+      TextEditingController(text: linkedin);
   late TextEditingController _Gendercontroller = TextEditingController();
   File? _imageFile;
+  bool _isFetched = false;
+  bool _isLoading = false;
+  late String name = '';
+  late String email = '';
+  late String phone = '';
+  late String occupation = '';
+  late String linkedin = '';
 
   List<DropdownMenuItem<String?>> gender = [
     DropdownMenuItem(child: Text("Male"), value: "Male"),
@@ -40,6 +54,138 @@ class _RegistrationPersonalInformationState
   ];
 
 /*  List<String?> gender = ['Male', 'Female', null];*/
+
+  Future<void> fetchConnectionRequests() async {
+    if (_isFetched) return;
+    try {
+      final apiService = await PersonalInfoAPIService.create();
+
+      // Fetch dashboard data
+      final Map<String, dynamic>? dashboardData =
+          await apiService.getPersonalInfo();
+      if (dashboardData == null || dashboardData.isEmpty) {
+        // No data available or an error occurred
+        print(
+            'No data available or error occurred while fetching dashboard data');
+        return;
+      }
+
+      final Map<String, dynamic> records = dashboardData['records'];
+      if (records == null || records.isEmpty) {
+        // No records available
+        print('No records available');
+        return;
+      }
+
+      // Set isLoading to true while fetching data
+      setState(() {
+        _isLoading = true;
+      });
+
+      print(records);
+      name = records['name'];
+      email = records['email'];
+      phone = records['phone'];
+      occupation = records['occupation'] ?? '';
+      linkedin = records['linkedin'] ?? '';
+      print(name);
+      print(email);
+      print(phone);
+      print(occupation);
+      print(linkedin);
+      _FullNamecontroller.text = name;
+      _Emailcontroller.text = email;
+      _Phonecontroller.text = phone;
+      _Occupationcontroller.text = occupation;
+      _linkedincontroller.text = linkedin;
+
+/*      final List<dynamic> noticeData = records['notices'] ?? [];
+      final List<dynamic> examFeesData = records['examFees'] ?? [];
+      final List<dynamic> booksData = records['books'] ?? [];
+      final List<dynamic> EventData = records['recentEvents'] ?? [];
+      final List<dynamic> ProgramData = records['programs'] ?? [];
+      final List<dynamic> BjetData = records['bjetEvents'] ?? [];
+      print('Notices : $noticeData');
+      print('Exam Fees : $examFeesData');
+      print('Books : $booksData');
+      print('Events : $EventData');
+      print('Programs : $ProgramData');
+      print('BJet : $BjetData');
+
+      // Map exam fees to widgets
+      final List<Widget> noticeWidgets = noticeData.map((item) {
+        int index = examFeesData.indexOf(item);
+        return ItemTemplateNotice(
+          notice: item['message'],
+        );
+      }).toList();
+      // Map exam fees to widgets
+      final List<Widget> examFeeWidgets = examFeesData.map((item) {
+        int index = examFeesData.indexOf(item);
+        return ExamItemTemplate(
+          name: item['exam_type'],
+          Catagories: item['exam_category'],
+          price: item['fees'],
+          Details: item['exam_details'],
+          typeID: item['exam_type_id'],
+          CatagoryID: item['exam_category_id'],
+        );
+      }).toList();
+
+      // Map books to widgets
+      final List<Widget> bookWidgets = booksData.map((item) {
+        int index = booksData.indexOf(item);
+        return ItemTemplate(
+          name: item['name'],
+          price: item['price'],
+        );
+      }).toList();
+
+      final List<Widget> eventWidgets = EventData.map((item) {
+        int index = EventData.indexOf(item);
+        return ItemTemplateImages(
+          images: item['image'],
+          label: item['label'],
+        );
+      }).toList();
+
+      final List<Widget> programWidgets = ProgramData.map((item) {
+        int index = ProgramData.indexOf(item);
+        return ItemTemplateImages(
+          images: item['image'],
+          label: item['label'],
+        );
+      }).toList();
+
+      final List<Widget> bjetWidgets = BjetData.map((item) {
+        int index = BjetData.indexOf(item);
+        return ItemTemplateImages(
+          images: item['image'],
+          label: item['label'],
+        );
+      }).toList();*/
+
+      setState(() {
+        /*   _examFeeWidgets = examFeeWidgets;
+        _bookWidgets = bookWidgets;
+        _noticeWidgets = noticeWidgets;
+        _eventWidgets = eventWidgets;
+        _programWidgets = programWidgets;
+        _bjetWidgets = bjetWidgets;*/
+        _isFetched = true;
+      });
+    } catch (e) {
+      print('Error fetching connection requests: $e');
+      _isFetched = true;
+      // Handle error as needed
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchConnectionRequests();
+  }
 
   @override
   void dispose() {
@@ -96,7 +242,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 25),
-              LabeledTextWithAsterisk(text: 'Your Full Name',),
+              LabeledTextWithAsterisk(
+                text: 'Your Full Name',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -126,7 +274,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your Email Address',),
+              LabeledTextWithAsterisk(
+                text: 'Your Email Address',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -168,7 +318,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text:  'Your Mobile Number',),
+              LabeledTextWithAsterisk(
+                text: 'Your Mobile Number',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -214,7 +366,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your Date of Birth',),
+              LabeledTextWithAsterisk(
+                text: 'Your Date of Birth',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -274,7 +428,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 15),
-              LabeledTextWithAsterisk(text: 'Your Gender',),
+              LabeledTextWithAsterisk(
+                text: 'Your Gender',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -305,7 +461,41 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 15),
-              LabeledTextWithAsterisk(text: 'Your Address',),
+              LabeledTextWithAsterisk(
+                text: 'Your Linkedin Profile',
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                width: screenWidth * 0.9,
+                height: 70,
+                child: TextFormField(
+                  controller: _linkedincontroller,
+                  style: const TextStyle(
+                    color: Color.fromRGBO(143, 150, 158, 1),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                    labelText: 'LinkedIn Profile',
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontFamily: 'default',
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 5),
+              LabeledTextWithAsterisk(
+                text: 'Your Address',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -335,7 +525,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your Area Post Code',),
+              LabeledTextWithAsterisk(
+                text: 'Your Area Post Code',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -365,7 +557,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),
               const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your Occupation',),
+              LabeledTextWithAsterisk(
+                text: 'Your Occupation',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -394,7 +588,7 @@ class _RegistrationPersonalInformationState
                   ),
                 ),
               ),
-     /*         const SizedBox(height: 5),
+              /*         const SizedBox(height: 5),
               LabeledTextWithAsterisk(text: 'Your Linkdin Profile ID',),
               SizedBox(
                 height: 5,
@@ -471,7 +665,9 @@ class _RegistrationPersonalInformationState
                 ),
               ),*/
               const SizedBox(height: 10),
-              LabeledTextWithAsterisk(text: 'Upload Your Picture',),
+              LabeledTextWithAsterisk(
+                text: 'Upload Your Picture',
+              ),
               SizedBox(
                 height: 5,
               ),
@@ -638,6 +834,7 @@ class _RegistrationPersonalInformationState
     await prefs.setString('phone', _Phonecontroller.text);
     await prefs.setString('date_of_birth', _Datecontroller.text);
     await prefs.setString('gender', _Gendercontroller.text);
+    await prefs.setString('linkedin', _linkedincontroller.text);
     await prefs.setString('address', _Addresscontroller.text);
     await prefs.setString('post_code', _PostCodecontroller.text);
     await prefs.setString('occupation', _Occupationcontroller.text);
@@ -651,6 +848,7 @@ class _RegistrationPersonalInformationState
     print(await prefs.getString('phone'));
     print(await prefs.getString('date_of_birth'));
     print(await prefs.getString('gender'));
+    print(await prefs.getString('linkedin'));
     print(await prefs.getString('address'));
     print(await prefs.getString('post_code'));
     print(await prefs.getString('occupation'));

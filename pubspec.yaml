@@ -50,6 +50,10 @@ dependencies:
   flutter_bloc: ^8.1.5
   bloc: ^8.1.4
   equatable: ^2.0.5
+  flutter_share: ^2.0.0
+  share_plus: ^7.2.2
+  cached_network_image: ^3.3.1
+  flutter_cache_manager: ^3.3.1
 
 
 
@@ -96,6 +100,8 @@ flutter:
     - Assets/Images/Jica.png
     - Assets/Images/ITEE-Small.png
     - Assets/Images/Bjet-Small.png
+    - Assets/Images/ITEC-Logo.png
+    - Assets/Images/loading.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

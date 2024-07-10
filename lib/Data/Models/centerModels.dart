@@ -43,13 +43,15 @@ class ExamType {
 class Book {
   final int id;
   final String name;
+  final String bookprice;
 
-  Book({required this.id, required this.name});
+  Book({required this.id, required this.name, required this.bookprice});
 
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       id: json['id'] as int,
       name: json['name'] as String,
+      bookprice: json['fee'] as String,
     );
   }
 }
