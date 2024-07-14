@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -387,7 +388,7 @@ class _DashboardState extends State<Dashboard>
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: NetworkImage('https://bcc.touchandsolve.com${userProfile.photo}'),
+                                  image: CachedNetworkImageProvider('https://bcc.touchandsolve.com${userProfile.photo}'),
                                 ),
                               ),
                             ),
@@ -1419,7 +1420,7 @@ class _DashboardState extends State<Dashboard>
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: NetworkImage(photoUrl),
+                                  image: CachedNetworkImageProvider(photoUrl),
                                 ),
                               ),
                             ),
