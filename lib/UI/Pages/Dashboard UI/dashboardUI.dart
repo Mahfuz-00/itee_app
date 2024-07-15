@@ -435,7 +435,7 @@ class _DashboardState extends State<Dashboard>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Syllabus()));
+                                  builder: (context) => const Syllabus(shouldRefresh: true,)));
                         },
                       ),
                       Divider(),
@@ -451,7 +451,7 @@ class _DashboardState extends State<Dashboard>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const CourseOutline()));
+                                  builder: (context) => const CourseOutline(shouldRefresh: true,)));
                         },
                       ),
                       Divider(),
