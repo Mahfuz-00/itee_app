@@ -2733,28 +2733,30 @@ class _DashboardState extends State<Dashboard>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+         // titlePadding: EdgeInsets.all(10),
           title: Center(
             child: Text(
               'Exam Result',
               style: TextStyle(
                 color: Color.fromRGBO(0, 162, 222, 1),
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 25,
                 fontFamily: 'default',
               ),
             ),
           ),
+         // contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Divider(),
+             // Divider(),
               if (result == 'Passed' ||
                   result == 'Morning Passed' ||
                   result == 'Afternoon Passed') ...[
                 Center(
                   child: Text(
-                    'Congratulation',
+                    'Congratulations',
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
@@ -2765,58 +2767,15 @@ class _DashboardState extends State<Dashboard>
                 ),
                 SizedBox(height: 15),
               ],
-              Text(
-                'Name: $name',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFamily: 'default',
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Exam: $examName',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFamily: 'default',
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Session: $session',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFamily: 'default',
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Result: $result',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  fontFamily: 'default',
-                ),
-              ),
+              _buildRow('Name', name),
+              _buildRow('Exam Name', examName),
+              _buildRow('Session', session),
+              _buildRow('Result', result),
               if (result == 'Passed' ||
                   result == 'Morning Passed' ||
                   result == 'Afternoon Passed') ...[
-                SizedBox(height: 8),
-                Text(
-                  'Passer ID: $passerID',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    fontFamily: 'default',
-                  ),
-                ),
+                //SizedBox(height: 8),
+                _buildRow('Passer ID', passerID),
               ],
             ],
           ),
@@ -2851,6 +2810,63 @@ class _DashboardState extends State<Dashboard>
     );
   }
 
+  Widget _buildRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: label,
+                  style: TextStyle(
+                    color: Color.fromRGBO(143, 150, 158, 1),
+                    fontSize: 18,
+                    height: 1.6,
+                    letterSpacing: 1.3,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            ":",
+            style: TextStyle(
+              color: Color.fromRGBO(143, 150, 158, 1),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: value,
+                  style: TextStyle(
+                    color: Color.fromRGBO(143, 150, 158, 1),
+                    fontSize: 18,
+                    height: 1.6,
+                    letterSpacing: 1.3,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> GetAdmitCardLinkandPrint(String examineeId) async {
     if (_isFetchedPrint) return;
 
@@ -2877,7 +2893,7 @@ class _DashboardState extends State<Dashboard>
         generatePDF(context, link);
       else {
         const snackBar = SnackBar(
-          content: Text('You did not Registered in this Exam'),
+          content: Text('Error: You did not Registered in this Exam'),
         );
         ScaffoldMessenger.of(context as BuildContext).showSnackBar(snackBar);
       }
@@ -2902,7 +2918,7 @@ class _DashboardState extends State<Dashboard>
 
   Future<void> generatePDF(BuildContext context, String link) async {
     const snackBar = SnackBar(
-      content: Text('Preparing Printing, Please wait'),
+      content: Text('Preparing Printing, Please wait..., Please while printing change page orientation to horizontal'),
     );
     ScaffoldMessenger.of(context as BuildContext).showSnackBar(snackBar);
     print('Print Triggered!!');
