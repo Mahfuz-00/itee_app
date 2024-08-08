@@ -42,6 +42,7 @@ class ExamRegistrationAPIService {
     late String courseCategory = "";
     late String courseType = "";
     late String examFee = "";
+    late int examFeeID = 0;
     late String book = "";
     late String bookprice = "";
     late String venueID = "";
@@ -74,6 +75,7 @@ class ExamRegistrationAPIService {
       courseTypeID = prefs.getString('Exam Type') ?? '';
       courseType = prefs.getString('Exam Type_Name') ?? '';
       examFee = prefs.getString('Exam Fee') ?? '';
+      examFeeID = prefs.getInt('Exam Fee ID') ?? 0;
       bookID = prefs.getString('Book') ?? '';
       book = prefs.getString('Book_Name') ?? '';
       bookprice = prefs.getString('BookPrice') ?? '';
@@ -102,6 +104,7 @@ class ExamRegistrationAPIService {
       print('Course Type: $courseType');
       print('Course Type ID: $courseTypeID');
       print('Exam Fee: $examFee');
+      print('Exam Fee: $examFeeID');
       print('Book: $book');
       print('Book ID: $bookID');
       print('Book Price: $bookprice');
@@ -127,6 +130,7 @@ class ExamRegistrationAPIService {
     request.fields['itee_exam_category_id'] = prefs.getString('Exam Catagories') ?? '';
     request.fields['itee_exam_type_id'] = prefs.getString('Exam Type') ?? '';
     request.fields['exam_fees'] = prefs.getString('Exam Fee') ?? '';
+    request.fields['fee_id'] = (prefs.getInt('Exam Fee ID') ?? 0).toString();
     request.fields['itee_book_id'] = prefs.getString('Book') ?? '';
     request.fields['itee_book_fees'] = prefs.getString('BookPrice') ?? '';
     request.fields['full_name'] = prefs.getString('full_name') ?? '';

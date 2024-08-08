@@ -27,16 +27,15 @@ class ResultAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>?> getResult(String Catagory, String id) async {
+  Future<Map<String, dynamic>?> getResult(String examineeID) async {
     final String token = await authToken;
-    print('ID :$id');
-    print('Catagory :$Catagory');
+    print('ID :$examineeID');
     try {
       if (token.isEmpty) {
         throw Exception('Authentication token is empty.');
       }
       final response = await http.get(
-        Uri.parse('$baseUrl/itee/student/result/$Catagory/$id'),
+        Uri.parse('$baseUrl/itee/student/individual/result/$examineeID'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $authToken',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class ApplicationItemTemplate extends StatelessWidget {
   final String name;
+  final String ExamineeID;
   final String Catagories;
   final int result;
   final int payment;
@@ -9,6 +10,7 @@ class ApplicationItemTemplate extends StatelessWidget {
 
   ApplicationItemTemplate({
     required this.name,
+    required this.ExamineeID,
     required this.Catagories,
     required this.result,
     required this.payment,
@@ -22,6 +24,17 @@ class ApplicationItemTemplate extends StatelessWidget {
         children: [
           Text(
             name,
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              color: Color.fromRGBO(
+                  143, 150, 158, 1),
+              fontSize: 16,
+              fontFamily: 'default',
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            ExamineeID,
             textAlign: TextAlign.start,
             style: TextStyle(
               color: Color.fromRGBO(

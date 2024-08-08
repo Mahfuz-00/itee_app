@@ -13,6 +13,7 @@ class RegistrationCenter extends StatefulWidget {
   final String Catagory;
   final String Type;
   final String Fee;
+  final int FeeId;
   final String CatagoryId;
   final String TypeId;
 
@@ -21,6 +22,7 @@ class RegistrationCenter extends StatefulWidget {
     required this.Catagory,
     required this.Type,
     required this.Fee,
+    required this.FeeId,
     required this.CatagoryId,
     required this.TypeId,
   }) : super(key: key);
@@ -103,7 +105,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         setState(() {
           examFee = widget.Fee;
         });
-      }// Handle each section separately
+      } // Handle each section separately
 
       setState(() {
         _isFetched = true;
@@ -254,7 +256,6 @@ class _RegistrationCenterState extends State<RegistrationCenter>
       // Handle error
     }
   }
-
 
   @override
   void initState() {
@@ -416,83 +417,88 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  padding: EdgeInsets.only(left: 10),
+                  //padding: EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child:  widget.Catagory.isNotEmpty|| widget.Catagory != ''
-                      ? TextField(
-                    controller: TextEditingController(text: widget.Catagory),
-                    enabled: false, // Disable the text field if you want it to be read-only
-                    decoration: InputDecoration(
-                      hintText: 'Exam Category',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromRGBO(0, 162, 222, 1),
-                        ),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  )
+                  child: widget.Catagory.isNotEmpty || widget.Catagory != ''
+                      ? Container(
+                    height: screenHeight * 0.075,
+                        child: TextField(
+                            controller:
+                                TextEditingController(text: widget.Catagory),
+                            enabled: false,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(25),
+                              hintText: 'Exam Category',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                  color: const Color.fromRGBO(0, 162, 222, 1),
+                                ),
+                              ),
+                            ),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            ),
+                          ),
+                      )
                       : Stack(
-                    children: [
-                      // Inside your build method or wherever appropriate
-                      DropdownFormField(
-                        hintText: 'Select Exam Category',
-                        dropdownItems:
-                            ExamCategories.map((category) => category.name)
-                                .toList(),
-                        initialValue: selectedExamCategory,
-                        onChanged: (newValue) {
-                          setState(() {
-                            // Reset other selected values if needed
-                            selectedExamCategory = newValue!;
-                            isFetchFeeInvoked = true;
-                            if (newValue != null) {
-                              ExamCategory selectedCategoriesObject =
-                                  ExamCategories.firstWhere(
-                                (category) => category.name == newValue,
-                              );
+                          children: [
+                            // Inside your build method or wherever appropriate
+                            DropdownFormField(
+                              hintText: 'Select Exam Category',
+                              dropdownItems: ExamCategories.map(
+                                  (category) => category.name).toList(),
+                              initialValue: selectedExamCategory,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  // Reset other selected values if needed
+                                  selectedExamCategory = newValue!;
+                                  isFetchFeeInvoked = true;
+                                  if (newValue != null) {
+                                    ExamCategory selectedCategoriesObject =
+                                        ExamCategories.firstWhere(
+                                      (category) => category.name == newValue,
+                                    );
 
-                              if (selectedCategoriesObject != null) {
-                                // It Takes ID Int
-                                _ExamCatagoriesID =
-                                    selectedCategoriesObject.id.toString();
+                                    if (selectedCategoriesObject != null) {
+                                      // It Takes ID Int
+                                      _ExamCatagoriesID =
+                                          selectedCategoriesObject.id
+                                              .toString();
 
-                                fetchFee(_ExamCatagoriesID, _ExamTypeID,
-                                    isFetchFeeInvoked);
+                                      fetchFee(_ExamCatagoriesID, _ExamTypeID,
+                                          isFetchFeeInvoked);
 
-                                /*if (_ExamCatagoriesID != '' &&
+                                      /*if (_ExamCatagoriesID != '' &&
                                     _ExamTypeID != '' &&
                                     _ExamCatagoriesID != null &&
                                     _ExamTypeID != null) {
                                   fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                       isFetchFeeInvoked);
                                 }*/
-                                print(_ExamCatagoriesID);
-                              }
-                            }
-                          });
-                        },
-                      ),
-                      if (isLoadingExamCategory) ...[
-                        Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            color: const Color.fromRGBO(0, 162, 222, 1),
-                          ),
+                                      print(_ExamCatagoriesID);
+                                    }
+                                  }
+                                });
+                              },
+                            ),
+                            if (isLoadingExamCategory) ...[
+                              Align(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(
+                                  color: const Color.fromRGBO(0, 162, 222, 1),
+                                ),
+                              ),
+                            ]
+                          ],
                         ),
-                      ]
-                    ],
-                  ),
                 ),
               ),
               SizedBox(
@@ -510,79 +516,82 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  padding: EdgeInsets.only(left: 5),
+                  //padding: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child:  widget.Type.isNotEmpty|| widget.Type != ''
+                  child: widget.Type.isNotEmpty || widget.Type != ''
                       ? TextField(
-                    controller: TextEditingController(text: widget.Type),
-                    enabled: false, // Disable the text field if you want it to be read-only
-                    decoration: InputDecoration(
-                      hintText: 'Exam Type',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromRGBO(0, 162, 222, 1),
-                        ),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  )
+                          controller: TextEditingController(text: widget.Type),
+                          enabled: false,
+                          // Disable the text field if you want it to be read-only
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(25),
+                            hintText: 'Exam Type',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                color: const Color.fromRGBO(0, 162, 222, 1),
+                              ),
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          ),
+                        )
                       : Stack(
-                    children: [
-                      DropdownFormField(
-                        hintText: 'Select Exam Type',
-                        dropdownItems:
-                            ExamTypes.map((type) => type.name).toList(),
-                        initialValue: selectedExamType,
-                        onChanged: (newValue) {
-                          setState(() {
-                            // Reset other selected values if needed
-                            selectedExamType = newValue!;
-                            isFetchFeeInvoked = true;
-                            if (newValue != null) {
-                              ExamType selectedTypeObject =
-                                  ExamTypes.firstWhere(
-                                (type) => type.name == newValue,
-                                /*orElse: () => null,*/
-                              );
-                              if (selectedTypeObject != null) {
-                                //It Takes ID Int
-                                _ExamTypeID = selectedTypeObject.id.toString();
-                                print(_ExamTypeID);
+                          children: [
+                            DropdownFormField(
+                              hintText: 'Select Exam Type',
+                              dropdownItems:
+                                  ExamTypes.map((type) => type.name).toList(),
+                              initialValue: selectedExamType,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  // Reset other selected values if needed
+                                  selectedExamType = newValue!;
+                                  isFetchFeeInvoked = true;
+                                  if (newValue != null) {
+                                    ExamType selectedTypeObject =
+                                        ExamTypes.firstWhere(
+                                      (type) => type.name == newValue,
+                                      /*orElse: () => null,*/
+                                    );
+                                    if (selectedTypeObject != null) {
+                                      //It Takes ID Int
+                                      _ExamTypeID =
+                                          selectedTypeObject.id.toString();
+                                      print(_ExamTypeID);
 
-                                fetchFee(_ExamCatagoriesID, _ExamTypeID,
-                                    isFetchFeeInvoked);
-                                /* if (_ExamCatagoriesID != '' &&
+                                      fetchFee(_ExamCatagoriesID, _ExamTypeID,
+                                          isFetchFeeInvoked);
+                                      /* if (_ExamCatagoriesID != '' &&
                                     _ExamTypeID != '' &&
                                     _ExamCatagoriesID != null &&
                                     _ExamTypeID != null) {
                                   fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                       isFetchFeeInvoked);
                                 }*/
-                              }
-                            }
-                          });
-                        },
-                      ),
-                      if (isLoadingExamTypes) ...[
-                        Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            color: const Color.fromRGBO(0, 162, 222, 1),
-                          ),
+                                    }
+                                  }
+                                });
+                              },
+                            ),
+                            if (isLoadingExamTypes) ...[
+                              Align(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(
+                                  color: const Color.fromRGBO(0, 162, 222, 1),
+                                ),
+                              ),
+                            ]
+                          ],
                         ),
-                      ]
-                    ],
-                  ),
 
                   /*DropdownButtonFormField<String>(
                     value: selectedCourse,
@@ -637,46 +646,48 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  padding: EdgeInsets.only(left: 5),
+                  //padding: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child:  widget.Fee.isNotEmpty|| widget.Fee != ''
+                  child: widget.Fee.isNotEmpty || widget.Fee != ''
                       ? TextField(
-                    controller: TextEditingController(text: widget.Fee),
-                    enabled: false, // Disable the text field if you want it to be read-only
-                    decoration: InputDecoration(
-                      hintText: 'Exam Fee',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        controller: TextEditingController(text: widget.Fee),
+                        enabled: false,
+                        // Disable the text field if you want it to be read-only
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(25),
+                          hintText: 'Exam Fee',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: const Color.fromRGBO(0, 162, 222, 1),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  )
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'default',
+                        ),
+                      )
                       : Container(
-                    padding: EdgeInsets.only(top: 15, left: 15),
-                    child: Text(
-                      examFee != null && examFee.isNotEmpty
-                          ? '$examFee TK'
-                          : 'Exam Fee',
-                      style: TextStyle(
-                        color: Color.fromRGBO(143, 150, 158, 1),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ),
+                          padding: EdgeInsets.only(top: 15, left: 15),
+                          child: Text(
+                            examFee != null && examFee.isNotEmpty
+                                ? '$examFee TK'
+                                : 'Exam Fee',
+                            style: TextStyle(
+                              color: Color.fromRGBO(143, 150, 158, 1),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontFamily: 'default',
+                            ),
+                          ),
+                        ),
                 ),
               ),
               /*  if (selectedExamCategory != null && selectedExamType != null) ...[
@@ -770,7 +781,8 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                             if (selectedBookObject != null) {
                               //It Takes ID Int
                               _BookID = selectedBookObject.id.toString();
-                              _BookPrice = selectedBookObject.bookprice.toString();
+                              _BookPrice =
+                                  selectedBookObject.bookprice.toString();
                               print(_BookID);
                             }
                           }
@@ -827,7 +839,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
               SizedBox(
                 height: 15,
               ),
-               Text(
+              Text(
                 'Book Price : ',
                 style: TextStyle(
                   color: Color.fromRGBO(143, 150, 158, 1),
@@ -854,7 +866,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                   child: Container(
                     padding: EdgeInsets.only(top: 15, left: 15),
                     child: Text(
-                      _BookPrice != null && _BookPrice .isNotEmpty
+                      _BookPrice != null && _BookPrice.isNotEmpty
                           ? 'TK $_BookPrice/-'
                           : 'Book Price',
                       style: TextStyle(
@@ -903,17 +915,20 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                             'Exam Catagories', _ExamCatagoriesID);
                         await prefs.setString('Exam Type', _ExamTypeID);
                         await prefs.setString('Exam Fee', examFee);
+                        await prefs.setInt('Exam Fee ID', widget.FeeId);
                         await prefs.setString('Book', _BookID);
                         await prefs.setString('BookPrice', _BookPrice);
                         await prefs.setString(
                             'Venue_Name', selectedVenue.toString());
-                        if(widget.Catagory .isNotEmpty || widget.Catagory != ''){
-                          await prefs.setString('Exam Catagories_Name', widget.Catagory);
+                        if (widget.Catagory.isNotEmpty ||
+                            widget.Catagory != '') {
+                          await prefs.setString(
+                              'Exam Catagories_Name', widget.Catagory);
                         } else {
                           await prefs.setString('Exam Catagories_Name',
                               selectedExamCategory.toString());
                         }
-                        if(widget.Type.isNotEmpty || widget.Type != ''){
+                        if (widget.Type.isNotEmpty || widget.Type != '') {
                           await prefs.setString('Exam Type_Name', widget.Type);
                         } else {
                           await prefs.setString(
@@ -925,6 +940,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         print('Catagory : $_ExamCatagoriesID');
                         print('Type : $_ExamTypeID');
                         print('Book $_BookID');
+                        print('Fee ID : ${widget.FeeId}');
 
                         final String? VenueSaved =
                             await prefs.getString('Venue');
@@ -933,7 +949,8 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         final String? TypeSaved =
                             await prefs.getString('Exam Type');
                         final String? BookSaved = await prefs.getString('Book');
-                        final String? BookPriceSaved = await prefs.getString('BookPrice');
+                        final String? BookPriceSaved =
+                            await prefs.getString('BookPrice');
                         final String? FeeSaved =
                             await prefs.getString('Exam Fee');
 

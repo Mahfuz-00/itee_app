@@ -31,6 +31,7 @@ class _RegistrationApplicationReviewState
   late String courseCategory = "";
   late String courseType = "";
   late String examFee = "";
+  late int examFeeID = 0;
   late String book = "";
   late String bookprice = "";
   late String venueID = "";
@@ -67,6 +68,7 @@ class _RegistrationApplicationReviewState
     courseTypeID = prefs.getString('Exam Type') ?? '';
     courseType = prefs.getString('Exam Type_Name') ?? '';
     examFee = prefs.getString('Exam Fee') ?? '';
+    examFeeID = prefs.getInt('Exam Fee ID') ?? 0;
     bookID = prefs.getString('Book') ?? '';
     book = prefs.getString('Book_Name') ?? '';
     bookprice = prefs.getString('BookPrice') ?? '';
@@ -96,6 +98,7 @@ class _RegistrationApplicationReviewState
     print('Course Category: $courseCategory');
     print('Course Type: $courseType');
     print('Exam Fee: $examFee');
+    print('Exam Fee ID: $examFeeID');
     print('Book: $book');
     print('Book Price: $bookprice');
     print('Full Name: $fullName');
@@ -357,10 +360,16 @@ class _RegistrationApplicationReviewState
                                 children: [
                                   _buildRow('Education Qualification',
                                       educationQualification),
-                                  if(educationQualification == 'SSC or Equivalent'  || educationQualification == 'HSC or Equivalent') ...[
+                                  if (educationQualification ==
+                                          'SSC or Equivalent' ||
+                                      educationQualification ==
+                                          'HSC or Equivalent') ...[
                                     _buildRow('Decipine', discipline),
                                   ],
-                                  if(educationQualification == 'BSc or Equivalent'  || educationQualification == 'Diploma or Equivalent') ...[
+                                  if (educationQualification ==
+                                          'BSc or Equivalent' ||
+                                      educationQualification ==
+                                          'Diploma or Equivalent') ...[
                                     _buildRow('Subject', subject),
                                   ],
                                   _buildRow('Passing Year', passingYear),
@@ -395,10 +404,10 @@ class _RegistrationApplicationReviewState
                                 buttonloading = true;
                               });
                               const snackBar = SnackBar(
-                                content: Text(
-                                    'Processing'),
+                                content: Text('Processing'),
                               );
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
                               final apiService =
                                   await ExamRegistrationAPIService.create();
 
@@ -412,16 +421,23 @@ class _RegistrationApplicationReviewState
                                 int examRegistrationId =
                                     registrationSuccessful['records']
                                         ['exam_registration_id'];
-                                prefs.setInt(
-                                    'exam_registration_id', examRegistrationId);
                                 print(
                                     'Saved exam registration ID: $examRegistrationId');
+                                prefs.setInt(
+                                    'exam_registration_id', examRegistrationId);
+                                String examineeID =
+                                registrationSuccessful['records']
+                                ['examine_id'];
+                                print(
+                                    'Examinee ID: $examineeID');
+                                prefs.setString(
+                                    'examinee_id', examineeID);
                                 // If registration was successful, navigate to the next screen
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const PaymentConfirmation()),
+                                           PaymentConfirmation(ExamineeID: examineeID,)),
                                 );
                               } else {
                                 setState(() {

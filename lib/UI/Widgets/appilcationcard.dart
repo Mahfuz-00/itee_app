@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class ApplicationCard extends StatelessWidget {
   final String examName;
+  final String examineeID;
   final String examCatagories;
   final int Payment;
   final int AdmitCard;
@@ -12,6 +13,7 @@ class ApplicationCard extends StatelessWidget {
 
   ApplicationCard({
     required this.examName,
+    required this.examineeID,
     required this.examCatagories,
     required this.Payment,
     required this.AdmitCard,
@@ -35,6 +37,18 @@ class ApplicationCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Examinee ID: $examineeID',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 Text(
                   'Exam Type: $examName',
                   style: TextStyle(

@@ -9,7 +9,9 @@ import '../Login UI/loginUI.dart';
 import '../AdmitCard UI/downloadadmitcard.dart';
 
 class PaymentConfirmation extends StatefulWidget {
-  const PaymentConfirmation({super.key});
+  final String ExamineeID;
+  const PaymentConfirmation({Key? key, required this.ExamineeID})
+      : super(key: key);
 
   @override
   State<PaymentConfirmation> createState() => _PaymentConfirmationState();
@@ -72,6 +74,21 @@ class _PaymentConfirmationState extends State<PaymentConfirmation>
                       Center(
                         child: Text(
                           'Congratulations, Your Registration Successfully Submitted',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color.fromRGBO(143, 150, 158, 1),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Center(
+                        child: Text(
+                          'Your ID: ${widget.ExamineeID}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Color.fromRGBO(143, 150, 158, 1),

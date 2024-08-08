@@ -135,7 +135,7 @@ class _AdmitCardDownloadState extends State<AdmitCardDownload> with SingleTicker
   }
 
 
-  Future<void> GetAdmitCardLinkandPrint(String categoryId, String typeId) async {
+  Future<void> GetAdmitCardLinkandPrint(String ExamineeID) async {
     if (_isFetchedPrint) return;
 
     try {
@@ -148,7 +148,7 @@ class _AdmitCardDownloadState extends State<AdmitCardDownload> with SingleTicker
 
       // Fetch dashboard data
       final Map<String, dynamic> dashboardData =
-      await apiService.fetchAdmitCardItems(categoryId, typeId);
+      await apiService.fetchAdmitCardItems(ExamineeID);
       if (dashboardData == null || dashboardData.isEmpty) {
         // No data available or an error occurred
         print(
@@ -467,7 +467,7 @@ class _AdmitCardDownloadState extends State<AdmitCardDownload> with SingleTicker
                           ),
                         ),
                         onPressed: () {
-                          GetAdmitCardLinkandPrint(_ExamCatagoriesID, _ExamTypeID);
+                          GetAdmitCardLinkandPrint(_ExamCatagoriesID);
                         },
                         child: const Text('Download',
                             style: TextStyle(

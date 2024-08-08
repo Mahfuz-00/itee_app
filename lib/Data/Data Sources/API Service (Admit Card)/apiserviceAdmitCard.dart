@@ -27,7 +27,7 @@ class AdmitCardAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>> fetchAdmitCardItems(String CatatogyID, String TypeID) async {
+  Future<Map<String, dynamic>> fetchAdmitCardItems(String ExamineeID) async {
 
     final String token = await authToken;
     try {
@@ -35,7 +35,7 @@ class AdmitCardAPIService {
         throw Exception('Authentication token is empty.');
       }
       final response = await http.get(
-        Uri.parse('$baseUrl/itee/admit/$CatatogyID/$TypeID'),
+        Uri.parse('$baseUrl/itee/admit/$ExamineeID'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $authToken',

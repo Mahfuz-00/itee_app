@@ -4,6 +4,7 @@ class ExamItemTemplate extends StatelessWidget {
   final String name;
   final String Catagories;
   final String price;
+  final int priceID;
   final String Details;
   final String typeID;
   final String CatagoryID;
@@ -12,6 +13,7 @@ class ExamItemTemplate extends StatelessWidget {
     required this.name,
     required this.Catagories,
     required this.price,
+    required this.priceID,
     required this.Details,
     required this.typeID,
     required this.CatagoryID,
