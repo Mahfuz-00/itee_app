@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CourseOutlineAPIService {
+class ExamMaterialAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
 
-  CourseOutlineAPIService._();
+  ExamMaterialAPIService._();
 
-  static Future<CourseOutlineAPIService> create() async {
-    var apiService = CourseOutlineAPIService._();
+  static Future<ExamMaterialAPIService> create() async {
+    var apiService = ExamMaterialAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;
@@ -27,7 +27,7 @@ class CourseOutlineAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>> fetchCourseOutlineItems() async {
+  Future<Map<String, dynamic>> fetchExamMaterialItems() async {
     final String token = await authToken;
     try {
       if (token.isEmpty) {

@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardAPIService {
+class ResultViewAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
 
-  DashboardAPIService._();
+  ResultViewAPIService._();
 
-  static Future<DashboardAPIService> create() async {
-    var apiService = DashboardAPIService._();
+  static Future<ResultViewAPIService> create() async {
+    var apiService = ResultViewAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;
   }
 
-/*  DashboardAPIService() {
+/*  ResultAPIService() {
     _loadAuthToken();
     print('triggered');
   }*/
@@ -27,42 +27,31 @@ class DashboardAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>> fetchDashboardItems() async {
+  Future<Map<String, dynamic>?> getallResult() async {
     final String token = await authToken;
-    final response;
     try {
       if (token.isEmpty) {
-        response = await http.get(
-            Uri.parse('$baseUrl/itee/dashboard'),
-            headers: {
-              'Accept': 'application/json',
-            },
-        );
-      }else {
-        response = await http.get(
-          Uri.parse('$baseUrl/itee/dashboard'),
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $authToken',
-          },
-        );
+        throw Exception('Authentication token is empty.');
       }
-
-
+      final response = await http.get(
+        Uri.parse('$baseUrl/itee/my-results-list'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+      print(response.request);
       print(response.statusCode);
-      print(response.body);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         print(jsonData);
         return jsonData;
-      } else if (response.statusCode == 500) {
-        return {};
       } else {
-        throw Exception('Failed to load dashboard items');
+        throw Exception('Failed to load result');
       }
     } catch (e) {
-      throw Exception('Error fetching dashboard items: $e');
+      throw Exception('Error fetching result: $e');
     }
   }
 }

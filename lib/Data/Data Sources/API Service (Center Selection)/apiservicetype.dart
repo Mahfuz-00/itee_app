@@ -2,20 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardAPIService {
+class TypeAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
 
-  DashboardAPIService._();
+  TypeAPIService._();
 
-  static Future<DashboardAPIService> create() async {
-    var apiService = DashboardAPIService._();
+  static Future<TypeAPIService> create() async {
+    var apiService = TypeAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;
   }
 
-/*  DashboardAPIService() {
+/*  CenterAPIService() {
     _loadAuthToken();
     print('triggered');
   }*/
@@ -27,37 +27,27 @@ class DashboardAPIService {
     print(prefs.getString('token'));
   }
 
-  Future<Map<String, dynamic>> fetchDashboardItems() async {
+  Future<Map<String, dynamic>> fetchTypes(String examCategoryId) async {
     final String token = await authToken;
-    final response;
     try {
       if (token.isEmpty) {
-        response = await http.get(
-            Uri.parse('$baseUrl/itee/dashboard'),
-            headers: {
-              'Accept': 'application/json',
-            },
-        );
-      }else {
-        response = await http.get(
-          Uri.parse('$baseUrl/itee/dashboard'),
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer $authToken',
-          },
-        );
+        throw Exception('Authentication token is empty.');
       }
-
+      print(examCategoryId);
+      final response = await http.get(
+        Uri.parse('$baseUrl/itee/category/types/$examCategoryId'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $authToken',
+        },
+      );
 
       print(response.statusCode);
-      print(response.body);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        print(jsonData);
+        print(response.body);
         return jsonData;
-      } else if (response.statusCode == 500) {
-        return {};
       } else {
         throw Exception('Failed to load dashboard items');
       }

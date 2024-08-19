@@ -45,13 +45,17 @@ class Book {
   final String name;
   final String bookprice;
 
-  Book({required this.id, required this.name, required this.bookprice});
+  Book(
+      {
+      required this.id,
+      required this.name,
+      required this.bookprice});
 
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       id: json['id'] as int,
-      name: json['name'] as String,
-      bookprice: json['fee'] as String,
+      name: json['book_name'] as String,
+      bookprice: json['book_price'] as String,
     );
   }
 }

@@ -1,46 +1,142 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
+import 'package:itee_exam_app/UI/Widgets/paymentCard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../Core/Connection Checker/internetconnectioncheck.dart';
+import '../../../Data/Data Sources/API Service (Payment)/apiservicepaymentview.dart';
+import '../../../Data/Data Sources/API Service (Result)/apiserviceResult.dart';
+import '../../../Data/Data Sources/API Service (Result)/apiserviceresultview.dart';
+import '../../Widgets/resultDetailsTile.dart';
+import '../../Widgets/resultcard.dart';
+import '../../Widgets/templateerrorcontainer.dart';
+import '../../Widgets/templateerrorcontainerAlert.dart';
+import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 
+class Payment extends StatefulWidget {
+  final bool shouldRefresh;
 
-class BJetDetails extends StatefulWidget {
-  const BJetDetails({super.key});
+  const Payment({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<BJetDetails> createState() => _BJetDetailsState();
+  State<Payment> createState() => _PaymentState();
 }
 
-class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStateMixin{
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class _PaymentState extends State<Payment> {
+  bool _isLoading = false;
+  late final String name;
+  bool isloaded = false;
+  bool _pageLoading = true;
+  late TextEditingController _idcontroller = TextEditingController();
+  bool buttonClicked = false;
+  bool _isFetched = false;
+  List<Widget> _paymentWidgets = [];
+
+  Future<void> fetchConnectionRequests() async {
+    if (_isFetched) return;
+    try {
+      final apiService = await PaymentViewAPIService.create();
+
+      // Fetch dashboard data
+      final Map<String, dynamic>? dashboardData =
+          await apiService.getallPayment();
+      if (dashboardData == null || dashboardData.isEmpty) {
+        // No data available or an error occurred
+        print(
+            'No data available or error occurred while fetching dashboard data');
+        return;
+      }
+
+      final List<dynamic> records = dashboardData['records'];
+      if (records == null || records.isEmpty) {
+        // No records available
+        print('No records available');
+        setState(() {
+          _paymentWidgets = [];
+          _isFetched = true;
+        });
+        return;
+      }
+
+      for (var index = 0; index < records.length; index++) {
+        print('Payment at index $index: ${records[index]}\n');
+      }
+
+      // Set isLoading to true while fetching data
+      setState(() {
+        _isLoading = true;
+      });
+
+      final List<Widget> PaymentWidgets;
+
+      PaymentWidgets = records.map((item) {
+        int index = records.indexOf(item);
+        return PaymentCard(
+          ExamineeID: item['examine_id'],
+          ExamType: item['exam_type'],
+          ExamCatagory: item['exam_category'],
+          BookName: item['book_name'],
+          BookFee: item['book_fees'],
+        );
+      }).toList();
+
+      setState(() {
+        _paymentWidgets = PaymentWidgets;
+      });
+
+      setState(() {
+        _isFetched = true;
+      });
+    } catch (e) {
+      print('Error fetching connection requests: $e');
+      _isFetched = true;
+      // Handle error as needed
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('initState called');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return PopScope(
+      canPop: true,
       child: Scaffold(
-        key: _scaffoldKey,
+        backgroundColor: Colors.grey[100],
+        //resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-          titleSpacing: 5,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white,),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            'B-Jet Program',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new_outlined,
+                color: Colors.white,
+              )),
+          title: Text(
+            'Payment',
             style: TextStyle(
               color: Colors.white,
-              fontWeight: FontWeight.bold,
               fontSize: 20,
+              fontWeight: FontWeight.bold,
               fontFamily: 'default',
             ),
           ),
@@ -49,30 +145,35 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
         body: SingleChildScrollView(
           child: SafeArea(
             child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'What is B-JET (Bangladesh-Japan ICT Engineers\' Training Program)?\n',
-                    style: TextStyle(
-                      color: const Color.fromRGBO(0, 162, 222, 1),
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50.0, left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                        child: Text(
+                      'Your Payment(s)',
+                      style: TextStyle(
+                        color: Color.fromRGBO(0, 162, 222, 1),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'default',
+                      ),
+                    )),
+                    SizedBox(height: 20),
+                    Column(
+                      children: [
+                        CardWidget(
+                          loading: _isLoading,
+                          fetch: _isFetched,
+                          errorText: 'No Outstanding Dues',
+                          listWidget: _paymentWidgets,
+                          fetchData: fetchConnectionRequests(),
+                        )
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Text('The B-JET Program was launched in 2017 as a technical cooperation project by JICA, with the Bangladesh Computer Council as its counterpart.\n\nThe purpose of this project is to implement a human resources development program for talented ICT engineers in Bangladesh targeting the Japanese market.\n\nAfter completing the three-month training program, students are expected to find employment in Japan, participate in study abroad or internship programs, or find employment at a Japanese company in Bangladesh.\n\nThe course began in November 2017 with a first class of 20 students, followed by 40 students in the second class and onwards, with the aim of producing a total of more than 300 graduates by 2020, with a final class of 9 students.',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),),
-                  SizedBox(height: 10),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -90,11 +191,11 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                       context,
                       MaterialPageRoute(
                           builder: (context) => Dashboard(
-                            shouldRefresh: true,
-                          )));
+                                shouldRefresh: true,
+                              )));
                 },
                 child: Container(
-                  width: screenWidth / 4,
+                  width: screenWidth / 5,
                   padding: EdgeInsets.all(5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -124,13 +225,11 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ITEEDetails()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ITEEDetails()));
                 },
                 child: Container(
-                  width: screenWidth / 4,
+                  width: screenWidth / 5,
                   padding: EdgeInsets.all(5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -157,13 +256,11 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                   ),
                 ),
               ),
-          /*    GestureDetector(
+              GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BJetDetails()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => BJetDetails()));
                 },
                 child: Container(
                   width: screenWidth / 5,
@@ -173,8 +270,7 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Image(
-                        image: AssetImage(
-                            'Assets/Images/Bjet-Small.png'),
+                        image: AssetImage('Assets/Images/Bjet-Small.png'),
                         height: 30,
                         width: 50,
                       ),
@@ -193,26 +289,24 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                     ],
                   ),
                 ),
-              ),*/
+              ),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ITEETrainingProgramDetails()));
+                          builder: (context) => ITEETrainingProgramDetails()));
                 },
                 child: Container(
-                  width: screenWidth / 4,
+                  width: screenWidth / 5,
                   padding: EdgeInsets.all(5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Image(
-                        image: AssetImage(
-                            'Assets/Images/ITEE-Small.png'),
+                        image: AssetImage('Assets/Images/ITEE-Small.png'),
                         height: 30,
                         width: 60,
                       ),
@@ -234,11 +328,30 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
               ),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () {
+                onTap: () async {
                   showPhoneNumberDialog(context);
+                  /* try {
+                                  await FlutterPhoneDirectCaller.callNumber(
+                                      '+8801857321122');
+                                  // Optionally, you could provide feedback if the call was initiated successfully
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Calling...')),
+                                  );
+                                } catch (e) {
+                                  print('Error: $e');
+                                  // Handle any errors that occur during the call attempt
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed to make the call: $e')),
+                                  );
+                                }
+                                ;*/
+                  //_callNumber;
+                  /*_makePhoneCall(context, 'tel:+8801857321122');*/
                 },
                 child: Container(
-                  width: screenWidth / 4,
+                  width: screenWidth / 5,
                   padding: EdgeInsets.all(5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

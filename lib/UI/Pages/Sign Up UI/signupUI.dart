@@ -34,6 +34,7 @@ class _SignupState extends State<Signup> {
   var globalKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> globalfromkey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _isButtonLoading = false;
   double _imageHeight = 0;
   double _imageWidth = 0;
 
@@ -459,7 +460,7 @@ class _SignupState extends State<Signup> {
                                   ),
                                   fixedSize: Size(screenWidth*0.9, 70),
                                 ),
-                                child: _isLoading
+                                child:_isButtonLoading
                                     ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
                                     : const Text('Register',
                                     textAlign: TextAlign.center,
@@ -526,7 +527,7 @@ class _SignupState extends State<Signup> {
 
   Future<void> _registerUser() async {
     setState(() {
-      _isLoading = true;
+      _isButtonLoading = true;
     });
     const snackBar = SnackBar(
       content: Text(
@@ -556,6 +557,9 @@ class _SignupState extends State<Signup> {
       apiService.register(registerRequest, _imageFile).then((response) {
         print("Submitted");
         if (response != null && response == "User Registration Successfully. Verification is pending.") {
+          setState(() {
+            _isButtonLoading = false;
+          });
           clearForm();
           Navigator.pushReplacement(
             context,
@@ -563,7 +567,7 @@ class _SignupState extends State<Signup> {
           );
         } else if (response != null && response == "The email has already been taken."){
           setState(() {
-            _isLoading = false;
+            _isButtonLoading = false;
           });
           const snackBar = SnackBar(
             content: Text('The Email is Taken!, Please Try entering a different Email'),
@@ -571,7 +575,7 @@ class _SignupState extends State<Signup> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else if (response != null && response == "The phone has already been taken."){
           setState(() {
-            _isLoading = false;
+            _isButtonLoading = false;
           });
           const snackBar = SnackBar(
             content: Text('The Phone Number is Taken!, Please Try a different Number'),
@@ -579,7 +583,7 @@ class _SignupState extends State<Signup> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } else{
           setState(() {
-            _isLoading = false;
+            _isButtonLoading = false;
           });
           const snackBar = SnackBar(
             content: Text('Registration Failed!'),
@@ -588,7 +592,7 @@ class _SignupState extends State<Signup> {
         }
       }).catchError((error) {
         setState(() {
-          _isLoading = false;
+          _isButtonLoading = false;
         });
         // Handle registration error
         print(error);
@@ -597,6 +601,22 @@ class _SignupState extends State<Signup> {
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
+    } else {
+      setState(() {
+        _isButtonLoading =
+        false; // Validation complete, hide circular progress indicator
+      });
+      if(_passwordController.text != _confirmPasswordController.text){
+        const snackBar = SnackBar(
+          content: Text('Passwords do not match'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        const snackBar = SnackBar(
+          content: Text('Fill all Fields'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     }
   }
 

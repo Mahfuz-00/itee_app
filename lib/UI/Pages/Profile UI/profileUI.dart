@@ -17,6 +17,10 @@ import '../../../Data/Models/profileModelFull.dart';
 import '../../../Data/Models/profilemodel.dart';
 import '../../../Data/Models/userInfoUpdateModel.dart';
 import '../../Bloc/auth_cubit.dart';
+import '../B-Jet Details UI/B-jetDetailsUI.dart';
+import '../Dashboard UI/dashboardUI.dart';
+import '../ITEE Details UI/iteedetailsui.dart';
+import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import '../Login UI/loginUI.dart';
 import 'passwordChange.dart';
 
@@ -404,6 +408,202 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          bottomNavigationBar: Container(
+            height: screenHeight * 0.08,
+            color: const Color.fromRGBO(0, 162, 222, 1),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Dashboard(
+                              shouldRefresh: true,
+                            )));
+                  },
+                  child: Container(
+                    width: screenWidth / 5,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.home,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ITEEDetails()));
+                  },
+                  child: Container(
+                    width: screenWidth / 5,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'ITEE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BJetDetails()));
+                  },
+                  child: Container(
+                    width: screenWidth / 5,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Image(
+                          image: AssetImage(
+                              'Assets/Images/Bjet-Small.png'),
+                          height: 30,
+                          width: 50,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'B-Jet',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ITEETrainingProgramDetails()));
+                  },
+                  child: Container(
+                    width: screenWidth / 5,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Image(
+                          image: AssetImage(
+                              'Assets/Images/ITEE-Small.png'),
+                          height: 30,
+                          width: 60,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Training',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Dashboard(
+                              shouldRefresh: true,
+                            )));
+                  },
+                  child: Container(
+                    width: screenWidth / 5,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          size: 30,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Contact',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

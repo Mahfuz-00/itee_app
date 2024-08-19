@@ -9,6 +9,7 @@ import 'package:itee_exam_app/UI/Pages/B-Jet%20Details%20UI/B-jetDetailsUI.dart'
 import 'package:itee_exam_app/UI/Pages/Exam%20Details%20UI/examDetailsUI.dart';
 import 'package:itee_exam_app/UI/Pages/ITEE%20Details%20UI/iteedetailsui.dart';
 import 'package:itee_exam_app/UI/Pages/ITEE%20Training%20Program%20Details%20UI/trainingprogramdetails.dart';
+import 'package:itee_exam_app/UI/Pages/Registation%20UI/registrationvenuefrommenu.dart';
 import 'package:itee_exam_app/UI/Widgets/listTileDashboardImages.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,11 +32,12 @@ import '../../Widgets/listTileDashboard.dart';
 import '../../Widgets/listTileDashboardApplication.dart';
 import '../../Widgets/listTileDashboardExam.dart';
 import '../../Widgets/listTileNotice.dart';
-import '../AdmitCard UI/downloadadmitcard.dart';
-import '../Course Outline UI/courseOutlineUI.dart';
+import '../AdmitCard UI/admitcardUI.dart';
+import '../Exam Material UI/ExamMaterialUI.dart';
 import '../Login UI/loginUI.dart';
+import '../PaymentUI/paymentUI.dart';
 import '../Profile UI/profileUI.dart';
-import '../Registation UI/registrationvenue.dart';
+import '../Registation UI/registrationvenuefrompopularexam.dart';
 import '../Result UI/resultUI.dart';
 import '../Syllabus UI/syllabusUI.dart';
 
@@ -71,6 +73,9 @@ class _DashboardState extends State<Dashboard>
   List<Widget> _bjetWidgets = [];
   late int resultcheck = 2;
   late int admitcardcheck = 2;
+  late int _currentapplicationpage = 0;
+  late int _currentexamregitrationpage = 0;
+  late int _currentbookpage = 0;
 
   Future<void> loadUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -444,6 +449,77 @@ class _DashboardState extends State<Dashboard>
                             ),
                             Divider(),
                             ListTile(
+                              title: Text('Exam Registration',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'default',
+                                  )),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RegistrationCenterFromMenu()));
+                              },
+                            ),
+                            Divider(),
+                            ListTile(
+                              title: Text('Payment',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'default',
+                                  )),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Payment(
+                                              shouldRefresh: true,
+                                            )));
+                              },
+                            ),
+                            Divider(),
+                            ListTile(
+                              title: Text('Admit Card',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'default',
+                                  )),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const AdmitCard(
+                                              shouldRefresh: true,
+                                            )));
+                              },
+                            ),
+                            Divider(),
+                            ListTile(
+                              title: Text('Result',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'default',
+                                  )),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Result(
+                                              shouldRefresh: true,
+                                            )));
+                              },
+                            ),
+                            Divider(),
+                            ListTile(
                               title: Text('Syllabus',
                                   style: TextStyle(
                                     color: Colors.black87,
@@ -462,7 +538,7 @@ class _DashboardState extends State<Dashboard>
                             ),
                             Divider(),
                             ListTile(
-                              title: Text('Course Outline',
+                              title: Text('Exam Material',
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontSize: 20,
@@ -474,9 +550,27 @@ class _DashboardState extends State<Dashboard>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const CourseOutline(
+                                            const ExamMaterial(
                                               shouldRefresh: true,
                                             )));
+                              },
+                            ),
+                            Divider(),
+                            ListTile(
+                              title: Text('Profile',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'default',
+                                  )),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Profile(
+                                              shouldRefresh: true,
+                                            ))); // Close the drawer
                               },
                             ),
                             Divider(),
@@ -562,7 +656,7 @@ class _DashboardState extends State<Dashboard>
                                       horizontal: 20.0),
                                   child: Center(
                                     child: Text(
-                                      'A Local & Internally recognized IT Skills Training & Exam Center',
+                                      'A National & Internationally recognized IT Skills Training & Exam Center',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Color.fromRGBO(143, 150, 158, 1),
@@ -571,6 +665,51 @@ class _DashboardState extends State<Dashboard>
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'default',
                                       ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                Material(
+                                  elevation: 5,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    width: screenWidth * 0.9,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10)),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                            width: screenWidth * 0.9,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 20),
+                                            decoration: BoxDecoration(
+                                              color: Color.fromRGBO(
+                                                  0, 162, 222, 1),
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'Notice(s)',
+                                                /*বিজ্ঞপ্তি*/
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontFamily: 'default',
+                                                ),
+                                              ),
+                                            )),
+                                        _buildList(_noticeWidgets),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -627,38 +766,103 @@ class _DashboardState extends State<Dashboard>
                                                     Radius.circular(10),
                                               ),
                                             ),
-                                            child: PageView.builder(
-                                              controller: PageController(
-                                                  viewportFraction: 1),
-                                              itemCount:
-                                                  _applicationWidgets.length,
-                                              itemBuilder: (context, index) {
-                                                ApplicationItemTemplate
-                                                    Applicant =
-                                                    _applicationWidgets[index]
-                                                        as ApplicationItemTemplate;
-                                                return ApplicationCard(
-                                                  examName: Applicant.name,
-                                                  examineeID:
-                                                      Applicant.ExamineeID,
-                                                  examCatagories:
-                                                      Applicant.Catagories,
-                                                  Payment: Applicant.payment,
-                                                  AdmitCard:
-                                                      Applicant.admitcard,
-                                                  Result: Applicant.result,
-                                                  onPaymentPressed: () {},
-                                                  onAdmitCardPressed: () {
-                                                    GetAdmitCardLinkandPrint(
-                                                        Applicant.ExamineeID);
-                                                  },
-                                                  onResultPressed: () {
-                                                    GetResult(
-                                                        Applicant.ExamineeID);
-                                                  },
-                                                );
-                                              },
-                                            ),
+                                            child: _applicationWidgets ==
+                                                        null ||
+                                                    _applicationWidgets.isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                      'You have made any Application',
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black54,
+                                                        fontFamily: 'default',
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Stack(
+                                                    children: [
+                                                      PageView.builder(
+                                                        controller:
+                                                            PageController(
+                                                                viewportFraction:
+                                                                    1),
+                                                        itemCount:
+                                                            _applicationWidgets
+                                                                .length,
+                                                        onPageChanged: (index) {
+                                                          setState(() {
+                                                            _currentapplicationpage =
+                                                                index; // Update _currentPage when the page changes
+                                                          });
+                                                        },
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          ApplicationItemTemplate
+                                                              Applicant =
+                                                              _applicationWidgets[
+                                                                      index]
+                                                                  as ApplicationItemTemplate;
+                                                          return ApplicationCard(
+                                                            examName:
+                                                                Applicant.name,
+                                                            examineeID:
+                                                                Applicant
+                                                                    .ExamineeID,
+                                                            examCatagories:
+                                                                Applicant
+                                                                    .Catagories,
+                                                            Payment: Applicant
+                                                                .payment,
+                                                            AdmitCard: Applicant
+                                                                .admitcard,
+                                                            Result: Applicant
+                                                                .result,
+                                                            onPaymentPressed:
+                                                                () {},
+                                                            onAdmitCardPressed:
+                                                                () {
+                                                              GetAdmitCardLinkandPrint(
+                                                                  Applicant
+                                                                      .ExamineeID);
+                                                            },
+                                                            onResultPressed:
+                                                                () {
+                                                              GetResult(Applicant
+                                                                  .ExamineeID);
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Icon(
+                                                          Icons.arrow_back_ios,
+                                                          color:
+                                                              _currentapplicationpage ==
+                                                                      0
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          color: _currentapplicationpage ==
+                                                                  _applicationWidgets
+                                                                          .length -
+                                                                      1
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                           ),
                                         ],
                                       ),
@@ -695,8 +899,7 @@ class _DashboardState extends State<Dashboard>
                                             ),
                                             child: Center(
                                               child: Text(
-                                                'গুরুত্বপূর্ণ নোটিশ',
-                                                /*বিজ্ঞপ্তি*/
+                                                'Exam Registration',
                                                 style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
@@ -705,7 +908,147 @@ class _DashboardState extends State<Dashboard>
                                                 ),
                                               ),
                                             )),
-                                        _buildList(_noticeWidgets),
+                                        Container(
+                                          height: 250,
+                                          width: screenWidth,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10),
+                                            ),
+                                          ),
+                                          child: _examFeeWidgets ==
+                                              null ||
+                                              _examFeeWidgets.isEmpty
+                                              ? Center(
+                                            child: Text(
+                                              'No Exam Avaiable right now',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black54,
+                                                fontFamily: 'default',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )
+                                              : Stack(
+                                            children: [
+                                              PageView.builder(
+                                                controller: PageController(
+                                                    viewportFraction: 1),
+                                                itemCount:
+                                                    _examFeeWidgets.length,
+                                                onPageChanged: (index) {
+                                                  setState(() {
+                                                    _currentexamregitrationpage =
+                                                        index; // Update _currentPage when the page changes
+                                                  });
+                                                },
+                                                itemBuilder: (context, index) {
+                                                  ExamItemTemplate exam =
+                                                      _examFeeWidgets[index]
+                                                          as ExamItemTemplate;
+                                                  return ExamCard(
+                                                    examName: exam.name,
+                                                    examCatagories:
+                                                        exam.Catagories,
+                                                    examFee: exam.price,
+                                                    onDetailsPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ExamDetails(
+                                                                        details:
+                                                                            exam.Details,
+                                                                      )));
+                                                    },
+                                                    onSharePressed: () async {
+                                                      Share.share(
+                                                        exam.Details,
+                                                        subject: 'Exam Details',
+                                                      );
+                                                    },
+                                                    onRegistrationPressed: () {
+                                                      print(exam.Catagories);
+                                                      print(exam.name);
+                                                      print(exam.price);
+                                                      print(exam.Details);
+                                                      print(exam.CatagoryID);
+                                                      print(exam.typeID);
+                                                      print(exam.priceID);
+                                                      if (auth == true) {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        RegistrationCenterFromPopularExam(
+                                                                          Catagory:
+                                                                              exam.Catagories,
+                                                                          Type:
+                                                                              exam.name,
+                                                                          Fee: exam
+                                                                              .price,
+                                                                          CatagoryId:
+                                                                              exam.CatagoryID,
+                                                                          TypeId:
+                                                                              exam.typeID,
+                                                                          FeeId:
+                                                                              exam.priceID,
+                                                                        )));
+                                                      } else if (auth ==
+                                                          false) {
+                                                        const snackBar =
+                                                            SnackBar(
+                                                          content: Text(
+                                                              'Please Login First!!'),
+                                                        );
+                                                        ScaffoldMessenger.of(context
+                                                                as BuildContext)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        Login()));
+                                                      }
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Icon(
+                                                  Icons.arrow_back_ios,
+                                                  color:
+                                                      _currentexamregitrationpage ==
+                                                              0
+                                                          ? Colors.transparent
+                                                          : Colors.black,
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color:
+                                                      _currentexamregitrationpage ==
+                                                              _examFeeWidgets
+                                                                      .length -
+                                                                  1
+                                                          ? Colors.transparent
+                                                          : Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -750,134 +1093,6 @@ class _DashboardState extends State<Dashboard>
                                               ),
                                             )),
                                         _buildImageList(_eventWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Popular Exam',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        Container(
-                                          height: 250,
-                                          width: screenWidth,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                            ),
-                                          ),
-                                          child: PageView.builder(
-                                            controller: PageController(
-                                                viewportFraction: 1),
-                                            itemCount: _examFeeWidgets.length,
-                                            itemBuilder: (context, index) {
-                                              ExamItemTemplate exam =
-                                                  _examFeeWidgets[index]
-                                                      as ExamItemTemplate;
-                                              return ExamCard(
-                                                examName: exam.name,
-                                                examCatagories: exam.Catagories,
-                                                examFee: exam.price,
-                                                onDetailsPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ExamDetails(
-                                                                details: exam
-                                                                    .Details,
-                                                              )));
-                                                },
-                                                onSharePressed: () async {
-                                                  Share.share(
-                                                    exam.Details,
-                                                    subject: 'Exam Details',
-                                                  );
-                                                },
-                                                onRegistrationPressed: () {
-                                                  print(exam.Catagories);
-                                                  print(exam.name);
-                                                  print(exam.price);
-                                                  print(exam.Details);
-                                                  print(exam.CatagoryID);
-                                                  print(exam.typeID);
-                                                  print(exam.priceID);
-                                                  if (auth == true) {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                RegistrationCenter(
-                                                                  Catagory: exam
-                                                                      .Catagories,
-                                                                  Type:
-                                                                      exam.name,
-                                                                  Fee: exam
-                                                                      .price,
-                                                                  CatagoryId: exam
-                                                                      .CatagoryID,
-                                                                  TypeId: exam
-                                                                      .typeID,
-                                                                  FeeId: exam
-                                                                      .priceID,
-                                                                )));
-                                                  } else if (auth == false) {
-                                                    const snackBar = SnackBar(
-                                                      content: Text(
-                                                          'Please Login First!!'),
-                                                    );
-                                                    ScaffoldMessenger.of(context
-                                                            as BuildContext)
-                                                        .showSnackBar(snackBar);
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    Login()));
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -987,55 +1202,118 @@ class _DashboardState extends State<Dashboard>
                                   SizedBox(
                                     height: 30,
                                   ),
-                                  Column(
-                                    children: [
-                                      Container(
-                                          width: screenWidth * 0.9,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Color.fromRGBO(0, 162, 222, 1),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              'Book',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                                fontFamily: 'default',
-                                              ),
-                                            ),
-                                          )),
-                                      Container(
-                                        height: 150,
-                                        width: screenWidth,
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10)),
-                                        ),
-                                        child: PageView.builder(
-                                          controller: PageController(
-                                              viewportFraction: 1),
-                                          itemCount: _bookWidgets.length,
-                                          itemBuilder: (context, index) {
-                                            ItemTemplate book =
-                                                _bookWidgets[index]
-                                                    as ItemTemplate;
-                                            return BookCard(
-                                              bookName: book.name,
-                                              bookPrice: book.price,
-                                            );
-                                          },
+                                  Material(
+                                    elevation: 5,
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      width: screenWidth * 0.9,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
                                         ),
                                       ),
-                                    ],
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                              width: screenWidth * 0.9,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 20, vertical: 20),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    Color.fromRGBO(0, 162, 222, 1),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight: Radius.circular(10),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'Book',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontFamily: 'default',
+                                                  ),
+                                                ),
+                                              )),
+                                          Container(
+                                            height: 150,
+                                            width: screenWidth,
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            child: _bookWidgets == null ||
+                                                    _bookWidgets.isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                      'No books available',
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black54,
+                                                        fontFamily: 'default',
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Stack(
+                                                    children: [
+                                                      PageView.builder(
+                                                        controller: PageController(
+                                                            viewportFraction: 1),
+                                                        itemCount:
+                                                            _bookWidgets.length,
+                                                        onPageChanged: (index) {
+                                                          setState(() {
+                                                            _currentbookpage =
+                                                                index; // Update _currentPage when the page changes
+                                                          });
+                                                        },
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          ItemTemplate book =
+                                                              _bookWidgets[index]
+                                                                  as ItemTemplate;
+                                                          return BookCard(
+                                                            bookName: book.name,
+                                                            bookPrice: book.price,
+                                                          );
+                                                        },
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        child: Icon(
+                                                          Icons.arrow_back_ios,
+                                                          color: _currentbookpage ==
+                                                                  0
+                                                              ? Colors.transparent
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.centerRight,
+                                                        child: Icon(
+                                                          Icons.arrow_forward_ios,
+                                                          color: _currentbookpage ==
+                                                                  _bookWidgets
+                                                                          .length -
+                                                                      1
+                                                              ? Colors.transparent
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 30,
@@ -1109,9 +1387,9 @@ class _DashboardState extends State<Dashboard>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const CourseOutline()));
+                                                      const ExamMaterial()));
                                         },
-                                        child: const Text('Course Outline',
+                                        child: const Text('Exam Material',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20,
@@ -1551,7 +1829,7 @@ class _DashboardState extends State<Dashboard>
                             ),
                             Divider(),
                             ListTile(
-                              title: Text('Course Outline',
+                              title: Text('Exam Material',
                                   style: TextStyle(
                                     color: Colors.black87,
                                     fontSize: 20,
@@ -1563,7 +1841,7 @@ class _DashboardState extends State<Dashboard>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const CourseOutline()));
+                                            const ExamMaterial()));
                               },
                             ),
                             Divider(),
@@ -1711,38 +1989,103 @@ class _DashboardState extends State<Dashboard>
                                                     Radius.circular(10),
                                               ),
                                             ),
-                                            child: PageView.builder(
-                                              controller: PageController(
-                                                  viewportFraction: 1),
-                                              itemCount:
-                                                  _applicationWidgets.length,
-                                              itemBuilder: (context, index) {
-                                                ApplicationItemTemplate
-                                                    Applicant =
-                                                    _applicationWidgets[index]
-                                                        as ApplicationItemTemplate;
-                                                return ApplicationCard(
-                                                  examName: Applicant.name,
-                                                  examineeID:
-                                                      Applicant.ExamineeID,
-                                                  examCatagories:
-                                                      Applicant.Catagories,
-                                                  Payment: Applicant.payment,
-                                                  AdmitCard:
-                                                      Applicant.admitcard,
-                                                  Result: Applicant.result,
-                                                  onPaymentPressed: () {},
-                                                  onAdmitCardPressed: () {
-                                                    GetAdmitCardLinkandPrint(
-                                                        Applicant.ExamineeID);
-                                                  },
-                                                  onResultPressed: () {
-                                                    GetResult(
-                                                        Applicant.ExamineeID);
-                                                  },
-                                                );
-                                              },
-                                            ),
+                                            child: _applicationWidgets ==
+                                                        null ||
+                                                    _applicationWidgets.isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                      'You have made any Application',
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black54,
+                                                        fontFamily: 'default',
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Stack(
+                                                    children: [
+                                                      PageView.builder(
+                                                        controller:
+                                                            PageController(
+                                                                viewportFraction:
+                                                                    1),
+                                                        itemCount:
+                                                            _applicationWidgets
+                                                                .length,
+                                                        onPageChanged: (index) {
+                                                          setState(() {
+                                                            _currentapplicationpage =
+                                                                index; // Update _currentPage when the page changes
+                                                          });
+                                                        },
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          ApplicationItemTemplate
+                                                              Applicant =
+                                                              _applicationWidgets[
+                                                                      index]
+                                                                  as ApplicationItemTemplate;
+                                                          return ApplicationCard(
+                                                            examName:
+                                                                Applicant.name,
+                                                            examineeID:
+                                                                Applicant
+                                                                    .ExamineeID,
+                                                            examCatagories:
+                                                                Applicant
+                                                                    .Catagories,
+                                                            Payment: Applicant
+                                                                .payment,
+                                                            AdmitCard: Applicant
+                                                                .admitcard,
+                                                            Result: Applicant
+                                                                .result,
+                                                            onPaymentPressed:
+                                                                () {},
+                                                            onAdmitCardPressed:
+                                                                () {
+                                                              GetAdmitCardLinkandPrint(
+                                                                  Applicant
+                                                                      .ExamineeID);
+                                                            },
+                                                            onResultPressed:
+                                                                () {
+                                                              GetResult(Applicant
+                                                                  .ExamineeID);
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Icon(
+                                                          Icons.arrow_back_ios,
+                                                          color:
+                                                              _currentapplicationpage ==
+                                                                      0
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          color: _currentapplicationpage ==
+                                                                  _applicationWidgets
+                                                                          .length -
+                                                                      1
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                           ),
                                         ],
                                       ),
@@ -1868,7 +2211,7 @@ class _DashboardState extends State<Dashboard>
                                             ),
                                             child: Center(
                                               child: Text(
-                                                'Popular Exam',
+                                                'Exam Registration',
                                                 style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
@@ -1887,77 +2230,135 @@ class _DashboardState extends State<Dashboard>
                                               topRight: Radius.circular(10),
                                             ),
                                           ),
-                                          child: PageView.builder(
-                                            controller: PageController(
-                                                viewportFraction: 1),
-                                            itemCount: _examFeeWidgets.length,
-                                            itemBuilder: (context, index) {
-                                              ExamItemTemplate exam =
-                                                  _examFeeWidgets[index]
-                                                      as ExamItemTemplate;
-                                              return ExamCard(
-                                                examName: exam.name,
-                                                examCatagories: exam.Catagories,
-                                                examFee: exam.price,
-                                                onDetailsPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ExamDetails(
-                                                                details: exam
-                                                                    .Details,
-                                                              )));
+                                          child: _examFeeWidgets ==
+                                              null ||
+                                              _examFeeWidgets.isEmpty
+                                              ? Center(
+                                            child: Text(
+                                              'No Exam Avaiable right now',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black54,
+                                                fontFamily: 'default',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          )
+                                              : Stack(
+                                            children: [
+                                              PageView.builder(
+                                                controller: PageController(
+                                                    viewportFraction: 1),
+                                                itemCount:
+                                                    _examFeeWidgets.length,
+                                                onPageChanged: (index) {
+                                                  setState(() {
+                                                    _currentexamregitrationpage =
+                                                        index; // Update _currentPage when the page changes
+                                                  });
                                                 },
-                                                onSharePressed: () async {
-                                                  Share.share(
-                                                    exam.Details,
-                                                    subject: 'Exam Details',
+                                                itemBuilder: (context, index) {
+                                                  ExamItemTemplate exam =
+                                                      _examFeeWidgets[index]
+                                                          as ExamItemTemplate;
+                                                  return ExamCard(
+                                                    examName: exam.name,
+                                                    examCatagories:
+                                                        exam.Catagories,
+                                                    examFee: exam.price,
+                                                    onDetailsPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      ExamDetails(
+                                                                        details:
+                                                                            exam.Details,
+                                                                      )));
+                                                    },
+                                                    onSharePressed: () async {
+                                                      Share.share(
+                                                        exam.Details,
+                                                        subject: 'Exam Details',
+                                                      );
+                                                    },
+                                                    onRegistrationPressed: () {
+                                                      print(exam.Catagories);
+                                                      print(exam.name);
+                                                      print(exam.price);
+                                                      print(exam.Details);
+                                                      print(exam.CatagoryID);
+                                                      print(exam.typeID);
+                                                      print(exam.priceID);
+                                                      if (auth == true) {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        RegistrationCenterFromPopularExam(
+                                                                          Catagory:
+                                                                              exam.Catagories,
+                                                                          Type:
+                                                                              exam.name,
+                                                                          Fee: exam
+                                                                              .price,
+                                                                          CatagoryId:
+                                                                              exam.CatagoryID,
+                                                                          TypeId:
+                                                                              exam.typeID,
+                                                                          FeeId:
+                                                                              exam.priceID,
+                                                                        )));
+                                                      } else if (auth ==
+                                                          false) {
+                                                        const snackBar =
+                                                            SnackBar(
+                                                          content: Text(
+                                                              'Please Login First!!'),
+                                                        );
+                                                        ScaffoldMessenger.of(context
+                                                                as BuildContext)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        Login()));
+                                                      }
+                                                    },
                                                   );
                                                 },
-                                                onRegistrationPressed: () {
-                                                  print(exam.Catagories);
-                                                  print(exam.name);
-                                                  print(exam.price);
-                                                  print(exam.Details);
-                                                  print(exam.CatagoryID);
-                                                  print(exam.typeID);
-                                                  print(exam.priceID);
-                                                  if (auth == true) {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                RegistrationCenter(
-                                                                  Catagory: exam
-                                                                      .Catagories,
-                                                                  Type:
-                                                                      exam.name,
-                                                                  Fee: exam
-                                                                      .price,
-                                                                  CatagoryId: exam
-                                                                      .CatagoryID,
-                                                                  TypeId: exam
-                                                                      .typeID, FeeId: exam.priceID,
-                                                                )));
-                                                  } else if (auth == false) {
-                                                    const snackBar = SnackBar(
-                                                      content: Text(
-                                                          'Please Login First!!'),
-                                                    );
-                                                    ScaffoldMessenger.of(context
-                                                            as BuildContext)
-                                                        .showSnackBar(snackBar);
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    Login()));
-                                                  }
-                                                },
-                                              );
-                                            },
+                                              ),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Icon(
+                                                  Icons.arrow_back_ios,
+                                                  color:
+                                                      _currentexamregitrationpage ==
+                                                              0
+                                                          ? Colors.transparent
+                                                          : Colors.black,
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color:
+                                                      _currentexamregitrationpage ==
+                                                              _examFeeWidgets
+                                                                      .length -
+                                                                  1
+                                                          ? Colors.transparent
+                                                          : Colors.black,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -2117,20 +2518,79 @@ class _DashboardState extends State<Dashboard>
                                                   const BorderRadius.all(
                                                       Radius.circular(10)),
                                             ),
-                                            child: PageView.builder(
-                                              controller: PageController(
-                                                  viewportFraction: 1),
-                                              itemCount: _bookWidgets.length,
-                                              itemBuilder: (context, index) {
-                                                ItemTemplate book =
-                                                    _bookWidgets[index]
-                                                        as ItemTemplate;
-                                                return BookCard(
-                                                  bookName: book.name,
-                                                  bookPrice: book.price,
-                                                );
-                                              },
-                                            ),
+                                            child: _bookWidgets == null ||
+                                                    _bookWidgets.isEmpty
+                                                ? Center(
+                                                    child: Text(
+                                                      'No books available',
+                                                      style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.black54,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'default',
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Stack(
+                                                    children: [
+                                                      PageView.builder(
+                                                        controller:
+                                                            PageController(
+                                                                viewportFraction:
+                                                                    1),
+                                                        itemCount:
+                                                            _bookWidgets.length,
+                                                        onPageChanged: (index) {
+                                                          setState(() {
+                                                            _currentbookpage =
+                                                                index; // Update _currentPage when the page changes
+                                                          });
+                                                        },
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          ItemTemplate book =
+                                                              _bookWidgets[
+                                                                      index]
+                                                                  as ItemTemplate;
+                                                          return BookCard(
+                                                            bookName: book.name,
+                                                            bookPrice:
+                                                                book.price,
+                                                          );
+                                                        },
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Icon(
+                                                          Icons.arrow_back_ios,
+                                                          color:
+                                                              _currentbookpage ==
+                                                                      0
+                                                                  ? Colors
+                                                                      .transparent
+                                                                  : Colors
+                                                                      .black,
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerRight,
+                                                        child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          color: _currentbookpage ==
+                                                                  _bookWidgets
+                                                                          .length -
+                                                                      1
+                                                              ? Colors
+                                                                  .transparent
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                           ),
                                         ],
                                       ),
@@ -2208,9 +2668,9 @@ class _DashboardState extends State<Dashboard>
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const CourseOutline()));
+                                                      const ExamMaterial()));
                                         },
-                                        child: const Text('Course Outline',
+                                        child: const Text('Exam Material',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20,
@@ -2604,45 +3064,102 @@ class _DashboardState extends State<Dashboard>
     }
   }
 
+  int _currentListPage = 0; // Declare _currentPage as a state variable
+
   Widget _buildList(List<Widget> items) {
     return Container(
       height: 200,
       width: MediaQuery.of(context).size.width * 0.9,
-      child: PageView.builder(
-        controller: PageController(viewportFraction: 0.95),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return items[index];
-        },
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: PageController(viewportFraction: 0.95),
+            itemCount: items.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentListPage =
+                    index; // Update _currentPage when the page changes
+              });
+            },
+            itemBuilder: (context, index) {
+              return items[index];
+            },
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: _currentListPage == 0 ? Colors.transparent : Colors.grey,
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Icon(
+              Icons.arrow_forward_ios,
+              color: _currentListPage == items.length - 1
+                  ? Colors.transparent
+                  : Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
 
+  late int _currentPage = 0;
+
   Widget _buildImageList(List<Widget> items) {
     return Container(
       height: 200,
-      child: PageView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          ItemTemplateImages images = items[index] as ItemTemplateImages;
-          final String fullImageUrl =
-              'https://www.bcc.touchandsolve.com' + images.images;
-          print(fullImageUrl);
-          return CachedNetworkImage(
-            imageUrl: fullImageUrl,
-            fit: BoxFit.cover,
-            progressIndicatorBuilder: (context, url, downloadProgress) {
-              return Center(
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
+      child: Stack(
+        children: [
+          PageView.builder(
+            itemCount: items.length,
+            onPageChanged: (index) {
+              // Trigger a rebuild when the page changes to update the icon colors
+              setState(() {
+                _currentPage = index;
+                print(_currentPage);
+              });
+            },
+            itemBuilder: (context, index) {
+              ItemTemplateImages images = items[index] as ItemTemplateImages;
+              final String fullImageUrl =
+                  'https://www.bcc.touchandsolve.com' + images.images;
+              print(fullImageUrl);
+              return CachedNetworkImage(
+                imageUrl: fullImageUrl,
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, downloadProgress) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: downloadProgress.progress,
+                    ),
+                  );
+                },
+                errorWidget: (context, url, error) => Center(
+                  child: Icon(Icons.error), // Error icon for image load failure
                 ),
               );
             },
-            errorWidget: (context, url, error) => Center(
-              child: Icon(Icons.error), // Error icon for image load failure
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: _currentPage == 0 ? Colors.transparent : Colors.white,
             ),
-          );
-        },
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Icon(
+              Icons.arrow_forward_ios,
+              color: _currentPage == items.length - 1
+                  ? Colors.transparent
+                  : Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -2733,7 +3250,7 @@ class _DashboardState extends State<Dashboard>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-         // titlePadding: EdgeInsets.all(10),
+          // titlePadding: EdgeInsets.all(10),
           title: Center(
             child: Text(
               'Exam Result',
@@ -2745,12 +3262,12 @@ class _DashboardState extends State<Dashboard>
               ),
             ),
           ),
-         // contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+          // contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             // Divider(),
+              // Divider(),
               if (result == 'Passed' ||
                   result == 'Morning Passed' ||
                   result == 'Afternoon Passed') ...[
@@ -2918,7 +3435,8 @@ class _DashboardState extends State<Dashboard>
 
   Future<void> generatePDF(BuildContext context, String link) async {
     const snackBar = SnackBar(
-      content: Text('Preparing Printing, Please wait..., Please while printing change page orientation to horizontal'),
+      content: Text(
+          'Preparing Printing, Please wait..., Please while printing change page orientation to horizontal'),
     );
     ScaffoldMessenger.of(context as BuildContext).showSnackBar(snackBar);
     print('Print Triggered!!');
@@ -2948,7 +3466,6 @@ class _DashboardState extends State<Dashboard>
       Navigator.of(context, rootNavigator: true).pop();
     }
   }
-
 
   void _showNotificationsOverlay(BuildContext context) {
     final overlay = Overlay.of(context);

@@ -134,7 +134,7 @@ class ApplicationCard extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            'Payment',
+                            'Pay Now',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,

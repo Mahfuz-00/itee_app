@@ -1,37 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceCenterSelection.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceFee.dart';
+import '../../../Data/Data Sources/API Service (Center Selection)/apiservicebook.dart';
+import '../../../Data/Data Sources/API Service (Center Selection)/apiservicetype.dart';
 import '../../../Data/Models/centerModels.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/dropdownfield.dart';
+import '../B-Jet Details UI/B-jetDetailsUI.dart';
+import '../Dashboard UI/dashboardUI.dart';
+import '../ITEE Details UI/iteedetailsui.dart';
+import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import 'registrationpersonalinfo.dart';
 
-class RegistrationCenter extends StatefulWidget {
-  final String Catagory;
-  final String Type;
-  final String Fee;
-  final int FeeId;
-  final String CatagoryId;
-  final String TypeId;
-
-  const RegistrationCenter({
-    Key? key,
-    required this.Catagory,
-    required this.Type,
-    required this.Fee,
-    required this.FeeId,
-    required this.CatagoryId,
-    required this.TypeId,
-  }) : super(key: key);
+class RegistrationCenterFromMenu extends StatefulWidget {
+  const RegistrationCenterFromMenu({super.key});
 
   @override
-  State<RegistrationCenter> createState() => _RegistrationCenterState();
+  State<RegistrationCenterFromMenu> createState() =>
+      _RegistrationCenterFromMenuState();
 }
 
-class _RegistrationCenterState extends State<RegistrationCenter>
+class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -55,11 +49,14 @@ class _RegistrationCenterState extends State<RegistrationCenter>
   late String _ExamTypeID = '';
   late String _BookID = '';
   late String _BookPrice = '';
+  late int FeeID = 0;
 
   bool _isFetched = false;
+  bool _isBookFetched = false;
   bool _pageLoading = true;
   bool _isLoading = false;
   bool isFetchFeeInvoked = false;
+  bool _isFetchedType = false;
 
   Future<void> fetchConnectionRequests() async {
     if (_isFetched) return;
@@ -82,6 +79,8 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         return;
       }
 
+      // getBooks(selectedExamCategory.toString());
+
       final Map<String, dynamic> records = dashboardData['records'];
       if (records == null || records.isEmpty) {
         // No records available
@@ -90,22 +89,6 @@ class _RegistrationCenterState extends State<RegistrationCenter>
       }
 
       await handleRecords(records);
-
-      if (widget.CatagoryId.isNotEmpty || widget.CatagoryId != '') {
-        setState(() {
-          _ExamCatagoriesID = widget.CatagoryId;
-        });
-      }
-      if (widget.TypeId.isNotEmpty || widget.TypeId != '') {
-        setState(() {
-          _ExamTypeID = widget.TypeId;
-        });
-      }
-      if (widget.Fee.isNotEmpty || widget.Fee != '') {
-        setState(() {
-          examFee = widget.Fee;
-        });
-      } // Handle each section separately
 
       setState(() {
         _isFetched = true;
@@ -128,15 +111,17 @@ class _RegistrationCenterState extends State<RegistrationCenter>
       await handleExamCategories(examCategories);
     }
 
+/*
     if (records.containsKey('exam_type')) {
       final List<dynamic> examTypes = records['exam_type'];
       await handleExamTypes(examTypes);
     }
+*/
 
-    if (records.containsKey('books')) {
+    /*if (records.containsKey('books')) {
       final List<dynamic> books = records['books'];
       await handleBooks(books);
-    }
+    }*/
   }
 
   Future<void> handleVenues(List<dynamic> venues) async {
@@ -180,6 +165,79 @@ class _RegistrationCenterState extends State<RegistrationCenter>
     }
   }
 
+  Future<void> fetchType(String CatagoriesID) async {
+    if (_isFetchedType) return; // Exit early if already fetched
+
+    setState(() {
+      isLoadingExamTypes = true;
+    });
+
+    try {
+      print('Category ID: $CatagoriesID');
+
+      if (CatagoriesID.isNotEmpty) {
+        final apiService = await TypeAPIService.create();
+
+        // Fetch types data
+        final Map<String, dynamic> response = await apiService.fetchTypes(CatagoriesID);
+
+        if (response == null || response.isEmpty) {
+          print('No data available or an error occurred while fetching types');
+          return;
+        }
+
+        final dynamic records = response['records']; // Could be a list or map
+
+        if (records == null || records.isEmpty) {
+          print('No records available');
+          return;
+        }
+
+        // Handle the fetched books
+        await handleExamTypes(records);
+
+        // If records is a list, use an index to access elements
+        if (records is List) {
+          for (var record in records) {
+            final String name = record['name'] as String;
+            final int id = record['id'] as int;
+            final String categoryID = record['category_id'];
+
+            print('Type: $name');
+            print('Type ID: $id');
+            print('Category ID: $categoryID');
+          }
+        }
+        // If records is a map, access elements directly
+        else if (records is Map) {
+          final String name = records['name'] as String;
+          final int id = records['id'] as int;
+          final int categoryID = records['category_id'] as int;
+
+          print('Type: $name');
+          print('Type ID: $id');
+          print('Category ID: $categoryID');
+        }
+
+        setState(() {
+          _isFetchedType = true; // Mark as fetched
+        //  isFetchFeeInvoked = false; // Stop indicating loading
+        });
+
+      } else {
+        print('Category ID is empty');
+      }
+    } catch (e) {
+      print('Error fetching types: $e');
+      setState(() {
+        _isFetchedType = true; // Mark as fetched even on error
+       // isFetchFeeInvoked = false; // Stop indicating loading
+      });
+    }
+  }
+
+
+
   Future<void> handleExamTypes(List<dynamic> examTypes) async {
     List<ExamType> fetchedExamTypes = [];
     try {
@@ -209,16 +267,15 @@ class _RegistrationCenterState extends State<RegistrationCenter>
     });
     print('Invoked');
     if (triggered == true &&
-        Catagories != '' &&
-        type != '' &&
-        Catagories != null &&
-        type != null) {
+        (Catagories.isNotEmpty ?? false) &&
+        (type.isNotEmpty ?? false)) {
       if (_isFetchedFee) return;
       try {
         final apiService = await FeeAPIService.create();
 
         final response = await apiService.fetchExamFee(Catagories, type);
         final fee = response['records']['fee'] as String;
+        final id = response['records']['id'];
 
         setState(() {
           examFee = fee;
@@ -226,6 +283,9 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         });
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('Exam fee', examFee);
+        await prefs.setInt('Exam Fee ID', id);
+
+        FeeID = prefs.getInt('Exam Fee ID')!;
 
         _isFetchedFee = true;
       } catch (e) {
@@ -248,12 +308,53 @@ class _RegistrationCenterState extends State<RegistrationCenter>
         // Further processing if needed
       }
       setState(() {
-        isLoadingBooks = false;
+        // isLoadingBooks = false;
         Books = fetchedBooks;
       });
     } catch (e) {
       print('Error handling books: $e');
       // Handle error
+    }
+  }
+
+  Future<void> getBooks(String Catagory) async {
+    if (_isBookFetched) return;
+
+    setState(() {
+      isLoadingBooks = true;
+    });
+
+    try {
+      final apiService = await BookAPIService.create();
+
+      // Fetch books data
+      final Map<String, dynamic> dashboardData =
+          await apiService.fetchBooks(Catagory);
+      if (dashboardData == null || dashboardData.isEmpty) {
+        print(
+            'No data available or an error occurred while fetching dashboard data');
+        return;
+      }
+
+      final List<dynamic> records = dashboardData['records'];
+      if (records == null || records.isEmpty) {
+        print('No records available');
+        return;
+      }
+
+      // Handle the fetched books
+      await handleBooks(records);
+
+      setState(() {
+        _isBookFetched = true;
+        isLoadingBooks = false;
+      });
+    } catch (e) {
+      print('Error fetching books: $e');
+      setState(() {
+        _isBookFetched = true;
+        isLoadingBooks = false;
+      });
     }
   }
 
@@ -423,82 +524,61 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: widget.Catagory.isNotEmpty || widget.Catagory != ''
-                      ? Container(
-                    height: screenHeight * 0.075,
-                        child: TextField(
-                            controller:
-                                TextEditingController(text: widget.Catagory),
-                            enabled: false,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(25),
-                              hintText: 'Exam Category',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                  color: const Color.fromRGBO(0, 162, 222, 1),
-                                ),
-                              ),
-                            ),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'default',
-                            ),
-                          ),
-                      )
-                      : Stack(
-                          children: [
-                            // Inside your build method or wherever appropriate
-                            DropdownFormField(
-                              hintText: 'Select Exam Category',
-                              dropdownItems: ExamCategories.map(
-                                  (category) => category.name).toList(),
-                              initialValue: selectedExamCategory,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  // Reset other selected values if needed
-                                  selectedExamCategory = newValue!;
-                                  isFetchFeeInvoked = true;
-                                  if (newValue != null) {
-                                    ExamCategory selectedCategoriesObject =
-                                        ExamCategories.firstWhere(
-                                      (category) => category.name == newValue,
-                                    );
+                  child: Stack(
+                    children: [
+                      // Inside your build method or wherever appropriate
+                      DropdownFormField(
+                        hintText: 'Select Exam Category',
+                        dropdownItems:
+                            ExamCategories.map((category) => category.name)
+                                .toList(),
+                        initialValue: selectedExamCategory,
+                        onChanged: (newValue) {
+                          setState(() {
+                            // Reset other selected values if needed
+                            selectedExamCategory = newValue!;
+                            isFetchFeeInvoked = true;
+                            if (newValue != null) {
+                              _isBookFetched = false;
+                              getBooks(selectedExamCategory!);
+                              ExamCategory selectedCategoriesObject =
+                                  ExamCategories.firstWhere(
+                                (category) => category.name == newValue,
+                              );
 
-                                    if (selectedCategoriesObject != null) {
-                                      // It Takes ID Int
-                                      _ExamCatagoriesID =
-                                          selectedCategoriesObject.id
-                                              .toString();
+                              if (selectedCategoriesObject != null) {
+                                // It Takes ID Int
+                                _ExamCatagoriesID =
+                                    selectedCategoriesObject.id.toString();
 
-                                      fetchFee(_ExamCatagoriesID, _ExamTypeID,
-                                          isFetchFeeInvoked);
+                                fetchFee(_ExamCatagoriesID, _ExamTypeID,
+                                    isFetchFeeInvoked);
+                                _isFetchedType = false;
+                                fetchType(_ExamCatagoriesID);
 
-                                      /*if (_ExamCatagoriesID != '' &&
+                                if (_ExamCatagoriesID != '' &&
                                     _ExamTypeID != '' &&
                                     _ExamCatagoriesID != null &&
                                     _ExamTypeID != null) {
                                   fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                       isFetchFeeInvoked);
-                                }*/
-                                      print(_ExamCatagoriesID);
-                                    }
-                                  }
-                                });
-                              },
-                            ),
-                            if (isLoadingExamCategory) ...[
-                              Align(
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(
-                                  color: const Color.fromRGBO(0, 162, 222, 1),
-                                ),
-                              ),
-                            ]
-                          ],
+                                }
+                                print(_ExamCatagoriesID);
+                              }
+                            }
+                          });
+                        },
+                      ),
+                      if (isLoadingExamCategory) ...[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                            color: const Color.fromRGBO(0, 162, 222, 1),
+                          ),
                         ),
+                      ]
+                    ],
+                  ),
                 ),
               ),
               SizedBox(
@@ -522,76 +602,53 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: widget.Type.isNotEmpty || widget.Type != ''
-                      ? TextField(
-                          controller: TextEditingController(text: widget.Type),
-                          enabled: false,
-                          // Disable the text field if you want it to be read-only
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(25),
-                            hintText: 'Exam Type',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: const Color.fromRGBO(0, 162, 222, 1),
-                              ),
-                            ),
-                          ),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'default',
-                          ),
-                        )
-                      : Stack(
-                          children: [
-                            DropdownFormField(
-                              hintText: 'Select Exam Type',
-                              dropdownItems:
-                                  ExamTypes.map((type) => type.name).toList(),
-                              initialValue: selectedExamType,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  // Reset other selected values if needed
-                                  selectedExamType = newValue!;
-                                  isFetchFeeInvoked = true;
-                                  if (newValue != null) {
-                                    ExamType selectedTypeObject =
-                                        ExamTypes.firstWhere(
-                                      (type) => type.name == newValue,
-                                      /*orElse: () => null,*/
-                                    );
-                                    if (selectedTypeObject != null) {
-                                      //It Takes ID Int
-                                      _ExamTypeID =
-                                          selectedTypeObject.id.toString();
-                                      print(_ExamTypeID);
+                  child: Stack(
+                    children: [
+                      DropdownFormField(
+                        hintText: 'Select Exam Type',
+                        dropdownItems:
+                            ExamTypes.map((type) => type.name).toList(),
+                        initialValue: selectedExamType,
+                        onChanged: (newValue) {
+                          setState(() {
+                            // Reset other selected values if needed
+                            selectedExamType = newValue!;
+                            isFetchFeeInvoked = true;
+                            if (newValue != null) {
+                              ExamType selectedTypeObject =
+                                  ExamTypes.firstWhere(
+                                (type) => type.name == newValue,
+                                /*orElse: () => null,*/
+                              );
+                              if (selectedTypeObject != null) {
+                                //It Takes ID Int
+                                _ExamTypeID = selectedTypeObject.id.toString();
+                                print(_ExamTypeID);
 
-                                      fetchFee(_ExamCatagoriesID, _ExamTypeID,
-                                          isFetchFeeInvoked);
-                                      /* if (_ExamCatagoriesID != '' &&
+                                fetchFee(_ExamCatagoriesID, _ExamTypeID,
+                                    isFetchFeeInvoked);
+                                if (_ExamCatagoriesID != '' &&
                                     _ExamTypeID != '' &&
                                     _ExamCatagoriesID != null &&
                                     _ExamTypeID != null) {
                                   fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                       isFetchFeeInvoked);
-                                }*/
-                                    }
-                                  }
-                                });
-                              },
-                            ),
-                            if (isLoadingExamTypes) ...[
-                              Align(
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(
-                                  color: const Color.fromRGBO(0, 162, 222, 1),
-                                ),
-                              ),
-                            ]
-                          ],
+                                }
+                              }
+                            }
+                          });
+                        },
+                      ),
+                      if (isLoadingExamTypes) ...[
+                        Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                            color: const Color.fromRGBO(0, 162, 222, 1),
+                          ),
                         ),
+                      ]
+                    ],
+                  ),
 
                   /*DropdownButtonFormField<String>(
                     value: selectedCourse,
@@ -652,42 +709,20 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(color: Colors.grey),
                   ),
-                  child: widget.Fee.isNotEmpty || widget.Fee != ''
-                      ? TextField(
-                        controller: TextEditingController(text: widget.Fee),
-                        enabled: false,
-                        // Disable the text field if you want it to be read-only
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(25),
-                          hintText: 'Exam Fee',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: const Color.fromRGBO(0, 162, 222, 1),
-                            ),
-                          ),
-                        ),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'default',
-                        ),
-                      )
-                      : Container(
-                          padding: EdgeInsets.only(top: 15, left: 15),
-                          child: Text(
-                            examFee != null && examFee.isNotEmpty
-                                ? '$examFee TK'
-                                : 'Exam Fee',
-                            style: TextStyle(
-                              color: Color.fromRGBO(143, 150, 158, 1),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              fontFamily: 'default',
-                            ),
-                          ),
-                        ),
+                  child: Container(
+                    padding: EdgeInsets.only(top: 15, left: 15),
+                    child: Text(
+                      examFee != null && examFee.isNotEmpty
+                          ? '$examFee TK'
+                          : 'Exam Fee',
+                      style: TextStyle(
+                        color: Color.fromRGBO(143, 150, 158, 1),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ),
                 ),
               ),
               /*  if (selectedExamCategory != null && selectedExamType != null) ...[
@@ -915,32 +950,23 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                             'Exam Catagories', _ExamCatagoriesID);
                         await prefs.setString('Exam Type', _ExamTypeID);
                         await prefs.setString('Exam Fee', examFee);
-                        await prefs.setInt('Exam Fee ID', widget.FeeId);
+                        // await prefs.setInt('Exam Fee ID', _);
                         await prefs.setString('Book', _BookID);
                         await prefs.setString('BookPrice', _BookPrice);
                         await prefs.setString(
                             'Venue_Name', selectedVenue.toString());
-                        if (widget.Catagory.isNotEmpty ||
-                            widget.Catagory != '') {
-                          await prefs.setString(
-                              'Exam Catagories_Name', widget.Catagory);
-                        } else {
-                          await prefs.setString('Exam Catagories_Name',
-                              selectedExamCategory.toString());
-                        }
-                        if (widget.Type.isNotEmpty || widget.Type != '') {
-                          await prefs.setString('Exam Type_Name', widget.Type);
-                        } else {
-                          await prefs.setString(
-                              'Exam Type_Name', selectedExamType.toString());
-                        }
+                        await prefs.setString('Exam Catagories_Name',
+                            selectedExamCategory.toString());
+                        await prefs.setString(
+                            'Exam Type_Name', selectedExamType.toString());
+                        //await prefs.setString('Exam Fee ID', examFee);
                         await prefs.setString(
                             'Book_Name', selectedBook.toString());
 
                         print('Catagory : $_ExamCatagoriesID');
                         print('Type : $_ExamTypeID');
-                        print('Book $_BookID');
-                        print('Fee ID : ${widget.FeeId}');
+                        print('Book: $_BookID');
+                        print('Fee ID : ${examFee}');
 
                         final String? VenueSaved =
                             await prefs.getString('Venue');
@@ -954,6 +980,7 @@ class _RegistrationCenterState extends State<RegistrationCenter>
                         final String? FeeSaved =
                             await prefs.getString('Exam Fee');
 
+                        print('Fee ID : $FeeID');
                         print(VenueSaved);
                         print('Exam Catagory : $CatagoresSaved');
                         print('Exam Type : $TypeSaved');
@@ -989,6 +1016,316 @@ class _RegistrationCenterState extends State<RegistrationCenter>
           ),
         ),
       )),
+      bottomNavigationBar: Container(
+        height: screenHeight * 0.08,
+        color: const Color.fromRGBO(0, 162, 222, 1),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              shouldRefresh: true,
+                            )));
+              },
+              child: Container(
+                width: screenWidth / 5,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.home,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'Home',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ITEEDetails()));
+              },
+              child: Container(
+                width: screenWidth / 5,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.info_outline,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'ITEE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BJetDetails()));
+              },
+              child: Container(
+                width: screenWidth / 5,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Image(
+                      image: AssetImage('Assets/Images/Bjet-Small.png'),
+                      height: 30,
+                      width: 50,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'B-Jet',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ITEETrainingProgramDetails()));
+              },
+              child: Container(
+                width: screenWidth / 5,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Image(
+                      image: AssetImage('Assets/Images/ITEE-Small.png'),
+                      height: 30,
+                      width: 60,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'Training',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                showPhoneNumberDialog(context);
+              },
+              child: Container(
+                width: screenWidth / 5,
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.phone,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      'Contact',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        fontFamily: 'default',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+  void showPhoneNumberDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Select a Number to Call',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color.fromRGBO(0, 162, 222, 1),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                    fontSize: 22,
+                  ),
+                ),
+              ),
+              Divider()
+            ],
+          ),
+          content: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                phoneNumberTile(context, '0255006847'),
+                Divider(),
+                phoneNumberTile(context, '028181032'),
+                Divider(),
+                phoneNumberTile(context, '028181033'),
+                Divider(),
+                phoneNumberTile(context, '+8801857321122'),
+                Divider(),
+              ],
+            ),
+          ),
+          actions: [
+            Center(
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.05,
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(0, 162, 222, 1)),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'default',
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
+    return ListTile(
+      title: Text(
+        phoneNumber,
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: 'default',
+        ),
+      ),
+      trailing: Container(
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(0, 162, 222, 1),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: IconButton(
+          icon: Icon(
+            Icons.call,
+            color: Colors.white,
+          ),
+          onPressed: () async {
+            try {
+              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Calling $phoneNumber...')),
+              );
+            } catch (e) {
+              print('Error: $e');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to make the call: $e')),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  _callNumber() async {
+    const number = '+8801857321122'; //set the number here
+    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
+  }
+
+  // Function to make a phone call
+  Future<void> _makePhoneCall(BuildContext context, String url) async {
+    print('Attempting to launch: $url');
+
+    if (await canLaunch(url)) {
+      print('Launching: $url');
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not Call $url')),
+      );
+    }
   }
 }

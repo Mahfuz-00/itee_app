@@ -31,7 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   Future<void> _sendCode(String email) async {
-    final apiService = await APIServiceForgotPassword.create();
+    final apiService = await APIServiceForgotPassword();
 /*    apiService.sendForgotPasswordOTP(email);
     Navigator.push(
       context,

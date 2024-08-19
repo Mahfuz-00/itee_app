@@ -3,10 +3,14 @@ import 'package:flutter/services.dart';
 
 class AccountCustomTextFormField extends StatelessWidget {
   final TextEditingController textController;
+  final FocusNode currentFocusNode;
+  final FocusNode? nextFocusNode;
 
   const AccountCustomTextFormField({
     Key? key,
     required this.textController,
+    required this.currentFocusNode,
+    this.nextFocusNode,
   }) : super(key: key);
 
   @override
@@ -18,6 +22,7 @@ class AccountCustomTextFormField extends StatelessWidget {
       child: TextFormField(
         textAlign: TextAlign.center,
         controller: textController,
+        focusNode: currentFocusNode,
         keyboardType: TextInputType.number,
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly, // Allow only digits
@@ -29,7 +34,7 @@ class AccountCustomTextFormField extends StatelessWidget {
           fontWeight: FontWeight.bold,
           fontFamily: 'default',
         ),
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           contentPadding: EdgeInsets.only(bottom: 20),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
@@ -45,6 +50,11 @@ class AccountCustomTextFormField extends StatelessWidget {
           ),
           labelText: '',
         ),
+        onChanged: (value) {
+          if (value.isNotEmpty && nextFocusNode != null) {
+            nextFocusNode!.requestFocus();
+          }
+        },
       ),
     );
   }
