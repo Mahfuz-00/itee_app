@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Forgot Password)/apiServiceForgotPassword.dart';
 import '../../../Data/Data Sources/API Service (Forgot Password)/apiServiceOTPVerification.dart';
+import '../../Widgets/accountotpbox.dart';
+import '../../Widgets/forgotpasswordotpbox.dart';
 import '../../Widgets/otpbox.dart';
 import 'createnewpasswordUI.dart';
 
@@ -23,6 +25,9 @@ class _OPTVerficationState extends State<OPTVerfication> {
   late TextEditingController _seconddigitcontroller = TextEditingController();
   late TextEditingController _thirddigitcontroller = TextEditingController();
   late TextEditingController _forthdigitcontroller = TextEditingController();
+
+  final List<TextEditingController> _controllers = List.generate(4, (index) => TextEditingController());
+  final List<FocusNode> _focusNodes = List.generate(4, (index) => FocusNode());
 
   @override
   void initState() {
@@ -179,30 +184,22 @@ class _OPTVerficationState extends State<OPTVerfication> {
                                 ),
                               ),
                               const SizedBox(height: 50),
-                              Container(
-                                child: Center(
-                                  child: Padding(
-                                    padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(4, (index) {
+                                    return Row(
                                       children: [
-                                        CustomTextFormField(textController: _firstdigitcontroller,),
-                                        SizedBox(
-                                          width: 10,
+                                        ForgotPasswordCustomTextFormField(
+                                          textController: _controllers[index],
+                                          currentFocusNode: _focusNodes[index],
+                                          nextFocusNode: index < 3 ? _focusNodes[index + 1] : null,
                                         ),
-                                        CustomTextFormField(textController: _seconddigitcontroller,),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        CustomTextFormField(textController: _thirddigitcontroller,),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        CustomTextFormField(textController: _forthdigitcontroller,),
+                                        if (index < 3) SizedBox(width: 10),
                                       ],
-                                    ),
-                                  ),
+                                    );
+                                  }),
                                 ),
                               ),
                               SizedBox(
@@ -210,21 +207,18 @@ class _OPTVerficationState extends State<OPTVerfication> {
                               ),
                               ElevatedButton(
                                   onPressed: () async {
-                                    if (_firstdigitcontroller.text.isNotEmpty &&
-                                        _seconddigitcontroller.text.isNotEmpty &&
-                                        _thirddigitcontroller.text.isNotEmpty &&
-                                        _forthdigitcontroller.text.isNotEmpty) {
-                                      String OTP = _firstdigitcontroller.text +
-                                          _seconddigitcontroller.text +
-                                          _thirddigitcontroller.text +
-                                          _forthdigitcontroller.text;
-                                      print(OTP);
-                                      final prefs =
-                                      await SharedPreferences.getInstance();
-                                      String email =
-                                          await prefs.getString('email') ?? '';
-                                      print(email);
+                                    bool allFieldsFilled = _controllers.every((controller) => controller.text.isNotEmpty);
+
+                                    if (allFieldsFilled) {
+                                      String OTP = _controllers.map((controller) => controller.text).join();
+                                      final prefs = await SharedPreferences.getInstance();
+                                      String email = prefs.getString('email') ?? '';
                                       _sendOTP(email, OTP);
+                                    } else {
+                                      const snackBar = SnackBar(
+                                        content: Text('Please fill all OTP fields'),
+                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(

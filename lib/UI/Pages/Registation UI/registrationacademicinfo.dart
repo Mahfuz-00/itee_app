@@ -50,6 +50,7 @@ class _RegistrationAcademicInformationState
   late TextEditingController _PassingIDcontroller = TextEditingController();
 
   late String? Qualification = '';
+  late bool isdelayed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +102,9 @@ class _RegistrationAcademicInformationState
                     ),
                   ),
                   const SizedBox(height: 25),
-                  LabeledTextWithAsterisk(text:  'Your Education Qualification',),
+                  LabeledTextWithAsterisk(
+                    text: 'Your Education Qualification',
+                  ),
                   SizedBox(
                     height: 5,
                   ),
@@ -132,7 +135,9 @@ class _RegistrationAcademicInformationState
                   const SizedBox(height: 15),
                   if (Qualification == 'SSC or Equivalent' ||
                       Qualification == 'HSC or Equivalent') ...[
-                    LabeledTextWithAsterisk(text: 'Decipline',),
+                    LabeledTextWithAsterisk(
+                      text: 'Decipline',
+                    ),
                     SizedBox(
                       height: 5,
                     ),
@@ -161,8 +166,11 @@ class _RegistrationAcademicInformationState
                     ),
                     const SizedBox(height: 15),
                   ],
-                  if (Qualification == 'BSc or Equivalent' || Qualification == 'Diploma or Equivalent') ...[
-                    LabeledTextWithAsterisk(text: 'Subject',),
+                  if (Qualification == 'BSc or Equivalent' ||
+                      Qualification == 'Diploma or Equivalent') ...[
+                    LabeledTextWithAsterisk(
+                      text: 'Subject',
+                    ),
                     SizedBox(
                       height: 5,
                     ),
@@ -193,7 +201,9 @@ class _RegistrationAcademicInformationState
                     ),
                     const SizedBox(height: 15),
                   ],
-                  LabeledTextWithAsterisk(text: 'Passing Year',),
+                  LabeledTextWithAsterisk(
+                    text: 'Passing Year',
+                  ),
                   SizedBox(
                     height: 5,
                   ),
@@ -237,7 +247,9 @@ class _RegistrationAcademicInformationState
                     ),
                   ),
                   const SizedBox(height: 15),
-                  LabeledTextWithAsterisk(text: 'Institute',),
+                  LabeledTextWithAsterisk(
+                    text: 'Institute',
+                  ),
                   SizedBox(
                     height: 5,
                   ),
@@ -267,7 +279,9 @@ class _RegistrationAcademicInformationState
                     ),
                   ),
                   const SizedBox(height: 15),
-                  LabeledTextWithAsterisk(text: 'Result',),
+                  LabeledTextWithAsterisk(
+                    text: 'Result',
+                  ),
                   SizedBox(
                     height: 5,
                   ),
@@ -384,11 +398,15 @@ class _RegistrationAcademicInformationState
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              setState(() {
+                                isdelayed = true;
+                              });
                               saveData();
                               if (validateInputs()) {
                                 saveData();
                                 print('validated');
+                                await Future.delayed(Duration(seconds: 2));
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -406,13 +424,15 @@ class _RegistrationAcademicInformationState
                                 );
                               }
                             },
-                            child: const Text('Next',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'default',
-                                )),
+                            child: isdelayed
+                                ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                                : const Text('Next',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'default',
+                                    )),
                           ),
                         ),
                       ],
@@ -435,8 +455,8 @@ class _RegistrationAcademicInformationState
                     context,
                     MaterialPageRoute(
                         builder: (context) => Dashboard(
-                          shouldRefresh: true,
-                        )));
+                              shouldRefresh: true,
+                            )));
               },
               child: Container(
                 width: screenWidth / 5,
@@ -469,10 +489,8 @@ class _RegistrationAcademicInformationState
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ITEEDetails()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ITEEDetails()));
               },
               child: Container(
                 width: screenWidth / 5,
@@ -505,10 +523,8 @@ class _RegistrationAcademicInformationState
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BJetDetails()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BJetDetails()));
               },
               child: Container(
                 width: screenWidth / 5,
@@ -518,8 +534,7 @@ class _RegistrationAcademicInformationState
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Image(
-                      image: AssetImage(
-                          'Assets/Images/Bjet-Small.png'),
+                      image: AssetImage('Assets/Images/Bjet-Small.png'),
                       height: 30,
                       width: 50,
                     ),
@@ -545,8 +560,7 @@ class _RegistrationAcademicInformationState
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            ITEETrainingProgramDetails()));
+                        builder: (context) => ITEETrainingProgramDetails()));
               },
               child: Container(
                 width: screenWidth / 5,
@@ -556,8 +570,7 @@ class _RegistrationAcademicInformationState
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Image(
-                      image: AssetImage(
-                          'Assets/Images/ITEE-Small.png'),
+                      image: AssetImage('Assets/Images/ITEE-Small.png'),
                       height: 30,
                       width: 60,
                     ),
@@ -743,14 +756,16 @@ class _RegistrationAcademicInformationState
   }
 
   bool validateInputs() {
-    if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  {
-      if(_Deciplinecontroller.text.isEmpty){
+    if (Qualification == 'SSC or Equivalent' ||
+        Qualification == 'HSC or Equivalent') {
+      if (_Deciplinecontroller.text.isEmpty) {
         return false;
       }
       return true;
     }
-    if(Qualification == 'BSc or Equivalent'  || Qualification == 'Diploma or Equivalent') {
-      if(_SubjectNamecontroller.text.isEmpty){
+    if (Qualification == 'BSc or Equivalent' ||
+        Qualification == 'Diploma or Equivalent') {
+      if (_SubjectNamecontroller.text.isEmpty) {
         return false;
       }
       return true;
@@ -767,10 +782,12 @@ class _RegistrationAcademicInformationState
   Future<void> saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('qualification', _Qulificationcontroller.text);
-    if(Qualification == 'SSC or Equivalent'  || Qualification == 'HSC or Equivalent')  {
+    if (Qualification == 'SSC or Equivalent' ||
+        Qualification == 'HSC or Equivalent') {
       await prefs.setString('subject_name', _Deciplinecontroller.text);
     }
-    if(Qualification == 'BSc or Equivalent'  || Qualification == 'Diploma or Equivalent') {
+    if (Qualification == 'BSc or Equivalent' ||
+        Qualification == 'Diploma or Equivalent') {
       await prefs.setString('subject_name', _SubjectNamecontroller.text);
     }
 

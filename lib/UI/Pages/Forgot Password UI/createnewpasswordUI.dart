@@ -16,6 +16,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
   bool _isLoading = true;
   late TextEditingController _newPasswordcontroller = TextEditingController();
   late TextEditingController _confirmPasswordcontroller = TextEditingController();
+  late bool isclicked = false;
 
   @override
   void initState() {
@@ -146,6 +147,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 20,),
                               Container(
                                 width: screenWidth*0.9,
                                 height: 70,
@@ -174,6 +176,9 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                               SizedBox(height: 50,),
                               ElevatedButton(
                                   onPressed: () async {
+                                    setState(() {
+                                      isclicked = true;
+                                    });
                                     if (_newPasswordcontroller.text.isNotEmpty &&
                                         _confirmPasswordcontroller.text.isNotEmpty) {
                                       if(_newPasswordcontroller.text != _confirmPasswordcontroller.text){
@@ -198,7 +203,9 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                                     ),
                                     fixedSize: Size(screenWidth*0.9, 70),
                                   ),
-                                  child: const Text('Submit',
+                                  child:  isclicked
+                                      ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                                      : const Text('Submit',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 20,
