@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
@@ -279,44 +278,6 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
                   ),
                 ),
               ),
-           /*   GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ITEETrainingProgramDetails()));
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage(
-                            'Assets/Images/ITEE-Small.png'),
-                        height: 30,
-                        width: 60,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Training',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),*/
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
@@ -462,26 +423,5 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
       ),
     );
   }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
-  }
-
 }
 

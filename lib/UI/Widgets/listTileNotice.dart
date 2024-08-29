@@ -26,7 +26,6 @@ class ItemTemplateNotice extends StatelessWidget {
               ),
             ),
           ),
-         // Spacer(), // Add a spacer to fill the remaining space
         ],
       ),
     );

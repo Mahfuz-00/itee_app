@@ -41,7 +41,7 @@ class ApplicationCard extends StatelessWidget {
                   'Examinee ID: $examineeID',
                   style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'default',
                   ),
@@ -53,7 +53,7 @@ class ApplicationCard extends StatelessWidget {
                   'Exam Type: $examName',
                   style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'default',
                   ),
@@ -65,21 +65,11 @@ class ApplicationCard extends StatelessWidget {
                   'Exam Catagories: $examCatagories',
                   style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'default',
                   ),
                 ),
-                /*SizedBox(height: 10,),
-                Text(
-                  'Exam Fee: $examFee',*/ /*৳*/ /*
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                  ),
-                ),*/
               ],
             ),
           ),

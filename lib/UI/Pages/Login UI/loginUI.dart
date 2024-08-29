@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:footer/footer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../Data/Data Sources/API Service (Login)/apiservicelogin.dart';
 import '../../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
 import '../../../Data/Models/loginmodels.dart';
@@ -76,7 +75,6 @@ class _LoginState extends State<Login> {
                 Expanded(
                   child: Center(
                     child: Container(
-                      //alignment: Alignment.center,
                       child: Column(
                         children: [
                           const Text(
@@ -241,11 +239,10 @@ class _LoginState extends State<Login> {
                               onPressed: () async {
                                 setState(() {
                                   _isButtonClicked =
-                                      true; // Button clicked, show circular progress indicator
+                                      true;
                                 });
                                 if (await validateAndSave(
                                     globalfromkey, context)) {
-                                  //print(_loginRequest.toJSON());
                                   print('Checking $userType');
                                   if (userType != null) {
                                     if (userType == 'itee_student') {
@@ -263,7 +260,7 @@ class _LoginState extends State<Login> {
                                 }
                                 setState(() {
                                   _isButtonClicked =
-                                      false; // Validation complete, hide circular progress indicator
+                                      false;
                                 });
                               },
                               style: ElevatedButton.styleFrom(
@@ -354,24 +351,16 @@ class _LoginState extends State<Login> {
       try {
         final response = await apiService.login(loginRequestModel);
         if (response != null) {
-          // Handle successful login
           storeTokenLocally(response.token);
           userType = response.userType;
           print('UserType :: $userType');
           _fetchUserProfile(response.token);
           return true;
         } else {
-          // Handle unsuccessful login
           showTopToast(context, 'Email or password is not valid.');
-          /*ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Email or password is not valid.'),
-            ),
-          );*/
           return false;
         }
       } catch (e) {
-        // Handle login error
         String errorMessage = 'Incorrect Email and Password.';
         if (e.toString().contains('Invalid User')) {
           errorMessage = 'Invalid User!, Please enter a valid email address.';
@@ -383,15 +372,9 @@ class _LoginState extends State<Login> {
               'Email or password is empty. Please fill in both fields.';
         }
         showTopToast(context, errorMessage);
-        /*  ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-          ),
-        );*/
         return false;
       }
     }
-    // Return false if form validation fails
     return false;
   }
 
@@ -453,26 +436,8 @@ class _LoginState extends State<Login> {
       print('Mounted Again');
 
       authCubit.login(userProfile, token);
-
-      /* // Save user profile data in SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        await prefs.setString('userName', userProfile.name);
-        await prefs.setString('organizationName', userProfile.organization);
-        await prefs.setString('photoUrl', userProfile.photo);
-        UserName = prefs.getString('userName');
-        OrganizationName = prefs.getString('organizationName');
-        PhotoURL = prefs.getString('photoUrl');
-        print('User Name: $UserName');
-        print('Organization Name: $OrganizationName');
-        print('Photo URL: $PhotoURL');
-        print('User profile saved successfully');
-      } catch (e) {
-        print('Error saving user profile: $e');
-      }*/
     } catch (e) {
       print('Error fetching user profile: $e');
-      // Handle error as needed
     }
   }
 }

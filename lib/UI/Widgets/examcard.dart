@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ExamCard extends StatelessWidget {
+  final String examImage;
   final String examName;
   final String examCatagories;
   final String examFee;
@@ -9,6 +11,7 @@ class ExamCard extends StatelessWidget {
   final VoidCallback onRegistrationPressed;
 
   ExamCard({
+    required this.examImage,
     required this.examName,
     required this.examCatagories,
     required this.examFee,
@@ -25,43 +28,91 @@ class ExamCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         Container(
-           padding: EdgeInsets.all(10),
-           child: Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-             children: [
-               Text(
-                 'Exam Type: $examName',
-                 style: TextStyle(
-                   color: Colors.black87,
-                   fontSize: 18,
-                   fontWeight: FontWeight.bold,
-                   fontFamily: 'default',
-                 ),
-               ),
-               SizedBox(height: 10,),
-               Text(
-                 'Exam Catagories: $examCatagories',
-                 style: TextStyle(
-                   color: Colors.black87,
-                   fontSize: 18,
-                   fontWeight: FontWeight.bold,
-                   fontFamily: 'default',
-                 ),
-               ),
-               SizedBox(height: 10,),
-               Text(
-                 'Exam Fee: $examFee',/*৳*/
-                 style: TextStyle(
-                   color: Colors.black87,
-                   fontSize: 18,
-                   fontWeight: FontWeight.bold,
-                   fontFamily: 'default',
-                 ),
-               ),
-             ],
-           ),
-         ),
+          Container(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    height: screenHeight * 0.25,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog when tapped
+                                },
+                                child: CachedNetworkImage(
+                                  imageUrl: examImage,
+                                  fit: BoxFit.contain,
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: examImage,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: downloadProgress.progress,
+                              ),
+                            );
+                          },
+                          errorWidget: (context, url, error) => Center(
+                            child: Icon(Icons
+                                .error), // Error icon for image load failure
+                          ),
+                        ),
+                      ),
+                    )),
+                Divider(),
+                Text(
+                  'Exam Type: $examName',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Exam Catagories: $examCatagories',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Exam Fee: $examFee',
+                  /*৳*/
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                ),
+              ],
+            ),
+          ),
           Spacer(),
           Container(
             padding: EdgeInsets.only(bottom: 5, left: 5, right: 5),
@@ -84,7 +135,9 @@ class ExamCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 2,),
+                SizedBox(
+                  width: 2,
+                ),
                 Expanded(
                   child: GestureDetector(
                     onTap: onSharePressed,
@@ -101,7 +154,9 @@ class ExamCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 2,),
+                SizedBox(
+                  width: 2,
+                ),
                 Expanded(
                   child: GestureDetector(
                     onTap: onRegistrationPressed,
@@ -113,7 +168,8 @@ class ExamCard extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.app_registration, color: Colors.white),
+                        child:
+                            Icon(Icons.app_registration, color: Colors.white),
                       ),
                     ),
                   ),
@@ -121,7 +177,6 @@ class ExamCard extends StatelessWidget {
               ],
             ),
           ),
-
         ],
       ),
     );

@@ -55,12 +55,6 @@ class CardWidget extends StatelessWidget {
           } else if (listWidget.isNotEmpty) {
             // Display the list of requests if data is successfully fetched.
             return Container(
-              //width: screenWidth*0.9,
-             // padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              /*decoration: BoxDecoration(
-                color: Colors.white, // Sets the background color of the card.
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-              ),*/
               child: Column(
                 children: [
                   ListView.separated(

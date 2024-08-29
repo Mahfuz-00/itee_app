@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
@@ -8,7 +7,6 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Course Outline)/apiserviceCourseOutline.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
@@ -473,26 +471,6 @@ class _ExamMaterialState extends State<ExamMaterial> {
     );
   }
 
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
-  }
-
   Widget _buildDotPointItem(String name, String link) {
     return Container(
       padding: EdgeInsets.only(left: 30),
@@ -551,7 +529,5 @@ class _ExamMaterialState extends State<ExamMaterial> {
       // Handle any errors
       print('Error generating PDF: $e');
     }
-
   }
-
 }

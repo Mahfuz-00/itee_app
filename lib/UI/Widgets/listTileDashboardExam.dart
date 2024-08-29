@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+//Convert
 class ExamItemTemplate extends StatelessWidget {
+  final String image;
   final String name;
   final String Catagories;
   final String price;
@@ -10,6 +12,7 @@ class ExamItemTemplate extends StatelessWidget {
   final String CatagoryID;
 
   ExamItemTemplate({
+    required this.image,
     required this.name,
     required this.Catagories,
     required this.price,

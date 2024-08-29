@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../Login UI/loginUI.dart';
 
@@ -25,7 +24,7 @@ class _PasswordChangedState extends State<PasswordChanged> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:[
+                children: [
                   Center(
                     child: Image(
                       image: AssetImage('Assets/Images/Success-Mark.png'),
@@ -34,7 +33,9 @@ class _PasswordChangedState extends State<PasswordChanged> {
                       alignment: Alignment.center,
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     'Password Changed!',
                     textAlign: TextAlign.center,
@@ -56,7 +57,9 @@ class _PasswordChangedState extends State<PasswordChanged> {
                       fontFamily: 'default',
                     ),
                   ),
-                  SizedBox(height: 50,),
+                  SizedBox(
+                    height: 50,
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
@@ -67,7 +70,7 @@ class _PasswordChangedState extends State<PasswordChanged> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      fixedSize: Size(screenWidth*0.9, 70),
+                      fixedSize: Size(screenWidth * 0.9, 70),
                     ),
                     child: Text(
                       'Back to Login',

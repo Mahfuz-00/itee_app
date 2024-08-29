@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
@@ -369,25 +367,4 @@ class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStat
       ),
     );
   }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
-  }
-
 }

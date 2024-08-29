@@ -5,15 +5,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:itee_exam_app/Data/Models/imagemodel.dart';
 import 'package:itee_exam_app/UI/Pages/B-Jet%20Details%20UI/B-jetDetailsUI.dart';
 import 'package:itee_exam_app/UI/Pages/Exam%20Details%20UI/examDetailsUI.dart';
 import 'package:itee_exam_app/UI/Pages/ITEE%20Details%20UI/iteedetailsui.dart';
 import 'package:itee_exam_app/UI/Pages/ITEE%20Training%20Program%20Details%20UI/trainingprogramdetails.dart';
 import 'package:itee_exam_app/UI/Pages/Registation%20UI/registrationvenuefrommenu.dart';
-import 'package:itee_exam_app/UI/Widgets/listTileDashboardImages.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
@@ -27,8 +26,9 @@ import '../../../Data/Data Sources/API Service (Result)/apiserviceResult.dart';
 import '../../Bloc/auth_cubit.dart';
 import '../../Widgets/appilcationcard.dart';
 import '../../Widgets/bookcard.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/examcard.dart';
-import '../../Widgets/listTileDashboard.dart';
+import '../../Widgets/listTileDashboardBook.dart';
 import '../../Widgets/listTileDashboardApplication.dart';
 import '../../Widgets/listTileDashboardExam.dart';
 import '../../Widgets/listTileNotice.dart';
@@ -50,8 +50,8 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard>
-    with SingleTickerProviderStateMixin {
+class _DashboardState
+    extends State<Dashboard> /* with SingleTickerProviderStateMixin*/ {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late String userName = '';
@@ -68,26 +68,14 @@ class _DashboardState extends State<Dashboard>
   List<Widget> _applicationWidgets = [];
   List<Widget> _bookWidgets = [];
   List<Widget> _noticeWidgets = [];
-  List<Widget> _eventWidgets = [];
-  List<Widget> _programWidgets = [];
-  List<Widget> _bjetWidgets = [];
+  late List<ImageItem> _eventWidgets = [];
+  late List<ImageItem>  _programWidgets = [];
+  late List<ImageItem> _bjetWidgets = [];
   late int resultcheck = 2;
   late int admitcardcheck = 2;
   late int _currentapplicationpage = 0;
   late int _currentexamregitrationpage = 0;
   late int _currentbookpage = 0;
-
-  Future<void> loadUserProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userName = prefs.getString('userName') ?? '';
-      photoUrl = prefs.getString('photoUrl') ?? '';
-      photoUrl = 'https://bcc.touchandsolve.com' + photoUrl;
-      print('User Name: $userName');
-      print('Photo URL: $photoUrl');
-      print('User profile got it!!!!');
-    });
-  }
 
   Future<void> fetchConnectionRequests() async {
     if (_isFetched) return;
@@ -96,7 +84,7 @@ class _DashboardState extends State<Dashboard>
 
       // Fetch dashboard data
       final Map<String, dynamic> dashboardData =
-          await apiService.fetchDashboardItems();
+      await apiService.fetchDashboardItems();
       if (dashboardData == null || dashboardData.isEmpty) {
         // No data available or an error occurred
         print(
@@ -144,11 +132,7 @@ class _DashboardState extends State<Dashboard>
           print('Application at index $index: ${applications[index]}\n');
         }
       }
-/*      resultcheck = records['result'];
-      admitcardcheck = records['admit_card'];
 
-      print('Result check : $resultcheck');
-      print('Admit Card : $admitcardcheck');*/
       // Simulate fetching data for 5 seconds
       await Future.delayed(Duration(seconds: 1));
 
@@ -183,8 +167,12 @@ class _DashboardState extends State<Dashboard>
           typeID: item['exam_type_id'],
           CatagoryID: item['exam_category_id'],
           priceID: item['fee_id'],
+          image: item['exam_image'],
         );
       }).toList();
+      for (var index = 0; index < examFeesData.length; index++) {
+        print('Exams at index $index: ${examFeesData[index]}\n');
+      }
 
       for (var index = 0; index < examFeesData.length; index++) {
         print('Application at index $index: ${examFeesData[index]}\n');
@@ -192,33 +180,29 @@ class _DashboardState extends State<Dashboard>
 
       // Map books to widgets
       final List<Widget> bookWidgets = booksData.map((item) {
-        int index = booksData.indexOf(item);
-        return ItemTemplate(
+        return BookTemplate(
           name: item['name'],
           price: item['price'],
         );
       }).toList();
 
-      final List<Widget> eventWidgets = EventData.map((item) {
-        int index = EventData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
+      _eventWidgets = EventData.map((item) {
+        return ImageItem(
+          imageUrl: item['image'],
           label: item['label'],
         );
       }).toList();
 
-      final List<Widget> programWidgets = ProgramData.map((item) {
-        int index = ProgramData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
+        _programWidgets = ProgramData.map((item) {
+        return ImageItem(
+          imageUrl: item['image'],
           label: item['label'],
         );
       }).toList();
 
-      final List<Widget> bjetWidgets = BjetData.map((item) {
-        int index = BjetData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
+      _bjetWidgets = BjetData.map((item) {
+        return ImageItem(
+          imageUrl: item['image'],
           label: item['label'],
         );
       }).toList();
@@ -227,9 +211,6 @@ class _DashboardState extends State<Dashboard>
         _examFeeWidgets = examFeeWidgets;
         _bookWidgets = bookWidgets;
         _noticeWidgets = noticeWidgets;
-        _eventWidgets = eventWidgets;
-        _programWidgets = programWidgets;
-        _bjetWidgets = bjetWidgets;
         _isFetched = true;
       });
     } catch (e) {
@@ -242,2834 +223,2376 @@ class _DashboardState extends State<Dashboard>
   @override
   void initState() {
     super.initState();
-    if (!_isFetched) {
-      fetchConnectionRequests().then((_) {
+    Future.delayed(Duration(seconds: 2) , () {
+      if (!_isFetched) {
+        fetchConnectionRequests().then((_) {
+          if (widget.shouldRefresh && _isFetched) {
+            setState(() {
+              _pageLoading = false;
+            });
+          }
+        });
+      } else {
         if (widget.shouldRefresh && _isFetched) {
           setState(() {
             _pageLoading = false;
           });
         }
-      });
-    } else {
-      loadUserProfile();
-      if (widget.shouldRefresh && _isFetched) {
-        setState(() {
-          _pageLoading = false;
-        });
       }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     return _pageLoading
         ? Scaffold(
-            backgroundColor: Colors.white,
-            body: Center(
-              // Show circular loading indicator while waiting
-              child: CircularProgressIndicator(),
-            ),
-          )
+      backgroundColor: Colors.white,
+      body: Center(
+        // Show circular loading indicator while waiting
+        child: CircularProgressIndicator(),
+      ),
+    )
         : BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state is AuthAuthenticated) {
-                final userProfile = state.userProfile;
-                return InternetChecker(
-                  child: PopScope(
-                    canPop: false,
-                    child: Scaffold(
-                      key: _scaffoldKey,
-                      appBar: auth
-                          ? AppBar(
-                              backgroundColor:
-                                  const Color.fromRGBO(0, 162, 222, 1),
-                              titleSpacing: 5,
-                              leading: IconButton(
-                                icon: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  _scaffoldKey.currentState!.openDrawer();
-                                },
-                              ),
-                              title: const Text(
-                                'Dashboard',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  fontFamily: 'default',
-                                ),
-                              ),
-                              actions: [
-                                Stack(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.notifications,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        _showNotificationsOverlay(context);
-                                        var notificationApiService =
-                                            await NotificationReadApiService
-                                                .create();
-                                        notificationApiService
-                                            .readNotification();
-                                      },
-                                    ),
-                                    if (notifications.isNotEmpty)
-                                      Positioned(
-                                        right: 11,
-                                        top: 11,
-                                        child: Container(
-                                          padding: EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          constraints: BoxConstraints(
-                                            minWidth: 12,
-                                            minHeight: 12,
-                                          ),
-                                          child: Text(
-                                            '${notifications.length}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 8,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          : AppBar(
-                              backgroundColor: Colors.white,
-                              titleSpacing: 5,
-                              automaticallyImplyLeading: false,
-                              title: Row(
-                                children: [
-                                  Image(
-                                    image: AssetImage(
-                                      'Assets/Images/BCC-Logo.png',
-                                    ),
-                                    height: 40,
-                                  ),
-                                  Image(
-                                    image: AssetImage(
-                                      'Assets/Images/ITEC-Logo.png',
-                                    ),
-                                    height: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Login(),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'Login/Sign Up',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(0, 162, 222, 1),
-                                        fontFamily: 'default',
-                                      ),
-                                    ))
-                              ],
-                            ),
-                      drawer: Drawer(
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          children: <Widget>[
-                            DrawerHeader(
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 162, 222, 1),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 60, // Adjust width as needed
-                                    height: 60, // Adjust height as needed
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: CachedNetworkImageProvider(
-                                            'https://bcc.touchandsolve.com${userProfile.photo}'),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    userProfile.name,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ListTile(
-                              title: Text('Home',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Dashboard(
-                                              shouldRefresh: true,
-                                            ))); // Close the drawer
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Exam Registration',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const RegistrationCenterFromMenu()));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Payment',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Payment(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Admit Card',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const AdmitCard(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Result',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Result(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Syllabus',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Syllabus(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Exam Material',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ExamMaterial(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Profile',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Profile(
-                                              shouldRefresh: true,
-                                            ))); // Close the drawer
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Logout',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () async {
-                                Navigator.pop(context);
-                                const snackBar = SnackBar(
-                                  content: Text('Logging out'),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                                /*   // Clear user data from SharedPreferences
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.remove('userName');
-                                await prefs.remove('organizationName');
-                                await prefs.remove('photoUrl');*/
-                                // Create an instance of LogOutApiService
-                                var logoutApiService =
-                                    await LogOutApiService.create();
-
-                                // Wait for authToken to be initialized
-                                logoutApiService.authToken;
-
-                                // Call the signOut method on the instance
-                                if (await logoutApiService.signOut()) {
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.remove('token');
-                                  const snackBar = SnackBar(
-                                    content: Text('Logged out'),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                  // Call logout method in AuthCubit/AuthBloc
-                                  context.read<AuthCubit>().logout();
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Login())); // Close the drawer
-                                }
-                              },
-                            ),
-                            Divider(),
-                          ],
-                        ),
-                      ),
-                      body: SingleChildScrollView(
-                        child: SafeArea(
-                          child: Container(
-                            //height: screenHeight,
-                            color: Colors.grey[100],
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 30),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    'Welcome to ITEE',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(0, 162, 222, 1),
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Center(
-                                    child: Text(
-                                      'A National & Internationally recognized IT Skills Training & Exam Center',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(143, 150, 158, 1),
-                                        letterSpacing: 1.1,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Notice(s)',
-                                                /*বিজ্ঞপ্তি*/
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildList(_noticeWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                if (auth == true) ...[
-                                  Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                      width: screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                              width: screenWidth * 0.9,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 20),
-                                              decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    0, 162, 222, 1),
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight: Radius.circular(10),
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'My Application(s)',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontFamily: 'default',
-                                                  ),
-                                                ),
-                                              )),
-                                          Container(
-                                            height: 250,
-                                            width: screenWidth,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight:
-                                                    Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: _applicationWidgets ==
-                                                        null ||
-                                                    _applicationWidgets.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                      'You have made any Application',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black54,
-                                                        fontFamily: 'default',
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Stack(
-                                                    children: [
-                                                      PageView.builder(
-                                                        controller:
-                                                            PageController(
-                                                                viewportFraction:
-                                                                    1),
-                                                        itemCount:
-                                                            _applicationWidgets
-                                                                .length,
-                                                        onPageChanged: (index) {
-                                                          setState(() {
-                                                            _currentapplicationpage =
-                                                                index; // Update _currentPage when the page changes
-                                                          });
-                                                        },
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          ApplicationItemTemplate
-                                                              Applicant =
-                                                              _applicationWidgets[
-                                                                      index]
-                                                                  as ApplicationItemTemplate;
-                                                          return ApplicationCard(
-                                                            examName:
-                                                                Applicant.name,
-                                                            examineeID:
-                                                                Applicant
-                                                                    .ExamineeID,
-                                                            examCatagories:
-                                                                Applicant
-                                                                    .Catagories,
-                                                            Payment: Applicant
-                                                                .payment,
-                                                            AdmitCard: Applicant
-                                                                .admitcard,
-                                                            Result: Applicant
-                                                                .result,
-                                                            onPaymentPressed:
-                                                                () {},
-                                                            onAdmitCardPressed:
-                                                                () {
-                                                              GetAdmitCardLinkandPrint(
-                                                                  Applicant
-                                                                      .ExamineeID);
-                                                            },
-                                                            onResultPressed:
-                                                                () {
-                                                              GetResult(Applicant
-                                                                  .ExamineeID);
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Icon(
-                                                          Icons.arrow_back_ios,
-                                                          color:
-                                                              _currentapplicationpage ==
-                                                                      0
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                        ),
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        child: Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
-                                                          color: _currentapplicationpage ==
-                                                                  _applicationWidgets
-                                                                          .length -
-                                                                      1
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                ],
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Exam Registration',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        Container(
-                                          height: 250,
-                                          width: screenWidth,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                            ),
-                                          ),
-                                          child: _examFeeWidgets ==
-                                              null ||
-                                              _examFeeWidgets.isEmpty
-                                              ? Center(
-                                            child: Text(
-                                              'No Exam Avaiable right now',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black54,
-                                                fontFamily: 'default',
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          )
-                                              : Stack(
-                                            children: [
-                                              PageView.builder(
-                                                controller: PageController(
-                                                    viewportFraction: 1),
-                                                itemCount:
-                                                    _examFeeWidgets.length,
-                                                onPageChanged: (index) {
-                                                  setState(() {
-                                                    _currentexamregitrationpage =
-                                                        index; // Update _currentPage when the page changes
-                                                  });
-                                                },
-                                                itemBuilder: (context, index) {
-                                                  ExamItemTemplate exam =
-                                                      _examFeeWidgets[index]
-                                                          as ExamItemTemplate;
-                                                  return ExamCard(
-                                                    examName: exam.name,
-                                                    examCatagories:
-                                                        exam.Catagories,
-                                                    examFee: exam.price,
-                                                    onDetailsPressed: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      ExamDetails(
-                                                                        details:
-                                                                            exam.Details,
-                                                                      )));
-                                                    },
-                                                    onSharePressed: () async {
-                                                      Share.share(
-                                                        exam.Details,
-                                                        subject: 'Exam Details',
-                                                      );
-                                                    },
-                                                    onRegistrationPressed: () {
-                                                      print(exam.Catagories);
-                                                      print(exam.name);
-                                                      print(exam.price);
-                                                      print(exam.Details);
-                                                      print(exam.CatagoryID);
-                                                      print(exam.typeID);
-                                                      print(exam.priceID);
-                                                      if (auth == true) {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        RegistrationCenterFromPopularExam(
-                                                                          Catagory:
-                                                                              exam.Catagories,
-                                                                          Type:
-                                                                              exam.name,
-                                                                          Fee: exam
-                                                                              .price,
-                                                                          CatagoryId:
-                                                                              exam.CatagoryID,
-                                                                          TypeId:
-                                                                              exam.typeID,
-                                                                          FeeId:
-                                                                              exam.priceID,
-                                                                        )));
-                                                      } else if (auth ==
-                                                          false) {
-                                                        const snackBar =
-                                                            SnackBar(
-                                                          content: Text(
-                                                              'Please Login First!!'),
-                                                        );
-                                                        ScaffoldMessenger.of(context
-                                                                as BuildContext)
-                                                            .showSnackBar(
-                                                                snackBar);
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        Login()));
-                                                      }
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Icon(
-                                                  Icons.arrow_back_ios,
-                                                  color:
-                                                      _currentexamregitrationpage ==
-                                                              0
-                                                          ? Colors.transparent
-                                                          : Colors.black,
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  color:
-                                                      _currentexamregitrationpage ==
-                                                              _examFeeWidgets
-                                                                      .length -
-                                                                  1
-                                                          ? Colors.transparent
-                                                          : Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Recent Events',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_eventWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Training Program',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_programWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'B-Jet Program',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_bjetWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                if (auth == true) ...[
-                                  Text(
-                                    'Candidate can also purchase books from the following offices on cash payment',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                      width: screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                              width: screenWidth * 0.9,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 20, vertical: 20),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    Color.fromRGBO(0, 162, 222, 1),
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight: Radius.circular(10),
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'Book',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontFamily: 'default',
-                                                  ),
-                                                ),
-                                              )),
-                                          Container(
-                                            height: 150,
-                                            width: screenWidth,
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(
-                                                  Radius.circular(10)),
-                                            ),
-                                            child: _bookWidgets == null ||
-                                                    _bookWidgets.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                      'No books available',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black54,
-                                                        fontFamily: 'default',
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Stack(
-                                                    children: [
-                                                      PageView.builder(
-                                                        controller: PageController(
-                                                            viewportFraction: 1),
-                                                        itemCount:
-                                                            _bookWidgets.length,
-                                                        onPageChanged: (index) {
-                                                          setState(() {
-                                                            _currentbookpage =
-                                                                index; // Update _currentPage when the page changes
-                                                          });
-                                                        },
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          ItemTemplate book =
-                                                              _bookWidgets[index]
-                                                                  as ItemTemplate;
-                                                          return BookCard(
-                                                            bookName: book.name,
-                                                            bookPrice: book.price,
-                                                          );
-                                                        },
-                                                      ),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        child: Icon(
-                                                          Icons.arrow_back_ios,
-                                                          color: _currentbookpage ==
-                                                                  0
-                                                              ? Colors.transparent
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.centerRight,
-                                                        child: Icon(
-                                                          Icons.arrow_forward_ios,
-                                                          color: _currentbookpage ==
-                                                                  _bookWidgets
-                                                                          .length -
-                                                                      1
-                                                              ? Colors.transparent
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Center(
-                                    child: Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              0, 162, 222, 1),
-                                          fixedSize: Size(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.08),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Syllabus()));
-                                        },
-                                        child: const Text('Syllabus',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'default',
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              0, 162, 222, 1),
-                                          fixedSize: Size(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.08),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const ExamMaterial()));
-                                        },
-                                        child: const Text('Exam Material',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'default',
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                                Center(
-                                  child: Text(
-                                    'Partners',
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(143, 150, 158, 1),
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'default'),
-                                  ),
-                                ),
-                                Divider(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image:
-                                          AssetImage('Assets/Images/Itpec.png'),
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Image(
-                                        image: AssetImage(
-                                            'Assets/Images/Jica.png'),
-                                        width: 70,
-                                        height: 70),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      bottomNavigationBar: Container(
-                        height: screenHeight * 0.08,
-                        color: const Color.fromRGBO(0, 162, 222, 1),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Dashboard(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.home,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Home',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ITEEDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.info_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'ITEE',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => BJetDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          'Assets/Images/Bjet-Small.png'),
-                                      height: 30,
-                                      width: 50,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'B-Jet',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ITEETrainingProgramDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          'Assets/Images/ITEE-Small.png'),
-                                      height: 30,
-                                      width: 60,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Training',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Dashboard(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.phone,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Contact',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+      builder: (context, state) {
+        if (state is AuthAuthenticated) {
+          final userProfile = state.userProfile;
+          return InternetChecker(
+            child: PopScope(
+              canPop: false,
+              child: Scaffold(
+                key: _scaffoldKey,
+                appBar: auth
+                    ? AppBar(
+                  backgroundColor:
+                  const Color.fromRGBO(0, 162, 222, 1),
+                  titleSpacing: 5,
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      color: Colors.white,
                     ),
+                    onPressed: () {
+                      _scaffoldKey.currentState!.openDrawer();
+                    },
                   ),
-                );
-              } else {
-                return InternetChecker(
-                  child: PopScope(
-                    canPop: false,
-                    child: Scaffold(
-                      key: _scaffoldKey,
-                      appBar: auth
-                          ? AppBar(
-                              backgroundColor:
-                                  const Color.fromRGBO(0, 162, 222, 1),
-                              titleSpacing: 5,
-                              leading: IconButton(
-                                icon: const Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  _scaffoldKey.currentState!.openDrawer();
-                                },
-                              ),
-                              title: const Text(
-                                'Dashboard',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  fontFamily: 'default',
-                                ),
-                              ),
-                              actions: [
-                                Stack(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.notifications,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        _showNotificationsOverlay(context);
-                                        var notificationApiService =
-                                            await NotificationReadApiService
-                                                .create();
-                                        notificationApiService
-                                            .readNotification();
-                                      },
-                                    ),
-                                    if (notifications.isNotEmpty)
-                                      Positioned(
-                                        right: 11,
-                                        top: 11,
-                                        child: Container(
-                                          padding: EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          constraints: BoxConstraints(
-                                            minWidth: 12,
-                                            minHeight: 12,
-                                          ),
-                                          child: Text(
-                                            '${notifications.length}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 8,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          : AppBar(
-                              backgroundColor: Colors.white,
-                              titleSpacing: 5,
-                              automaticallyImplyLeading: false,
-                              title: Row(
-                                children: [
-                                  Image(
-                                    image: AssetImage(
-                                      'Assets/Images/BCC-Logo.png',
-                                    ),
-                                    height: 40,
-                                  ),
-                                  Image(
-                                    image: AssetImage(
-                                      'Assets/Images/ITEC-Logo.png',
-                                    ),
-                                    height: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Login(),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'Login/Sign Up',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(0, 162, 222, 1),
-                                        fontFamily: 'default',
-                                      ),
-                                    ))
-                              ],
-                            ),
-                      drawer: Drawer(
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          children: <Widget>[
-                            DrawerHeader(
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 162, 222, 1),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 60, // Adjust width as needed
-                                    height: 60, // Adjust height as needed
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: CachedNetworkImageProvider(
-                                            photoUrl),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    userName,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ListTile(
-                              title: Text('Home',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Dashboard(
-                                              shouldRefresh: true,
-                                            ))); // Close the drawer
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Syllabus',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Syllabus()));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Exam Material',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ExamMaterial()));
-                              },
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text('Logout',
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'default',
-                                  )),
-                              onTap: () async {
-                                Navigator.pop(context);
-                                const snackBar = SnackBar(
-                                  content: Text('Logging out'),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-                                /*   // Clear user data from SharedPreferences
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.remove('userName');
-                                await prefs.remove('organizationName');
-                                await prefs.remove('photoUrl');*/
-                                // Create an instance of LogOutApiService
-                                var logoutApiService =
-                                    await LogOutApiService.create();
-
-                                // Wait for authToken to be initialized
-                                logoutApiService.authToken;
-
-                                // Call the signOut method on the instance
-                                if (await logoutApiService.signOut()) {
-                                  const snackBar = SnackBar(
-                                    content: Text('Logged out'),
-                                  );
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(snackBar);
-                                  // Call logout method in AuthCubit/AuthBloc
-                                  context.read<AuthCubit>().logout();
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              Login())); // Close the drawer
-                                }
-                              },
-                            ),
-                            Divider(),
-                          ],
-                        ),
-                      ),
-                      body: SingleChildScrollView(
-                        child: SafeArea(
-                          child: Container(
-                            //height: screenHeight,
-                            color: Colors.grey[100],
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 30),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    'Welcome to ITEE',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(0, 162, 222, 1),
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Center(
-                                    child: Text(
-                                      'A Local & Internally recognized IT Skills Training & Exam Center',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(143, 150, 158, 1),
-                                        letterSpacing: 1.1,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                if (auth == true) ...[
-                                  Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                      width: screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                              width: screenWidth * 0.9,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 20),
-                                              decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    0, 162, 222, 1),
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight: Radius.circular(10),
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'My Application(s)',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontFamily: 'default',
-                                                  ),
-                                                ),
-                                              )),
-                                          Container(
-                                            height: 250,
-                                            width: screenWidth,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(10),
-                                                bottomRight:
-                                                    Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: _applicationWidgets ==
-                                                        null ||
-                                                    _applicationWidgets.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                      'You have made any Application',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black54,
-                                                        fontFamily: 'default',
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Stack(
-                                                    children: [
-                                                      PageView.builder(
-                                                        controller:
-                                                            PageController(
-                                                                viewportFraction:
-                                                                    1),
-                                                        itemCount:
-                                                            _applicationWidgets
-                                                                .length,
-                                                        onPageChanged: (index) {
-                                                          setState(() {
-                                                            _currentapplicationpage =
-                                                                index; // Update _currentPage when the page changes
-                                                          });
-                                                        },
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          ApplicationItemTemplate
-                                                              Applicant =
-                                                              _applicationWidgets[
-                                                                      index]
-                                                                  as ApplicationItemTemplate;
-                                                          return ApplicationCard(
-                                                            examName:
-                                                                Applicant.name,
-                                                            examineeID:
-                                                                Applicant
-                                                                    .ExamineeID,
-                                                            examCatagories:
-                                                                Applicant
-                                                                    .Catagories,
-                                                            Payment: Applicant
-                                                                .payment,
-                                                            AdmitCard: Applicant
-                                                                .admitcard,
-                                                            Result: Applicant
-                                                                .result,
-                                                            onPaymentPressed:
-                                                                () {},
-                                                            onAdmitCardPressed:
-                                                                () {
-                                                              GetAdmitCardLinkandPrint(
-                                                                  Applicant
-                                                                      .ExamineeID);
-                                                            },
-                                                            onResultPressed:
-                                                                () {
-                                                              GetResult(Applicant
-                                                                  .ExamineeID);
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Icon(
-                                                          Icons.arrow_back_ios,
-                                                          color:
-                                                              _currentapplicationpage ==
-                                                                      0
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                        ),
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        child: Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
-                                                          color: _currentapplicationpage ==
-                                                                  _applicationWidgets
-                                                                          .length -
-                                                                      1
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                ],
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'গুরুত্বপূর্ণ নোটিশ',
-                                                /*বিজ্ঞপ্তি*/
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildList(_noticeWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Recent Events',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_eventWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Exam Registration',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        Container(
-                                          height: 250,
-                                          width: screenWidth,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10),
-                                            ),
-                                          ),
-                                          child: _examFeeWidgets ==
-                                              null ||
-                                              _examFeeWidgets.isEmpty
-                                              ? Center(
-                                            child: Text(
-                                              'No Exam Avaiable right now',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black54,
-                                                fontFamily: 'default',
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          )
-                                              : Stack(
-                                            children: [
-                                              PageView.builder(
-                                                controller: PageController(
-                                                    viewportFraction: 1),
-                                                itemCount:
-                                                    _examFeeWidgets.length,
-                                                onPageChanged: (index) {
-                                                  setState(() {
-                                                    _currentexamregitrationpage =
-                                                        index; // Update _currentPage when the page changes
-                                                  });
-                                                },
-                                                itemBuilder: (context, index) {
-                                                  ExamItemTemplate exam =
-                                                      _examFeeWidgets[index]
-                                                          as ExamItemTemplate;
-                                                  return ExamCard(
-                                                    examName: exam.name,
-                                                    examCatagories:
-                                                        exam.Catagories,
-                                                    examFee: exam.price,
-                                                    onDetailsPressed: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      ExamDetails(
-                                                                        details:
-                                                                            exam.Details,
-                                                                      )));
-                                                    },
-                                                    onSharePressed: () async {
-                                                      Share.share(
-                                                        exam.Details,
-                                                        subject: 'Exam Details',
-                                                      );
-                                                    },
-                                                    onRegistrationPressed: () {
-                                                      print(exam.Catagories);
-                                                      print(exam.name);
-                                                      print(exam.price);
-                                                      print(exam.Details);
-                                                      print(exam.CatagoryID);
-                                                      print(exam.typeID);
-                                                      print(exam.priceID);
-                                                      if (auth == true) {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        RegistrationCenterFromPopularExam(
-                                                                          Catagory:
-                                                                              exam.Catagories,
-                                                                          Type:
-                                                                              exam.name,
-                                                                          Fee: exam
-                                                                              .price,
-                                                                          CatagoryId:
-                                                                              exam.CatagoryID,
-                                                                          TypeId:
-                                                                              exam.typeID,
-                                                                          FeeId:
-                                                                              exam.priceID,
-                                                                        )));
-                                                      } else if (auth ==
-                                                          false) {
-                                                        const snackBar =
-                                                            SnackBar(
-                                                          content: Text(
-                                                              'Please Login First!!'),
-                                                        );
-                                                        ScaffoldMessenger.of(context
-                                                                as BuildContext)
-                                                            .showSnackBar(
-                                                                snackBar);
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        Login()));
-                                                      }
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Icon(
-                                                  Icons.arrow_back_ios,
-                                                  color:
-                                                      _currentexamregitrationpage ==
-                                                              0
-                                                          ? Colors.transparent
-                                                          : Colors.black,
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  color:
-                                                      _currentexamregitrationpage ==
-                                                              _examFeeWidgets
-                                                                      .length -
-                                                                  1
-                                                          ? Colors.transparent
-                                                          : Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Training Program',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_programWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                Material(
-                                  elevation: 5,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                            width: screenWidth * 0.9,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 20),
-                                            decoration: BoxDecoration(
-                                              color: Color.fromRGBO(
-                                                  0, 162, 222, 1),
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10),
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'B-Jet Program',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                  fontFamily: 'default',
-                                                ),
-                                              ),
-                                            )),
-                                        _buildImageList(_bjetWidgets),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                if (auth == true) ...[
-                                  Text(
-                                    'Candidate can also purchase books from the following offices on cash payment',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color.fromRGBO(143, 150, 158, 1),
-                                      fontFamily: 'default',
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                      width: screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                              width: screenWidth * 0.9,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 20),
-                                              decoration: BoxDecoration(
-                                                color: Color.fromRGBO(
-                                                    0, 162, 222, 1),
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(10),
-                                                  topRight: Radius.circular(10),
-                                                ),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'Book',
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                    fontFamily: 'default',
-                                                  ),
-                                                ),
-                                              )),
-                                          Container(
-                                            height: 150,
-                                            width: screenWidth,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(10)),
-                                            ),
-                                            child: _bookWidgets == null ||
-                                                    _bookWidgets.isEmpty
-                                                ? Center(
-                                                    child: Text(
-                                                      'No books available',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black54,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontFamily: 'default',
-                                                      ),
-                                                    ),
-                                                  )
-                                                : Stack(
-                                                    children: [
-                                                      PageView.builder(
-                                                        controller:
-                                                            PageController(
-                                                                viewportFraction:
-                                                                    1),
-                                                        itemCount:
-                                                            _bookWidgets.length,
-                                                        onPageChanged: (index) {
-                                                          setState(() {
-                                                            _currentbookpage =
-                                                                index; // Update _currentPage when the page changes
-                                                          });
-                                                        },
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          ItemTemplate book =
-                                                              _bookWidgets[
-                                                                      index]
-                                                                  as ItemTemplate;
-                                                          return BookCard(
-                                                            bookName: book.name,
-                                                            bookPrice:
-                                                                book.price,
-                                                          );
-                                                        },
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Icon(
-                                                          Icons.arrow_back_ios,
-                                                          color:
-                                                              _currentbookpage ==
-                                                                      0
-                                                                  ? Colors
-                                                                      .transparent
-                                                                  : Colors
-                                                                      .black,
-                                                        ),
-                                                      ),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerRight,
-                                                        child: Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
-                                                          color: _currentbookpage ==
-                                                                  _bookWidgets
-                                                                          .length -
-                                                                      1
-                                                              ? Colors
-                                                                  .transparent
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Center(
-                                    child: Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              0, 162, 222, 1),
-                                          fixedSize: Size(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.08),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Syllabus()));
-                                        },
-                                        child: const Text('Syllabus',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'default',
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              0, 162, 222, 1),
-                                          fixedSize: Size(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9,
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.08),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const ExamMaterial()));
-                                        },
-                                        child: const Text('Exam Material',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'default',
-                                            )),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                                Center(
-                                  child: Text(
-                                    'Partners',
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(143, 150, 158, 1),
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'default'),
-                                  ),
-                                ),
-                                Divider(),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image(
-                                      image:
-                                          AssetImage('Assets/Images/Itpec.png'),
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Image(
-                                        image: AssetImage(
-                                            'Assets/Images/Jica.png'),
-                                        width: 70,
-                                        height: 70),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      bottomNavigationBar: Container(
-                        height: screenHeight * 0.08,
-                        color: const Color.fromRGBO(0, 162, 222, 1),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Dashboard(
-                                              shouldRefresh: true,
-                                            )));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.home,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Home',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ITEEDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.info_outline,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'ITEE',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => BJetDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          'Assets/Images/Bjet-Small.png'),
-                                      height: 30,
-                                      width: 50,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'B-Jet',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ITEETrainingProgramDetails()));
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Image(
-                                      image: AssetImage(
-                                          'Assets/Images/ITEE-Small.png'),
-                                      height: 30,
-                                      width: 60,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Training',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () async {
-                                showPhoneNumberDialog(context);
-                                /* try {
-                                  await FlutterPhoneDirectCaller.callNumber(
-                                      '+8801857321122');
-                                  // Optionally, you could provide feedback if the call was initiated successfully
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Calling...')),
-                                  );
-                                } catch (e) {
-                                  print('Error: $e');
-                                  // Handle any errors that occur during the call attempt
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to make the call: $e')),
-                                  );
-                                }
-                                ;*/
-                                //_callNumber;
-                                /*_makePhoneCall(context, 'tel:+8801857321122');*/
-                              },
-                              child: Container(
-                                width: screenWidth / 5,
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.phone,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Contact',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        fontFamily: 'default',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }
-            },
-          );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
+                  title: const Text(
+                    'Dashboard',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 20,
                       fontFamily: 'default',
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+                  actions: [
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                          ),
+                          onPressed: () async {
+                            _showNotificationsOverlay(context);
+                            var notificationApiService =
+                            await NotificationReadApiService
+                                .create();
+                            notificationApiService
+                                .readNotification();
+                          },
+                        ),
+                        if (notifications.isNotEmpty)
+                          Positioned(
+                            right: 11,
+                            top: 11,
+                            child: Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                BorderRadius.circular(6),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 12,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                '${notifications.length}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                )
+                    : AppBar(
+                  backgroundColor: Colors.white,
+                  titleSpacing: 5,
+                  automaticallyImplyLeading: false,
+                  title: Row(
+                    children: [
+                      Image(
+                        image: AssetImage(
+                          'Assets/Images/BCC-Logo.png',
+                        ),
+                        height: 40,
+                      ),
+                      Image(
+                        image: AssetImage(
+                          'Assets/Images/ITEC-Logo.png',
+                        ),
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Login(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Login/Sign Up',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(0, 162, 222, 1),
+                            fontFamily: 'default',
+                          ),
+                        ))
+                  ],
                 ),
+                drawer: Drawer(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      DrawerHeader(
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(
+                                      'https://bcc.touchandsolve.com${userProfile
+                                          .photo}'),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              userProfile.name,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'default',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Home',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Dashboard(
+                                    shouldRefresh: true,
+                                  )));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Exam Registration',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const RegistrationCenterFromMenu()));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Payment',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Payment(
+                                    shouldRefresh: true,
+                                  )));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Admit Card',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const AdmitCard(
+                                    shouldRefresh: true,
+                                  )));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Result',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Result(
+                                    shouldRefresh: true,
+                                  )));
+                        },
+                      ),
+                      Divider(),
+                      ExpansionTile(
+                        title: Text(
+                          'Download Materials',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                        children: [
+                          Divider(),
+                          ListTile(
+                            title: Text(
+                              '   Syllabus',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18,
+                                fontFamily: 'default',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Syllabus(shouldRefresh: true),
+                                ),
+                              );
+                            },
+                          ),
+                          Divider(),
+                          ListTile(
+                            title: Text(
+                              '   Exam Material',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18,
+                                fontFamily: 'default',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                  const ExamMaterial(
+                                      shouldRefresh: true),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Profile',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Profile(
+                                        shouldRefresh: true,
+                                      )));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Logout',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          const snackBar = SnackBar(
+                            content: Text('Logging out'),
+                          );
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(snackBar);
+
+                          var logoutApiService =
+                          await LogOutApiService.create();
+
+                          // Wait for authToken to be initialized
+                          logoutApiService.authToken;
+
+                          // Call the signOut method on the instance
+                          if (await logoutApiService.signOut()) {
+                            final prefs =
+                            await SharedPreferences.getInstance();
+                            await prefs.remove('token');
+                            const snackBar = SnackBar(
+                              content: Text('Logged out'),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            // Call logout method in AuthCubit/AuthBloc
+                            context.read<AuthCubit>().logout();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Login()));
+                          }
+                        },
+                      ),
+                      Divider(),
+                    ],
+                  ),
+                ),
+                body: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Container(
+                      //height: screenHeight,
+                      color: Colors.grey[100],
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              'Welcome to ITEE',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromRGBO(0, 162, 222, 1),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'default',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0),
+                            child: Center(
+                              child: Text(
+                                'A National & Internationally recognized IT Skills Training & Exam Center',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(143, 150, 158, 1),
+                                  letterSpacing: 1.1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'default',
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Notice(s)',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildList(_noticeWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          if (auth == true) ...[
+                            Material(
+                              elevation: 5,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: screenWidth * 0.9,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        width: screenWidth * 0.9,
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              0, 162, 222, 1),
+                                          borderRadius:
+                                          const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'My Application(s)',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontFamily: 'default',
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                      height: 220,
+                                      width: screenWidth,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight:
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: _applicationWidgets ==
+                                          null ||
+                                          _applicationWidgets.isEmpty
+                                          ? Center(
+                                        child: Text(
+                                          'You have made any Application',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black54,
+                                            fontFamily: 'default',
+                                            fontWeight:
+                                            FontWeight.bold,
+                                          ),
+                                        ),
+                                      )
+                                          : Stack(
+                                        children: [
+                                          PageView.builder(
+                                            controller:
+                                            PageController(
+                                                viewportFraction:
+                                                1),
+                                            itemCount:
+                                            _applicationWidgets
+                                                .length,
+                                            onPageChanged: (index) {
+                                              setState(() {
+                                                _currentapplicationpage =
+                                                    index; // Update _currentPage when the page changes
+                                              });
+                                            },
+                                            itemBuilder:
+                                                (context, index) {
+                                              ApplicationItemTemplate
+                                              Applicant =
+                                              _applicationWidgets[
+                                              index]
+                                              as ApplicationItemTemplate;
+                                              return ApplicationCard(
+                                                examName:
+                                                Applicant.name,
+                                                examineeID:
+                                                Applicant
+                                                    .ExamineeID,
+                                                examCatagories:
+                                                Applicant
+                                                    .Catagories,
+                                                Payment: Applicant
+                                                    .payment,
+                                                AdmitCard: Applicant
+                                                    .admitcard,
+                                                Result: Applicant
+                                                    .result,
+                                                onPaymentPressed:
+                                                    () {},
+                                                onAdmitCardPressed:
+                                                    () {
+                                                  GetAdmitCardLinkandPrint(
+                                                      Applicant
+                                                          .ExamineeID);
+                                                },
+                                                onResultPressed:
+                                                    () {
+                                                  GetResult(Applicant
+                                                      .ExamineeID);
+                                                },
+                                              );
+                                            },
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft,
+                                            child: Icon(
+                                              Icons.arrow_back_ios,
+                                              color:
+                                              _currentapplicationpage ==
+                                                  0
+                                                  ? Colors.white
+                                                  : Colors
+                                                  .black,
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerRight,
+                                            child: Icon(
+                                              Icons
+                                                  .arrow_forward_ios,
+                                              color: _currentapplicationpage ==
+                                                  _applicationWidgets
+                                                      .length -
+                                                      1
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                          ],
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Exam Registration',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  Container(
+                                    height: 420,
+                                    width: screenWidth,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: _examFeeWidgets == null ||
+                                        _examFeeWidgets.isEmpty
+                                        ? Center(
+                                      child: Text(
+                                        'No Exam Avaiable right now',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black54,
+                                          fontFamily: 'default',
+                                          fontWeight:
+                                          FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                        : Stack(
+                                      children: [
+                                        PageView.builder(
+                                          controller:
+                                          PageController(
+                                              viewportFraction:
+                                              1),
+                                          itemCount: _examFeeWidgets
+                                              .length,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _currentexamregitrationpage =
+                                                  index; // Update _currentPage when the page changes
+                                            });
+                                          },
+                                          itemBuilder:
+                                              (context, index) {
+                                            ExamItemTemplate exam =
+                                            _examFeeWidgets[
+                                            index]
+                                            as ExamItemTemplate;
+                                            return ExamCard(
+                                                examImage: 'https://www.bcc.touchandsolve.com' + exam.image,
+                                                examName: exam.name,
+                                                examCatagories:
+                                                exam.Catagories,
+                                                examFee: exam.price,
+                                                onDetailsPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder:
+                                                              (context) =>
+                                                              ExamDetails(
+                                                                details: exam
+                                                                    .Details,
+                                                              )));
+                                                },
+                                                onSharePressed:
+                                                    () async {
+                                                  Share.share(
+                                                    exam.Details,
+                                                    subject:
+                                                    'Exam Details',
+                                                  );
+                                                },
+                                                onRegistrationPressed:
+                                                    () {
+                                                  print(exam
+                                                      .Catagories);
+                                                  print(exam.name);
+                                                  print(exam.price);
+                                                  print(exam.Details);
+                                                  print(exam
+                                                      .CatagoryID);
+                                                  print(exam.typeID);
+                                                  print(exam.priceID);
+                                                  if (auth == true) {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (
+                                                                context) =>
+                                                                RegistrationCenterFromPopularExam(
+                                                                  Catagory:
+                                                                  exam
+                                                                      .Catagories,
+                                                                  Type:
+                                                                  exam.name,
+                                                                  Fee:
+                                                                  exam.price,
+                                                                  CatagoryId:
+                                                                  exam
+                                                                      .CatagoryID,
+                                                                  TypeId:
+                                                                  exam.typeID,
+                                                                  FeeId:
+                                                                  exam.priceID,
+                                                                )));
+                                                  } else if (auth ==
+                                                      false) {
+                                                    const snackBar =
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Please Login First!!'),
+                                                    );
+                                                    ScaffoldMessenger
+                                                        .of(context
+                                                    as BuildContext)
+                                                        .showSnackBar(
+                                                        snackBar);
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                Login()));
+                                                  }
+                                                },
+                                            );
+                                          },
+                                        ),
+                                        Align(
+                                          alignment:
+                                          Alignment.centerLeft,
+                                          child: Icon(
+                                            Icons.arrow_back_ios,
+                                            color:
+                                            _currentexamregitrationpage ==
+                                                0
+                                                ? Colors
+                                                .transparent
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment:
+                                          Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: _currentexamregitrationpage ==
+                                                _examFeeWidgets
+                                                    .length -
+                                                    1
+                                                ? Colors.transparent
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Recent Events',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_eventWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Training Program',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_programWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'B-Jet Program',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_bjetWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          if (auth == true) ...[
+                            Text(
+                              'Candidate can also purchase books from the following offices on cash payment',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(143, 150, 158, 1),
+                                fontFamily: 'default',
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Material(
+                              elevation: 5,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: screenWidth * 0.9,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        width: screenWidth * 0.9,
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              0, 162, 222, 1),
+                                          borderRadius:
+                                          const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'Book',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontFamily: 'default',
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                      height: 200,
+                                      width: screenWidth,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        const BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      child: _bookWidgets == null ||
+                                          _bookWidgets.isEmpty
+                                          ? Center(
+                                        child: Text(
+                                          'No books available',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black54,
+                                            fontFamily: 'default',
+                                            fontWeight:
+                                            FontWeight.bold,
+                                          ),
+                                        ),
+                                      )
+                                          : Stack(
+                                        children: [
+                                          PageView.builder(
+                                            controller:
+                                            PageController(
+                                                viewportFraction:
+                                                1),
+                                            itemCount:
+                                            _bookWidgets.length,
+                                            onPageChanged: (index) {
+                                              setState(() {
+                                                _currentbookpage =
+                                                    index; // Update _currentPage when the page changes
+                                              });
+                                            },
+                                            itemBuilder:
+                                                (context, index) {
+                                              BookTemplate book =
+                                              _bookWidgets[
+                                              index]
+                                              as BookTemplate;
+                                              return BookCard(
+                                                bookName: book.name,
+                                                bookPrice:
+                                                book.price,
+                                              );
+                                            },
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft,
+                                            child: Icon(
+                                              Icons.arrow_back_ios,
+                                              color:
+                                              _currentbookpage ==
+                                                  0
+                                                  ? Colors
+                                                  .transparent
+                                                  : Colors
+                                                  .black,
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerRight,
+                                            child: Icon(
+                                              Icons
+                                                  .arrow_forward_ios,
+                                              color: _currentbookpage ==
+                                                  _bookWidgets
+                                                      .length -
+                                                      1
+                                                  ? Colors
+                                                  .transparent
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Center(
+                              child: Material(
+                                elevation: 5,
+                                borderRadius: BorderRadius.circular(10),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(
+                                        0, 162, 222, 1),
+                                    fixedSize: Size(
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width *
+                                            0.9,
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height *
+                                            0.08),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const Syllabus()));
+                                  },
+                                  child: const Text('Syllabus',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      )),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Material(
+                                elevation: 5,
+                                borderRadius: BorderRadius.circular(10),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(
+                                        0, 162, 222, 1),
+                                    fixedSize: Size(
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width *
+                                            0.9,
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height *
+                                            0.08),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const ExamMaterial()));
+                                  },
+                                  child: const Text('Exam Material',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      )),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                          Center(
+                            child: Text(
+                              'Partners',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(143, 150, 158, 1),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'default'),
+                            ),
+                          ),
+                          Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image(
+                                image:
+                                AssetImage('Assets/Images/Itpec.png'),
+                                width: 100,
+                                height: 100,
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Image(
+                                  image: AssetImage(
+                                      'Assets/Images/Jica.png'),
+                                  width: 70,
+                                  height: 70),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                bottomNavigationBar: CustomBottomNavigationBar(),
               ),
             ),
-          ],
-        );
+          );
+        } else {
+          return InternetChecker(
+            child: PopScope(
+              canPop: false,
+              child: Scaffold(
+                key: _scaffoldKey,
+                appBar: auth
+                    ? AppBar(
+                  backgroundColor:
+                  const Color.fromRGBO(0, 162, 222, 1),
+                  titleSpacing: 5,
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      _scaffoldKey.currentState!.openDrawer();
+                    },
+                  ),
+                  title: const Text(
+                    'Dashboard',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      fontFamily: 'default',
+                    ),
+                  ),
+                  actions: [
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                          ),
+                          onPressed: () async {
+                            _showNotificationsOverlay(context);
+                            var notificationApiService =
+                            await NotificationReadApiService
+                                .create();
+                            notificationApiService
+                                .readNotification();
+                          },
+                        ),
+                        if (notifications.isNotEmpty)
+                          Positioned(
+                            right: 11,
+                            top: 11,
+                            child: Container(
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius:
+                                BorderRadius.circular(6),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 12,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                '${notifications.length}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                )
+                    : AppBar(
+                  backgroundColor: Colors.white,
+                  titleSpacing: 5,
+                  automaticallyImplyLeading: false,
+                  title: Row(
+                    children: [
+                      Image(
+                        image: AssetImage(
+                          'Assets/Images/BCC-Logo.png',
+                        ),
+                        height: 40,
+                      ),
+                      Image(
+                        image: AssetImage(
+                          'Assets/Images/ITEC-Logo.png',
+                        ),
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Login(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Login/Sign Up',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(0, 162, 222, 1),
+                            fontFamily: 'default',
+                          ),
+                        ))
+                  ],
+                ),
+                drawer: Drawer(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: <Widget>[
+                      DrawerHeader(
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(0, 162, 222, 1),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 60, // Adjust width as needed
+                              height: 60, // Adjust height as needed
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(
+                                      photoUrl),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              userName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'default',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Home',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Dashboard(
+                                    shouldRefresh: true,
+                                  ))); // Close the drawer
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Syllabus',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const Syllabus()));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Exam Material',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const ExamMaterial()));
+                        },
+                      ),
+                      Divider(),
+                      ListTile(
+                        title: Text('Logout',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default',
+                            )),
+                        onTap: () async {
+                          Navigator.pop(context);
+                          const snackBar = SnackBar(
+                            content: Text('Logging out'),
+                          );
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(snackBar);
+                          var logoutApiService =
+                          await LogOutApiService.create();
+
+                          // Wait for authToken to be initialized
+                          logoutApiService.authToken;
+
+                          // Call the signOut method on the instance
+                          if (await logoutApiService.signOut()) {
+                            const snackBar = SnackBar(
+                              content: Text('Logged out'),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            // Call logout method in AuthCubit/AuthBloc
+                            context.read<AuthCubit>().logout();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Login())); // Close the drawer
+                          }
+                        },
+                      ),
+                      Divider(),
+                    ],
+                  ),
+                ),
+                body: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Container(
+                      //height: screenHeight,
+                      color: Colors.grey[100],
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Text(
+                              'Welcome to ITEE',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color.fromRGBO(0, 162, 222, 1),
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'default',
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0),
+                            child: Center(
+                              child: Text(
+                                'A Local & Internally recognized IT Skills Training & Exam Center',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(143, 150, 158, 1),
+                                  letterSpacing: 1.1,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'default',
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          if (auth == true) ...[
+                            Material(
+                              elevation: 5,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: screenWidth * 0.9,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        width: screenWidth * 0.9,
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              0, 162, 222, 1),
+                                          borderRadius:
+                                          const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'My Application(s)',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontFamily: 'default',
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                      height: 200,
+                                      width: screenWidth,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          bottomLeft: Radius.circular(10),
+                                          bottomRight:
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: _applicationWidgets ==
+                                          null ||
+                                          _applicationWidgets.isEmpty
+                                          ? Center(
+                                        child: Text(
+                                          'You don\'t have made any Application',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black54,
+                                            fontFamily: 'default',
+                                            fontWeight:
+                                            FontWeight.bold,
+                                          ),
+                                        ),
+                                      )
+                                          : Stack(
+                                        children: [
+                                          PageView.builder(
+                                            controller:
+                                            PageController(
+                                                viewportFraction:
+                                                1),
+                                            itemCount:
+                                            _applicationWidgets
+                                                .length,
+                                            onPageChanged: (index) {
+                                              setState(() {
+                                                _currentapplicationpage =
+                                                    index; // Update _currentPage when the page changes
+                                              });
+                                            },
+                                            itemBuilder:
+                                                (context, index) {
+                                              ApplicationItemTemplate
+                                              Applicant =
+                                              _applicationWidgets[
+                                              index]
+                                              as ApplicationItemTemplate;
+                                              return ApplicationCard(
+                                                examName:
+                                                Applicant.name,
+                                                examineeID:
+                                                Applicant
+                                                    .ExamineeID,
+                                                examCatagories:
+                                                Applicant
+                                                    .Catagories,
+                                                Payment: Applicant
+                                                    .payment,
+                                                AdmitCard: Applicant
+                                                    .admitcard,
+                                                Result: Applicant
+                                                    .result,
+                                                onPaymentPressed:
+                                                    () {},
+                                                onAdmitCardPressed:
+                                                    () {
+                                                  GetAdmitCardLinkandPrint(
+                                                      Applicant
+                                                          .ExamineeID);
+                                                },
+                                                onResultPressed:
+                                                    () {
+                                                  GetResult(Applicant
+                                                      .ExamineeID);
+                                                },
+                                              );
+                                            },
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft,
+                                            child: Icon(
+                                              Icons.arrow_back_ios,
+                                              color:
+                                              _currentapplicationpage ==
+                                                  0
+                                                  ? Colors.white
+                                                  : Colors
+                                                  .black,
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerRight,
+                                            child: Icon(
+                                              Icons
+                                                  .arrow_forward_ios,
+                                              color: _currentapplicationpage ==
+                                                  _applicationWidgets
+                                                      .length -
+                                                      1
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                          ],
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'গুরুত্বপূর্ণ নোটিশ',
+                                          /*বিজ্ঞপ্তি*/
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildList(_noticeWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Recent Events',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_eventWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Exam Registration',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  Container(
+                                    height: 420,
+                                    width: screenWidth,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: _examFeeWidgets == null ||
+                                        _examFeeWidgets.isEmpty
+                                        ? Center(
+                                      child: Text(
+                                        'No Exam Avaiable right now',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black54,
+                                          fontFamily: 'default',
+                                          fontWeight:
+                                          FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                        : Stack(
+                                      children: [
+                                        PageView.builder(
+                                          controller:
+                                          PageController(
+                                              viewportFraction:
+                                              1),
+                                          itemCount: _examFeeWidgets
+                                              .length,
+                                          onPageChanged: (index) {
+                                            setState(() {
+                                              _currentexamregitrationpage =
+                                                  index; // Update _currentPage when the page changes
+                                            });
+                                          },
+                                          itemBuilder:
+                                              (context, index) {
+                                            ExamItemTemplate exam =
+                                            _examFeeWidgets[
+                                            index]
+                                            as ExamItemTemplate;
+                                            return ExamCard(
+                                              examImage: 'https://www.bcc.touchandsolve.com' + exam.image,
+                                              examName: exam.name,
+                                              examCatagories:
+                                              exam.Catagories,
+                                              examFee: exam.price,
+                                              onDetailsPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                            ExamDetails(
+                                                              details: exam
+                                                                  .Details,
+                                                            )));
+                                              },
+                                              onSharePressed:
+                                                  () async {
+                                                Share.share(
+                                                  exam.Details,
+                                                  subject:
+                                                  'Exam Details',
+                                                );
+                                              },
+                                              onRegistrationPressed:
+                                                  () {
+                                                print(exam
+                                                    .Catagories);
+                                                print(exam.name);
+                                                print(exam.price);
+                                                print(exam.Details);
+                                                print(exam
+                                                    .CatagoryID);
+                                                print(exam.typeID);
+                                                print(exam.priceID);
+                                                if (auth == true) {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RegistrationCenterFromPopularExam(
+                                                                Catagory:
+                                                                exam.Catagories,
+                                                                Type:
+                                                                exam.name,
+                                                                Fee:
+                                                                exam.price,
+                                                                CatagoryId:
+                                                                exam.CatagoryID,
+                                                                TypeId:
+                                                                exam.typeID,
+                                                                FeeId:
+                                                                exam.priceID,
+                                                              )));
+                                                } else if (auth ==
+                                                    false) {
+                                                  const snackBar =
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Please Login First!!'),
+                                                  );
+                                                  ScaffoldMessenger
+                                                      .of(context
+                                                  as BuildContext)
+                                                      .showSnackBar(
+                                                      snackBar);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder:
+                                                              (context) =>
+                                                              Login()));
+                                                }
+                                              },
+                                            );
+                                          },
+                                        ),
+                                        Align(
+                                          alignment:
+                                          Alignment.centerLeft,
+                                          child: Icon(
+                                            Icons.arrow_back_ios,
+                                            color:
+                                            _currentexamregitrationpage ==
+                                                0
+                                                ? Colors
+                                                .transparent
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment:
+                                          Alignment.centerRight,
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: _currentexamregitrationpage ==
+                                                _examFeeWidgets
+                                                    .length -
+                                                    1
+                                                ? Colors.transparent
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Training Program',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_programWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Material(
+                            elevation: 5,
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: screenWidth * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10)),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                      width: screenWidth * 0.9,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(
+                                            0, 162, 222, 1),
+                                        borderRadius:
+                                        const BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'B-Jet Program',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )),
+                                  _buildImageList(_bjetWidgets),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          if (auth == true) ...[
+                            Text(
+                              'Candidate can also purchase books from the following offices on cash payment',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(143, 150, 158, 1),
+                                fontFamily: 'default',
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Material(
+                              elevation: 5,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: screenWidth * 0.9,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        width: screenWidth * 0.9,
+                                        padding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                            vertical: 20),
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(
+                                              0, 162, 222, 1),
+                                          borderRadius:
+                                          const BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'Book',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontFamily: 'default',
+                                            ),
+                                          ),
+                                        )),
+                                    Container(
+                                      height: 250,
+                                      width: screenWidth,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        const BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      child: _bookWidgets == null ||
+                                          _bookWidgets.isEmpty
+                                          ? Center(
+                                        child: Text(
+                                          'No books available',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black54,
+                                            fontWeight:
+                                            FontWeight.bold,
+                                            fontFamily: 'default',
+                                          ),
+                                        ),
+                                      )
+                                          : Stack(
+                                        children: [
+                                          PageView.builder(
+                                            controller:
+                                            PageController(
+                                                viewportFraction:
+                                                1),
+                                            itemCount:
+                                            _bookWidgets.length,
+                                            onPageChanged: (index) {
+                                              setState(() {
+                                                _currentbookpage =
+                                                    index; // Update _currentPage when the page changes
+                                              });
+                                            },
+                                            itemBuilder:
+                                                (context, index) {
+                                              BookTemplate book =
+                                              _bookWidgets[
+                                              index]
+                                              as BookTemplate;
+                                              return BookCard(
+                                                bookName: book.name,
+                                                bookPrice:
+                                                book.price,
+                                              );
+                                            },
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerLeft,
+                                            child: Icon(
+                                              Icons.arrow_back_ios,
+                                              color:
+                                              _currentbookpage ==
+                                                  0
+                                                  ? Colors
+                                                  .transparent
+                                                  : Colors
+                                                  .black,
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment
+                                                .centerRight,
+                                            child: Icon(
+                                              Icons
+                                                  .arrow_forward_ios,
+                                              color: _currentbookpage ==
+                                                  _bookWidgets
+                                                      .length -
+                                                      1
+                                                  ? Colors
+                                                  .transparent
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Center(
+                              child: Material(
+                                elevation: 5,
+                                borderRadius: BorderRadius.circular(10),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(
+                                        0, 162, 222, 1),
+                                    fixedSize: Size(
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width *
+                                            0.9,
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height *
+                                            0.08),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const Syllabus()));
+                                  },
+                                  child: const Text('Syllabus',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      )),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Center(
+                              child: Material(
+                                elevation: 5,
+                                borderRadius: BorderRadius.circular(10),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(
+                                        0, 162, 222, 1),
+                                    fixedSize: Size(
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width *
+                                            0.9,
+                                        MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height *
+                                            0.08),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const ExamMaterial()));
+                                  },
+                                  child: const Text('Exam Material',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'default',
+                                      )),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                          Center(
+                            child: Text(
+                              'Partners',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(143, 150, 158, 1),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'default'),
+                            ),
+                          ),
+                          Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image(
+                                image:
+                                AssetImage('Assets/Images/Itpec.png'),
+                                width: 100,
+                                height: 100,
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Image(
+                                  image: AssetImage(
+                                      'Assets/Images/Jica.png'),
+                                  width: 70,
+                                  height: 70),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                bottomNavigationBar: CustomBottomNavigationBar(),
+              ),
+            ),
+          );
+        }
       },
     );
   }
 
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
-  }
 
   int _currentListPage = 0; // Declare _currentPage as a state variable
 
   Widget _buildList(List<Widget> items) {
     return Container(
       height: 200,
-      width: MediaQuery.of(context).size.width * 0.9,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width * 0.9,
       child: Stack(
         children: [
           PageView.builder(
@@ -3108,7 +2631,7 @@ class _DashboardState extends State<Dashboard>
 
   late int _currentPage = 0;
 
-  Widget _buildImageList(List<Widget> items) {
+  Widget _buildImageList(List<ImageItem> items) {
     return Container(
       height: 200,
       child: Stack(
@@ -3116,29 +2639,49 @@ class _DashboardState extends State<Dashboard>
           PageView.builder(
             itemCount: items.length,
             onPageChanged: (index) {
-              // Trigger a rebuild when the page changes to update the icon colors
               setState(() {
                 _currentPage = index;
                 print(_currentPage);
               });
             },
             itemBuilder: (context, index) {
-              ItemTemplateImages images = items[index] as ItemTemplateImages;
-              final String fullImageUrl =
-                  'https://www.bcc.touchandsolve.com' + images.images;
+              final item = items[index];
+              final String fullImageUrl = 'https://www.bcc.touchandsolve.com' + item.imageUrl;
               print(fullImageUrl);
-              return CachedNetworkImage(
-                imageUrl: fullImageUrl,
-                fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, downloadProgress) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: downloadProgress.progress,
+              return GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      backgroundColor: Colors.transparent,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop(); // Close the dialog when tapped
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: fullImageUrl,
+                          fit: BoxFit.contain,
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        ),
+                      ),
                     ),
                   );
                 },
-                errorWidget: (context, url, error) => Center(
-                  child: Icon(Icons.error), // Error icon for image load failure
+                child: CachedNetworkImage(
+                  imageUrl: fullImageUrl,
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: downloadProgress.progress,
+                      ),
+                    );
+                  },
+                  errorWidget: (context, url, error) =>
+                      Center(
+                        child: Icon(
+                            Icons.error), // Error icon for image load failure
+                      ),
                 ),
               );
             },
@@ -3176,7 +2719,7 @@ class _DashboardState extends State<Dashboard>
 
       // Fetch dashboard data
       final Map<String, dynamic>? ResultData =
-          await apiService.getResult(examineeID);
+      await apiService.getResult(examineeID);
       if (ResultData == null || ResultData.isEmpty) {
         // No data available or an error occurred
         print(
@@ -3194,8 +2737,15 @@ class _DashboardState extends State<Dashboard>
       final String afternoonPasser = result['afternoon_passer'];
       final int passed = result['passed'];
 
-      showResultDialog(context, name, examName, session, passerID,
-          morningPasser, afternoonPasser, passed);
+      showResultDialog(
+          context,
+          name,
+          examName,
+          session,
+          passerID,
+          morningPasser,
+          afternoonPasser,
+          passed);
 
       setState(() {
         _isFetchedResult = true;
@@ -3219,8 +2769,7 @@ class _DashboardState extends State<Dashboard>
     }
   }
 
-  void showResultDialog(
-      BuildContext context,
+  void showResultDialog(BuildContext context,
       String name,
       String examName,
       String session,
@@ -3301,8 +2850,14 @@ class _DashboardState extends State<Dashboard>
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                  fixedSize: Size(MediaQuery.of(context).size.width * 0.3,
-                      MediaQuery.of(context).size.height * 0.05),
+                  fixedSize: Size(MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.3,
+                      MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.05),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -3396,7 +2951,7 @@ class _DashboardState extends State<Dashboard>
 
       // Fetch dashboard data
       final Map<String, dynamic> dashboardData =
-          await apiService.fetchAdmitCardItems(examineeId);
+      await apiService.fetchAdmitCardItems(examineeId);
       if (dashboardData == null || dashboardData.isEmpty) {
         // No data available or an error occurred
         print(
@@ -3472,64 +3027,65 @@ class _DashboardState extends State<Dashboard>
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: kToolbarHeight + 10.0,
-        right: 10.0,
-        width: 250,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: notifications.isEmpty
-                ? Container(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.notifications_off),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          'No new notifications',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
+      builder: (context) =>
+          Positioned(
+            top: kToolbarHeight + 10.0,
+            right: 10.0,
+            width: 250,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      spreadRadius: 2,
                     ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.all(8),
-                    shrinkWrap: true,
-                    itemCount: notifications.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.info_outline),
-                            title: Text(notifications[index]),
-                            onTap: () {
-                              // Handle notification tap if necessary
-                              overlayEntry.remove();
-                            },
-                          ),
-                          if (index < notifications.length - 1) Divider()
-                        ],
-                      );
-                    },
+                  ],
+                ),
+                child: notifications.isEmpty
+                    ? Container(
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.notifications_off),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'No new notifications',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
                   ),
+                )
+                    : ListView.builder(
+                  padding: EdgeInsets.all(8),
+                  shrinkWrap: true,
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.info_outline),
+                          title: Text(notifications[index]),
+                          onTap: () {
+                            // Handle notification tap if necessary
+                            overlayEntry.remove();
+                          },
+                        ),
+                        if (index < notifications.length - 1) Divider()
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
     );
 
     overlay?.insert(overlayEntry);

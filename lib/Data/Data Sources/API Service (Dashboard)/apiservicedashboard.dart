@@ -15,11 +15,6 @@ class DashboardAPIService {
     return apiService;
   }
 
-/*  DashboardAPIService() {
-    _loadAuthToken();
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';

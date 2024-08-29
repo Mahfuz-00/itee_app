@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
@@ -9,16 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Syllabus)/apiserviceSyllabus.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
-
-
-
 
 class Syllabus extends StatefulWidget {
   final bool shouldRefresh;
@@ -84,7 +79,6 @@ class _SyllabusState extends State<Syllabus> {
     print('initState called');
     if (!_isFetched) {
       fetchConnectionRequests();
-      //_isFetched = true; // Set _isFetched to true after the first call
     }
     Future.delayed(Duration(seconds: 4), () {
         setState(() {
@@ -115,7 +109,6 @@ class _SyllabusState extends State<Syllabus> {
         canPop: true,
         child: Scaffold(
           backgroundColor: Colors.grey[100],
-          //resizeToAvoidBottomInset: false,
           appBar: AppBar(
             backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
             leading: IconButton(
@@ -555,9 +548,5 @@ class _SyllabusState extends State<Syllabus> {
         // Handle any errors
         print('Error generating PDF: $e');
       }
-
   }
-
-
-
 }

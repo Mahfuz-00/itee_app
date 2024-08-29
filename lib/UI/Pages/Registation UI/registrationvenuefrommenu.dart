@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceCenterSelection.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceFee.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicebook.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicetype.dart';
 import '../../../Data/Models/centerModels.dart';
+import '../../Bloc/first_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfield.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
@@ -79,8 +81,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         return;
       }
 
-      // getBooks(selectedExamCategory.toString());
-
       final Map<String, dynamic> records = dashboardData['records'];
       if (records == null || records.isEmpty) {
         // No records available
@@ -110,18 +110,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       final List<dynamic> examCategories = records['exam_categories'];
       await handleExamCategories(examCategories);
     }
-
-/*
-    if (records.containsKey('exam_type')) {
-      final List<dynamic> examTypes = records['exam_type'];
-      await handleExamTypes(examTypes);
-    }
-*/
-
-    /*if (records.containsKey('books')) {
-      final List<dynamic> books = records['books'];
-      await handleBooks(books);
-    }*/
   }
 
   Future<void> handleVenues(List<dynamic> venues) async {
@@ -132,7 +120,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         fetchedVenues.add(venue);
         print('Venue Name: ${venue.name}');
         print('Venue ID: ${venue.id}');
-        // Further processing if needed
       }
       setState(() {
         isLoadingVenues = false;
@@ -140,7 +127,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       });
     } catch (e) {
       print('Error handling venues: $e');
-      // Handle error
     }
   }
 
@@ -152,7 +138,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         fetchedExamCategories.add(category);
         print('Exam Category Name: ${category.name}');
         print('Exam Category ID: ${category.id}');
-        // Further processing if needed
       }
       print(fetchedExamCategories);
       setState(() {
@@ -161,12 +146,11 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       });
     } catch (e) {
       print('Error handling exam categories: $e');
-      // Handle error
     }
   }
 
   Future<void> fetchType(String CatagoriesID) async {
-    if (_isFetchedType) return; // Exit early if already fetched
+    if (_isFetchedType) return;
 
     setState(() {
       isLoadingExamTypes = true;
@@ -186,7 +170,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
           return;
         }
 
-        final dynamic records = response['records']; // Could be a list or map
+        final dynamic records = response['records'];
 
         if (records == null || records.isEmpty) {
           print('No records available');
@@ -220,8 +204,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         }
 
         setState(() {
-          _isFetchedType = true; // Mark as fetched
-        //  isFetchFeeInvoked = false; // Stop indicating loading
+          _isFetchedType = true;
         });
 
       } else {
@@ -230,8 +213,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     } catch (e) {
       print('Error fetching types: $e');
       setState(() {
-        _isFetchedType = true; // Mark as fetched even on error
-       // isFetchFeeInvoked = false; // Stop indicating loading
+        _isFetchedType = true;
       });
     }
   }
@@ -254,7 +236,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       });
     } catch (e) {
       print('Error handling exam types: $e');
-      // Handle error
     }
   }
 
@@ -277,6 +258,8 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         final fee = response['records']['fee'] as String;
         final id = response['records']['id'];
 
+        FeeID = id;
+
         setState(() {
           examFee = fee;
           isFetchFeeInvoked = false;
@@ -291,7 +274,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       } catch (e) {
         print('Error fetching connection requests: $e');
         _isFetchedFee = true;
-        // Handle error as needed
       }
     }
   }
@@ -305,15 +287,12 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         print('Book Name: ${book.name}');
         print('Book ID: ${book.id}');
         print('Book Price: ${book.bookprice}');
-        // Further processing if needed
       }
       setState(() {
-        // isLoadingBooks = false;
         Books = fetchedBooks;
       });
     } catch (e) {
       print('Error handling books: $e');
-      // Handle error
     }
   }
 
@@ -358,6 +337,16 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     }
   }
 
+  List<Book> _selectedBooks = [];
+
+  double _calculateTotalPrice() {
+    return _selectedBooks.fold(0.0, (sum, book) {
+      double price = double.tryParse(book.bookprice) ??
+          0.0; // Convert to double, default to 0.0 if null
+      return sum + price;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -395,7 +384,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       body: SingleChildScrollView(
           child: SafeArea(
         child: Container(
-          //height: screenHeight-80,
           color: Colors.grey[100],
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: Column(
@@ -403,7 +391,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
             children: [
               Center(
                 child: Text(
-                  'Register here to learn creative skill',
+                  'Fill the Form for Exam Registration',
                   style: TextStyle(
                     color: Color.fromRGBO(143, 150, 158, 1),
                     fontSize: 20,
@@ -468,39 +456,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                       ]
                     ],
                   ),
-                  /*DropdownButtonFormField<String>(
-                    value: selectedCenter,
-                    items: courseTypeOptions.keys.map((String courseType) {
-                      return DropdownMenuItem<String>(
-                        value: courseType,
-                        child: Text(
-                          courseType,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCenter = newValue;
-                        //selectedCourseType = null;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Venue',
-                      labelStyle: TextStyle(
-                        color: Color.fromRGBO(143, 150, 158, 1),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'default',
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),*/
                 ),
               ),
               SizedBox(
@@ -518,7 +473,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  //padding: EdgeInsets.only(left: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -596,7 +550,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  //padding: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -618,7 +571,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                               ExamType selectedTypeObject =
                                   ExamTypes.firstWhere(
                                 (type) => type.name == newValue,
-                                /*orElse: () => null,*/
                               );
                               if (selectedTypeObject != null) {
                                 //It Takes ID Int
@@ -649,43 +601,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                       ]
                     ],
                   ),
-
-                  /*DropdownButtonFormField<String>(
-                    value: selectedCourse,
-                    items: selectedCourseType != null
-                        ? courseOptions[selectedCourseType!]!
-                            .map((String course) {
-                            return DropdownMenuItem<String>(
-                              value: course,
-                              child: Text(
-                                course,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  fontFamily: 'default',
-                                ),
-                              ),
-                            );
-                          }).toList()
-                        : [],
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCourse = newValue;
-                        selectedBatchNo = null;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Exam Type',
-                      labelStyle: TextStyle(
-                        color: Color.fromRGBO(143, 150, 158, 1),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'default',
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  )*/
                 ),
               ),
               SizedBox(
@@ -725,12 +640,12 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                   ),
                 ),
               ),
-              /*  if (selectedExamCategory != null && selectedExamType != null) ...[
-                SizedBox(
-                  height: 15,
-                ),
+              SizedBox(
+                height: 15,
+              ),
+              if(selectedExamCategory != null) ...[
                 Text(
-                  'Exam Fee : ',
+                  'Select a Book (If you want to)',
                   style: TextStyle(
                     color: Color.fromRGBO(143, 150, 158, 1),
                     fontSize: 16,
@@ -741,178 +656,74 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                 SizedBox(
                   height: 5,
                 ),
-                Container(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.075,
-                  child: TextFormField(
-                    readOnly: true,
-                    style: const TextStyle(
-                      color: Color.fromRGBO(143, 150, 158, 1),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Exam Fee',
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'default',
+              ],
+              Column(
+                children: [
+                  // Checkbox list for selecting books
+                  ...Books.map((book) {
+                    return CheckboxListTile(
+                      title: Text(
+                        book.name,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default'),
                       ),
-                      alignLabelWithHint: true,
-                      //contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: screenHeight * 0.15),
-                      border: const OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(5)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],*/
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                'Select a Book (If you want to)',
-                style: TextStyle(
-                  color: Color.fromRGBO(143, 150, 158, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'default',
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(5),
-                child: Container(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.075,
-                  padding: EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Stack(
-                    children: [
-                      DropdownFormField(
-                        hintText: 'Select Book',
-                        dropdownItems: Books.map((book) => book.name).toList(),
-                        initialValue: selectedBook,
-                        onChanged: (newValue) {
-                          setState(() {
-                            // Reset other selected values if needed
-                            selectedBook = newValue!;
-                            // Further logic if needed
-                          });
-                          if (newValue != null) {
-                            Book selectedBookObject = Books.firstWhere(
-                              (type) => type.name == newValue,
-                            );
-                            if (selectedBookObject != null) {
-                              //It Takes ID Int
-                              _BookID = selectedBookObject.id.toString();
-                              _BookPrice =
-                                  selectedBookObject.bookprice.toString();
-                              print(_BookID);
-                            }
+                      value: _selectedBooks.contains(book),
+                      onChanged: (bool? value) {
+                        setState(() {
+                          if (value == true) {
+                            _selectedBooks.add(book);
+                          } else {
+                            _selectedBooks.remove(book);
                           }
-                        },
-                      ),
-                      if (isLoadingBooks)
-                        Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            color: const Color.fromRGBO(0, 162, 222, 1),
-                          ),
+                        });
+
+                        print(
+                            'Selected Books: ${_selectedBooks.map((b) => b.name).join(', ')}');
+                      },
+                    );
+                  }).toList(),
+
+                  SizedBox(height: 20),
+                  // Add some space before the selected books section
+
+                  // Section to show selected books and their prices
+                  if (_selectedBooks.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Selected Books:',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default'),
                         ),
-                    ],
-                  ),
-                  /*DropdownButtonFormField<String>(
-                    value: selectedBatchNo,
-                    items: selectedCourse != null
-                        ? batchNoOptions[selectedCourse!]!.map((String batch) {
-                            return DropdownMenuItem<String>(
-                              value: batch,
-                              child: Text(
-                                batch,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                        SizedBox(height: 10,),
+                        ..._selectedBooks.map((book) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Text(
+                              '${book.name} - \$${(double.tryParse(book.bookprice) ?? 0.0).toStringAsFixed(2)}',
+                              style: TextStyle(
                                   fontSize: 16,
-                                  fontFamily: 'default',
-                                ),
-                              ),
-                            );
-                          }).toList()
-                        : [],
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedBatchNo = newValue;
-                        //selectedTutionFee = null;
-                        selectedTutionFee =
-                            tutionFeeOptions[selectedBatchNo!]?.first;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Book Name',
-                      labelStyle: TextStyle(
-                        color: Color.fromRGBO(143, 150, 158, 1),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'default',
-                      ),
-                      border: InputBorder.none,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'default'),
+                            ),
+                          );
+                        }).toList(),
+                        SizedBox(height: 10,),
+                        Text(
+                          'Total Price: \$${_calculateTotalPrice().toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'default'),
+                        ),
+                      ],
                     ),
-                  )*/
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                'Book Price : ',
-                style: TextStyle(
-                  color: Color.fromRGBO(143, 150, 158, 1),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'default',
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Material(
-                elevation: 5,
-                borderRadius: BorderRadius.circular(5),
-                child: Container(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.075,
-                  padding: EdgeInsets.only(left: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.only(top: 15, left: 15),
-                    child: Text(
-                      _BookPrice != null && _BookPrice.isNotEmpty
-                          ? 'TK $_BookPrice/-'
-                          : 'Book Price',
-                      style: TextStyle(
-                        color: Color.fromRGBO(143, 150, 158, 1),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ),
-                ),
+                ],
               ),
               SizedBox(
                 height: 25,
@@ -944,7 +755,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                           _ExamTypeID != '' &&
                           examFee != null &&
                           examFee != null) {
-                        final prefs = await SharedPreferences.getInstance();
+                  /*      final prefs = await SharedPreferences.getInstance();
                         await prefs.setString('Venue', _VenueID);
                         await prefs.setString(
                             'Exam Catagories', _ExamCatagoriesID);
@@ -979,6 +790,22 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                             await prefs.getString('BookPrice');
                         final String? FeeSaved =
                             await prefs.getString('Exam Fee');
+                        await prefs.setString(
+                            'Book_Name', selectedBook.toString());
+
+                        List<String> selectedBookIds =
+                        _selectedBooks.map((book) => book.id.toString()).toList();
+                        List<String> selectedBookNames =
+                        _selectedBooks.map((book) => book.name).toList();
+                        double totalPrice = _calculateTotalPrice();
+
+                        await prefs.setStringList('selectedBookIds', selectedBookIds);
+                        await prefs.setStringList('selectedBookNames', selectedBookNames);
+                        await prefs.setDouble('totalPrice', totalPrice);
+
+                        print('Selected Book IDs saved: $selectedBookIds');
+                        print('Selected Book Names saved: $selectedBookNames');
+                        print('Total Price saved: $totalPrice');
 
                         print('Fee ID : $FeeID');
                         print(VenueSaved);
@@ -986,7 +813,37 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                         print('Exam Type : $TypeSaved');
                         print(BookSaved);
                         print(FeeSaved);
-                        print(BookPriceSaved);
+                        print(BookPriceSaved);*/
+
+                        final firstPageCubit = context.read<FirstPageCubit>();
+
+                        double totalBookPrice = _calculateTotalPrice();
+
+                        firstPageCubit.updateFirstPageData(
+                          venueID: _VenueID,
+                          venueName: selectedVenue.toString(),
+                          courseCategoryID: _ExamCatagoriesID,
+                          courseCategoryName: selectedExamCategory.toString(),
+                          courseTypeID: _ExamTypeID,
+                          courseTypeName: selectedExamType.toString(),
+                          examFee: examFee,
+                          examFeeID: FeeID,
+                          selectedBookNames: _selectedBooks.map((book) => book.name).toList(),
+                          selectedBookIDs: _selectedBooks.map((book) => book.id.toString()).toList(),
+                          bookPrice: totalBookPrice,
+                        );
+
+                        print('Venue ID from State: ${firstPageCubit.state.venueID}');
+                        print('Venue Name from State: ${firstPageCubit.state.venueName}');
+                        print('Category ID from State: ${firstPageCubit.state.courseCategoryID}');
+                        print('Category Name from State: ${firstPageCubit.state.courseCategoryName}');
+                        print('Type ID from State: ${firstPageCubit.state.courseTypeID}');
+                        print('Type Name from State: ${firstPageCubit.state.courseTypeName}');
+                        print('Exam Fee from State: ${firstPageCubit.state.examFee}');
+                        print('Exam Fee ID from State: ${firstPageCubit.state.examFeeID}');
+                        print('Selected Book Names from State: ${firstPageCubit.state.selectedBookNames}');
+                        print('Selected Book IDs from State: ${firstPageCubit.state.selectedBookIDs}');
+                        print('Total Book Price from State: ${firstPageCubit.state.bookPrice}');
 
                         Navigator.push(
                             context,
@@ -1016,316 +873,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
           ),
         ),
       )),
-      bottomNavigationBar: Container(
-        height: screenHeight * 0.08,
-        color: const Color.fromRGBO(0, 162, 222, 1),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                              shouldRefresh: true,
-                            )));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.home,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ITEEDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'ITEE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => BJetDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage('Assets/Images/Bjet-Small.png'),
-                      height: 30,
-                      width: 50,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'B-Jet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ITEETrainingProgramDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage('Assets/Images/ITEE-Small.png'),
-                      height: 30,
-                      width: 60,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Training',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                showPhoneNumberDialog(context);
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.phone,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Contact',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
   }
 }

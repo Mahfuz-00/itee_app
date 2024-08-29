@@ -15,11 +15,6 @@ class APIServicePasswordUpdate {
     return apiService;
   }
 
-/*  APIServiceUpdateUser() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';
@@ -36,7 +31,6 @@ class APIServicePasswordUpdate {
     print('Authen:: $authToken');
     try {
       if (token.isEmpty) {
-        // Wait for authToken to be initialized
         await _loadAuthToken();
         throw Exception('Authentication token is empty.');
       }

@@ -21,11 +21,6 @@ class APIProfilePictureUpdate {
     return apiService;
   }
 
-/*  APIServiceUpdateUser() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';
@@ -37,7 +32,6 @@ class APIProfilePictureUpdate {
     final String token = await authToken;
     try {
       if (token.isEmpty) {
-        // Wait for authToken to be initialized
         await _loadAuthToken();
         throw Exception('Authentication token is empty.');
       }
@@ -51,7 +45,6 @@ class APIProfilePictureUpdate {
           filename: image.path.split('/').last);
       print(multipartFile);
       request.files.add(multipartFile);
-      //request.files.add(await http.MultipartFile.fromPath('photo', image.path));
 
       var response = await request.send();
 

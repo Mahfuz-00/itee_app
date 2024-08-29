@@ -15,11 +15,6 @@ class LogOutApiService {
     return apiService;
   }
 
-/*  LogOutApiService() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';
@@ -27,7 +22,6 @@ class LogOutApiService {
     print(authToken);
     //return token;
   }
-
 
   Future<bool> signOut() async {
     print(authToken);

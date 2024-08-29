@@ -29,21 +29,46 @@ class BookCard extends StatelessWidget {
                     'Book Name: $bookName',
                     style: TextStyle(
                       color: Colors.black87,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'default',
                     ),
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
-                    'Book Price: $bookPrice',/*৳*/
+                    'Book Price: $bookPrice',
                     style: TextStyle(
                       color: Colors.black87,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'default',
                     ),
                   ),
+                  SizedBox(height: 40),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
+                        fixedSize: Size(MediaQuery.of(context).size.width * 0.6,
+                            MediaQuery.of(context).size.height * 0.05),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: Text(
+                        'Buy Book',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'default',
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

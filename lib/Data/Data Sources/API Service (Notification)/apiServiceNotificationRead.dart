@@ -15,17 +15,11 @@ class NotificationReadApiService {
     return apiService;
   }
 
-/*  NotificationReadApiService() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';
     print('Load Token');
     print(authToken);
-    //return token;
   }
 
 

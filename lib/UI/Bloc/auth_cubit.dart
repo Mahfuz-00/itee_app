@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../Data/Models/profilemodel.dart';
 import '../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
-import '../../Data/Models/profileModelFull.dart';
 
 part 'auth_state.dart';
 
@@ -58,8 +57,28 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// Logs out the user by resetting the state.
   void logout() {
+    if (state is AuthAuthenticated) {
+      final currentState = state as AuthAuthenticated;
+      print('User profile and token removed from Cubit');
+      print('User Profile: '
+          'Token: ${currentState.token}, '
+          'User ID: ${currentState.userProfile.Id}, '
+          'User Name: ${currentState.userProfile.name}, '
+          'Photo: ${currentState.userProfile.photo}');
+    }
     emit(AuthInitial());
-    print('User profile and token removed from Cubit');
+
+    // After resetting, confirm that the data has been removed
+    if (state is AuthInitial) {
+      print('User profile and token are now empty.');
+    } else {
+      print('Failed to reset state.');
+    }
+  }
+
+  void removeToken() {
+    emit(AuthInitial());
   }
 }

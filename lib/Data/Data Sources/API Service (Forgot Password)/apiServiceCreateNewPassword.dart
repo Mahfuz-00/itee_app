@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class APIServiceCreateNewPassword{
   final String url = 'https://bcc.touchandsolve.com/api/forget/password';
@@ -10,36 +9,14 @@ class APIServiceCreateNewPassword{
 
   static Future<APIServiceCreateNewPassword> create() async {
     var apiService = APIServiceCreateNewPassword._();
-    await apiService._loadAuthToken();
-    print('triggered API');
     return apiService;
   }
 
-/*  APIServiceOTPVerification() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
-  Future<void> _loadAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    authToken = prefs.getString('token') ?? '';
-    print('Load Token');
-    print(authToken);
-    //return token;
-  }
 
 
 
   Future<String> NewPassword(String email, String password, String confirmPassword) async {
-/*    if (authToken.isEmpty) {
-      print(authToken);
-      // Wait for authToken to be initialized
-      await _loadAuthToken();
-      throw Exception('Authentication token is empty.');
-    }*/
     print(email);
-  //  print(authToken);
-    // Define the headers
     final Map<String, String> headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',

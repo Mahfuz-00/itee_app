@@ -1,16 +1,17 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Data/Data Sources/API Service (Registration)/apiservicegetpersonalinfo.dart';
+import '../../Bloc/second_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfields.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
@@ -59,8 +60,6 @@ class _RegistrationPersonalInformationState
     DropdownMenuItem(child: Text("Female"), value: "Female"),
   ];
 
-/*  List<String?> gender = ['Male', 'Female', null];*/
-
   Future<void> fetchConnectionRequests() async {
     if (_isFetched) return;
     try {
@@ -83,7 +82,6 @@ class _RegistrationPersonalInformationState
         return;
       }
 
-      // Set isLoading to true while fetching data
       setState(() {
         _isLoading = true;
       });
@@ -105,85 +103,12 @@ class _RegistrationPersonalInformationState
       _Occupationcontroller.text = occupation;
       _linkedincontroller.text = linkedin;
 
-/*      final List<dynamic> noticeData = records['notices'] ?? [];
-      final List<dynamic> examFeesData = records['examFees'] ?? [];
-      final List<dynamic> booksData = records['books'] ?? [];
-      final List<dynamic> EventData = records['recentEvents'] ?? [];
-      final List<dynamic> ProgramData = records['programs'] ?? [];
-      final List<dynamic> BjetData = records['bjetEvents'] ?? [];
-      print('Notices : $noticeData');
-      print('Exam Fees : $examFeesData');
-      print('Books : $booksData');
-      print('Events : $EventData');
-      print('Programs : $ProgramData');
-      print('BJet : $BjetData');
-
-      // Map exam fees to widgets
-      final List<Widget> noticeWidgets = noticeData.map((item) {
-        int index = examFeesData.indexOf(item);
-        return ItemTemplateNotice(
-          notice: item['message'],
-        );
-      }).toList();
-      // Map exam fees to widgets
-      final List<Widget> examFeeWidgets = examFeesData.map((item) {
-        int index = examFeesData.indexOf(item);
-        return ExamItemTemplate(
-          name: item['exam_type'],
-          Catagories: item['exam_category'],
-          price: item['fees'],
-          Details: item['exam_details'],
-          typeID: item['exam_type_id'],
-          CatagoryID: item['exam_category_id'],
-        );
-      }).toList();
-
-      // Map books to widgets
-      final List<Widget> bookWidgets = booksData.map((item) {
-        int index = booksData.indexOf(item);
-        return ItemTemplate(
-          name: item['name'],
-          price: item['price'],
-        );
-      }).toList();
-
-      final List<Widget> eventWidgets = EventData.map((item) {
-        int index = EventData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
-          label: item['label'],
-        );
-      }).toList();
-
-      final List<Widget> programWidgets = ProgramData.map((item) {
-        int index = ProgramData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
-          label: item['label'],
-        );
-      }).toList();
-
-      final List<Widget> bjetWidgets = BjetData.map((item) {
-        int index = BjetData.indexOf(item);
-        return ItemTemplateImages(
-          images: item['image'],
-          label: item['label'],
-        );
-      }).toList();*/
-
       setState(() {
-        /*   _examFeeWidgets = examFeeWidgets;
-        _bookWidgets = bookWidgets;
-        _noticeWidgets = noticeWidgets;
-        _eventWidgets = eventWidgets;
-        _programWidgets = programWidgets;
-        _bjetWidgets = bjetWidgets;*/
         _isFetched = true;
       });
     } catch (e) {
       print('Error fetching connection requests: $e');
       _isFetched = true;
-      // Handle error as needed
     }
   }
 
@@ -230,7 +155,6 @@ class _RegistrationPersonalInformationState
       body: SingleChildScrollView(
           child: SafeArea(
         child: Container(
-          //height: screenHeight-40,
           color: Colors.grey[100],
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           child: Column(
@@ -338,10 +262,8 @@ class _RegistrationPersonalInformationState
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
-                    // Only allow digits
                     LengthLimitingTextInputFormatter(11),
                   ],
-                  // Limit input length to 11 characters
                   validator: (input) {
                     if (input == null || input.isEmpty) {
                       return 'Please enter your mobile number name';
@@ -349,7 +271,7 @@ class _RegistrationPersonalInformationState
                     if (input.length != 11) {
                       return 'Mobile number must be 11 digits';
                     }
-                    return null; // Return null if the input is valid
+                    return null;
                   },
                   style: const TextStyle(
                     color: Color.fromRGBO(143, 150, 158, 1),
@@ -401,7 +323,6 @@ class _RegistrationPersonalInformationState
                       fontFamily: 'default',
                     ),
                     contentPadding: EdgeInsets.all(10),
-                    //floatingLabelBehavior: FloatingLabelBehavior.never,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
                       borderSide: BorderSide(color: Colors.black, width: 1.0),
@@ -423,7 +344,6 @@ class _RegistrationPersonalInformationState
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        // Adjust the padding as needed
                         child: Icon(
                           Icons.calendar_today_outlined,
                           size: 30,
@@ -594,82 +514,6 @@ class _RegistrationPersonalInformationState
                   ),
                 ),
               ),
-              /*         const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your Linkdin Profile ID',),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                width: screenWidth * 0.9,
-                height: 70,
-                child: TextFormField(
-                  //controller: _Occupationcontroller,
-                  style: const TextStyle(
-                    color: Color.fromRGBO(143, 150, 158, 1),
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                  ),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
-                    labelText: 'Linkdin Profile',
-                    labelStyle: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 5),
-              LabeledTextWithAsterisk(text: 'Your WhatsApp Number',),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                width: screenWidth * 0.9,
-                height: 70,
-                child: TextFormField(
-                  //controller: _Occupationcontroller,
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    // Only allow digits
-                    LengthLimitingTextInputFormatter(11),
-                  ],
-                  // Limit input length to 11 characters
-                  validator: (input) {
-                    if (input == null || input.isEmpty) {
-                      return 'Please enter your WhatsApp mobile number name';
-                    }
-                    if (input.length != 11) {
-                      return 'Mobile number must be 11 digits';
-                    }
-                    return null; // Return null if the input is valid
-                  },
-                  style: const TextStyle(
-                    color: Color.fromRGBO(143, 150, 158, 1),
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                  ),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
-                    labelText: 'WhatsApp Number',
-                    labelStyle: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                ),
-              ),*/
               const SizedBox(height: 10),
               LabeledTextWithAsterisk(
                 text: 'Upload Your Picture',
@@ -815,324 +659,8 @@ class _RegistrationPersonalInformationState
           ),
         ),
       )),
-      bottomNavigationBar: Container(
-        height: screenHeight * 0.08,
-        color: const Color.fromRGBO(0, 162, 222, 1),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                          shouldRefresh: true,
-                        )));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.home,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ITEEDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'ITEE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BJetDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage(
-                          'Assets/Images/Bjet-Small.png'),
-                      height: 30,
-                      width: 50,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'B-Jet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ITEETrainingProgramDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage(
-                          'Assets/Images/ITEE-Small.png'),
-                      height: 30,
-                      width: 60,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Training',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                showPhoneNumberDialog(context);
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.phone,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Contact',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
   }
 
   bool validateInputs() {
@@ -1151,7 +679,7 @@ class _RegistrationPersonalInformationState
   }
 
   Future<void> saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+/*    SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('full_name', _FullNamecontroller.text);
     await prefs.setString('email', _Emailcontroller.text);
     await prefs.setString('phone', _Phonecontroller.text);
@@ -1176,7 +704,35 @@ class _RegistrationPersonalInformationState
     print(await prefs.getString('post_code'));
     print(await prefs.getString('occupation'));
     print(await prefs.getString('image_path'));
+  }*/
+
+    final secondPageCubit = context.read<SecondPageCubit>();
+
+    context.read<SecondPageCubit>().updateUserInfo(
+      fullName: _FullNamecontroller.text,
+      email: _Emailcontroller.text,
+      phone: _Phonecontroller.text,
+      dateOfBirth: _Datecontroller.text,
+      gender: _Gendercontroller.text,
+      linkedin: _linkedincontroller.text,
+      address: _Addresscontroller.text,
+      postCode: _PostCodecontroller.text,
+      occupation: _Occupationcontroller.text,
+      imagePath: _imageFile!.path ?? '',
+    );
+
+    print('Full Name from State: ${secondPageCubit.state.fullName}');
+    print('Email from State: ${secondPageCubit.state.email}');
+    print('Phone from State: ${secondPageCubit.state.phone}');
+    print('Date of Birth from State: ${secondPageCubit.state.dateOfBirth}');
+    print('Gender from State: ${secondPageCubit.state.gender}');
+    print('LinkedIn from State: ${secondPageCubit.state.linkedin}');
+    print('Address from State: ${secondPageCubit.state.address}');
+    print('Post Code from State: ${secondPageCubit.state.postCode}');
+    print('Occupation from State: ${secondPageCubit.state.occupation}');
+    print('Image Path from State: ${secondPageCubit.state.imagePath}');
   }
+
 
   Future<void> _selectImage() async {
     final picker = ImagePicker();

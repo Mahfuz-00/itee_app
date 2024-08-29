@@ -1,20 +1,12 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
 import 'package:itee_exam_app/UI/Widgets/paymentCard.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Data/Data Sources/API Service (Payment)/apiservicepaymentview.dart';
-import '../../../Data/Data Sources/API Service (Result)/apiserviceResult.dart';
-import '../../../Data/Data Sources/API Service (Result)/apiserviceresultview.dart';
-import '../../Widgets/resultDetailsTile.dart';
-import '../../Widgets/resultcard.dart';
-import '../../Widgets/templateerrorcontainer.dart';
-import '../../Widgets/templateerrorcontainerAlert.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
@@ -34,7 +26,6 @@ class _PaymentState extends State<Payment> {
   late final String name;
   bool isloaded = false;
   bool _pageLoading = true;
-  late TextEditingController _idcontroller = TextEditingController();
   bool buttonClicked = false;
   bool _isFetched = false;
   List<Widget> _paymentWidgets = [];
@@ -77,13 +68,15 @@ class _PaymentState extends State<Payment> {
       final List<Widget> PaymentWidgets;
 
       PaymentWidgets = records.map((item) {
+        List<Map<String, dynamic>> books =
+            List<Map<String, dynamic>>.from(item['books']);
+        print('Book:: $books');
         int index = records.indexOf(item);
         return PaymentCard(
           ExamineeID: item['examine_id'],
           ExamType: item['exam_type'],
           ExamCatagory: item['exam_category'],
-          BookName: item['book_name'],
-          BookFee: item['book_fees'],
+          Books: books,
         );
       }).toList();
 
@@ -120,7 +113,6 @@ class _PaymentState extends State<Payment> {
       canPop: true,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        //resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
           leading: IconButton(
@@ -330,25 +322,6 @@ class _PaymentState extends State<Payment> {
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   showPhoneNumberDialog(context);
-                  /* try {
-                                  await FlutterPhoneDirectCaller.callNumber(
-                                      '+8801857321122');
-                                  // Optionally, you could provide feedback if the call was initiated successfully
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Calling...')),
-                                  );
-                                } catch (e) {
-                                  print('Error: $e');
-                                  // Handle any errors that occur during the call attempt
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to make the call: $e')),
-                                  );
-                                }
-                                ;*/
-                  //_callNumber;
-                  /*_makePhoneCall(context, 'tel:+8801857321122');*/
                 },
                 child: Container(
                   width: screenWidth / 5,
@@ -489,25 +462,5 @@ class _PaymentState extends State<Payment> {
         ),
       ),
     );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
   }
 }

@@ -5,17 +5,14 @@ class PaymentCard extends StatelessWidget {
   final String ExamineeID;
   final String ExamType;
   final String ExamCatagory;
-  final String BookName;
-  final String BookFee;
-
+  final List<Map<String, dynamic>> Books;
 
   const PaymentCard({
     Key? key,
     required this.ExamineeID,
     required this.ExamType,
     required this.ExamCatagory,
-    required this.BookName,
-    required this.BookFee,
+    required this.Books,
   }) : super(key: key);
 
   @override
@@ -28,6 +25,9 @@ class PaymentCard extends StatelessWidget {
         .of(context)
         .size
         .height;
+
+    final bookNames = Books.map((book) => book['book_name']).join(', ');
+    final totalBookFees = Books.fold(0.0, (sum, book) => sum + (double.parse(book['book_fees'].toString())));
 
     return Material(
       elevation: 5,
@@ -48,32 +48,35 @@ class PaymentCard extends StatelessWidget {
                 _buildRow('Examinee ID', ExamineeID),
                 _buildRow('Exam Type', ExamType),
                 _buildRow('Exam Catagories', ExamCatagory),
-                _buildRow('Book Name', BookName),
-                _buildRow('Book Fee', BookFee),
-                ElevatedButton(
-                  onPressed: () {
+                _buildRow('Book Names', bookNames),
+                _buildRow('Total Book Fees', '${totalBookFees.toInt()} TK'),
+                SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
 
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Color.fromRGBO(0, 162, 222, 1), // Background color
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Color.fromRGBO(0, 162, 222, 1), // Background color
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                      ),
+                      side: BorderSide(color: Colors.white, width: 2.0), // Border
                     ),
-                    side: BorderSide(color: Colors.white, width: 2.0), // Border
-                  ),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Pay Now',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'default',
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.07,
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Pay Now',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'default',
+                        ),
                       ),
                     ),
                   ),

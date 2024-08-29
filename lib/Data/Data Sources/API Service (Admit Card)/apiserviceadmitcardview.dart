@@ -15,11 +15,6 @@ class AdmitCardViewAPIService {
     return apiService;
   }
 
-/*  ResultAPIService() {
-    _loadAuthToken();
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';

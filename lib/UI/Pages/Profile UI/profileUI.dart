@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Log Out)/apiServiceLogOut.dart';
 import '../../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
@@ -43,11 +41,6 @@ class _ProfileState extends State<Profile> {
   late final UserProfileFull? userProfile;
   File? _imageFile;
   late TextEditingController _fullNameController;
-  late TextEditingController _organizationController;
-  late TextEditingController _designationController;
-  late TextEditingController _phoneController;
-  late TextEditingController _passwordController;
-  late TextEditingController _licenseNumberController;
 
   Future<void> _fetchUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -79,21 +72,6 @@ class _ProfileState extends State<Profile> {
         photo: userProfile!.photo)
       // Add other fields as needed
     );
-
-/*    try {
-      await prefs.setString('userName', userProfile!.name);
-      await prefs.setString('organizationName', userProfile!.organization);
-      await prefs.setString('photoUrl', userProfile!.photo);
-      final String? UserName = prefs.getString('userName');
-      final String? OrganizationName = prefs.getString('organizationName');
-      final String? PhotoURL = prefs.getString('photoUrl');
-      print('User Name: $UserName');
-      print('Organization Name: $OrganizationName');
-      print('Photo URL: $PhotoURL');
-      print('User profile saved successfully');
-    } catch (e) {
-      print('Error saving user profile: $e');
-    }*/
   }
 
   late UserProfile userProfileCubit;
@@ -102,17 +80,11 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     _fullNameController = TextEditingController();
-    _organizationController = TextEditingController();
-    _designationController = TextEditingController();
-    _phoneController = TextEditingController();
-    _licenseNumberController = TextEditingController();
-    _passwordController = TextEditingController();
     _fetchUserProfile();
     print('initState called');
     Future.delayed(Duration(seconds: 5), () {
       if (widget.shouldRefresh && !isloaded) {
         isloaded = true;
-
         setState(() {
           print('Page Loading');
           _pageLoading = false;
@@ -267,23 +239,12 @@ class _ProfileState extends State<Profile> {
                                 _buildDataCouple(
                                     Icons.person, 'Name', userProfile!.name),
                                 Divider(),
-                                /*_buildDataCouple(Icons.house_outlined,
-                                    'Organization', userProfile!.organization),
-                                Divider(),
-                                _buildDataCouple(Icons.work, 'Designation',
-                                    userProfile!.designation),
-                                Divider(),*/
                                 _buildDataCouple(Icons.phone_android_outlined,
                                     'Mobile', userProfile!.phone),
                                 Divider(),
                                 _buildDataCouple(
                                     Icons.mail, 'Email', userProfile!.email),
                                 Divider(),
-                               /* _buildDataCouple(
-                                    Icons.supervised_user_circle_rounded,
-                                    'Visitor Type',
-                                    userProfile!.VisitorType),
-                                Divider(),*/
                                 GestureDetector(
                                         onTap: () {
                                           Navigator.push(
@@ -396,15 +357,11 @@ class _ProfileState extends State<Profile> {
               size: 30,
             ),
             backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-            // Change the background color as needed
             elevation: 8,
-            // Increase the elevation to make it appear larger
             highlightElevation: 12,
-            // Increase the highlight elevation for the pressed state
-
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(
-                  30), // Adjust the border radius as needed
+                  30),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -789,26 +746,6 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                     height: 5,
                   ),
-                  /*_buildTextField('Organization Name',
-                      userProfile!.organization, _organizationController),
-                  SizedBox(
-                    height: 5,
-                  ),*/
-                 /* _buildTextField('Designation', userProfile!.designation,
-                      _designationController),
-                  SizedBox(
-                    height: 5,
-                  ),*/
-                  /*_buildTextField('Phone Number', userProfile!.phone as String,
-                      _phoneController),
-                  SizedBox(
-                    height: 5,
-                  ),*/
-                 /* _buildTextField('License Number', userProfile!.license,
-                      _licenseNumberController),
-                  SizedBox(
-                    height: 5,
-                  ),*/
                 ],
               ),
             ),
@@ -868,13 +805,8 @@ class _ProfileState extends State<Profile> {
                     if (globalfromkey.currentState!.validate()) {
                       print(userProfile!.id.toString());
                       print(userProfile!.name);
-                     // print(userProfile!.organization);
-                     // print(userProfile!.designation);
                       print(userProfile!.phone);
-                      //print(userProfile!.license);
 
-                      // Validate the form
-                      // If validation succeeds, update the profile
                       final userProfileUpdate = UserProfileUpdate(
                         userId: userProfile!.id.toString(),
                         // Provide the user ID here

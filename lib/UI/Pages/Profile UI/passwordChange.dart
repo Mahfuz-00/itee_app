@@ -1,6 +1,5 @@
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Data/Data Sources/API Service (User Info Update)/apiServicePasswordUpdate.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
@@ -173,8 +172,6 @@ class _PasswordChangeState extends State<PasswordChange> {
               SizedBox(height: 10),
               TextFormField(
                 keyboardType: TextInputType.text,
-                /* onSaved: (input) =>
-                _registerRequest.password = input!,*/
                 validator: (input) =>
                 input!.length < 8
                     ? "Password should be more than 7 characters"
@@ -226,7 +223,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                       _updatePassword();
                     },
                     child: _isButtonClicked
-                        ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                        ? CircularProgressIndicator()
                         : Text(
                       'Update',
                       style: TextStyle(
@@ -548,26 +545,6 @@ class _PasswordChangeState extends State<PasswordChange> {
     );
   }
 
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
-  }
-
   bool checkConfirmPassword() {
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
@@ -634,6 +611,4 @@ class _PasswordChangeState extends State<PasswordChange> {
      }
    }
   }
-
-
 }

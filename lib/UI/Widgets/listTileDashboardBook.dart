@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ItemTemplate extends StatelessWidget {
+class BookTemplate extends StatelessWidget {
   final String name;
   final String price;
 
-  ItemTemplate({
+  BookTemplate({
     required this.name,
     required this.price,
   });

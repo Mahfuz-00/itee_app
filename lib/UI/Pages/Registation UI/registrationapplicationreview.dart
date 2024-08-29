@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Registration)/apiServiceRegistration.dart';
-import '../AdmitCard UI/admitcardUI.dart';
+import '../../Bloc/combine_page_cubit.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
@@ -38,12 +38,13 @@ class _RegistrationApplicationReviewState
   late String courseType = "";
   late String examFee = "";
   late int examFeeID = 0;
+  late List<String>? savedBookNames = [];
   late String book = "";
-  late String bookprice = "";
+  late double? bookprice = 0.0;
   late String venueID = "";
   late String courseCategoryID = "";
   late String courseTypeID = "";
-  late String bookID = "";
+  late List<String>? bookID = [];
   late String fullName = "";
   late String email = "";
   late String mobileNumber = "";
@@ -64,8 +65,11 @@ class _RegistrationApplicationReviewState
   bool _isFetched = false;
   bool buttonloading = false;
 
-  Future<void> getDataFromSharedPreferences() async {
+/*  Future<void> getDataFromSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    savedBookNames = prefs.getStringList('selectedBookNames');
+    book = savedBookNames?.join(', ') ?? 'No books selected';
+
     Imagepath = prefs.getString('image_path') ?? '';
     venueID = prefs.getString('Venue') ?? '';
     venueName = prefs.getString('Venue_Name') ?? '';
@@ -75,9 +79,8 @@ class _RegistrationApplicationReviewState
     courseType = prefs.getString('Exam Type_Name') ?? '';
     examFee = prefs.getString('Exam Fee') ?? '';
     examFeeID = prefs.getInt('Exam Fee ID') ?? 0;
-    bookID = prefs.getString('Book') ?? '';
-    book = prefs.getString('Book_Name') ?? '';
-    bookprice = prefs.getString('BookPrice') ?? '';
+    bookID = prefs.getStringList('selectedBookIds');
+    bookprice = prefs.getDouble('totalPrice');
     fullName = prefs.getString('full_name') ?? '';
     email = prefs.getString('email') ?? '';
     mobileNumber = prefs.getString('phone') ?? '';
@@ -94,7 +97,7 @@ class _RegistrationApplicationReviewState
     institute = prefs.getString('institute') ?? '';
     result = prefs.getString('result') ?? '';
     passingID = prefs.getString('passing_id') ?? '';
-    // Print the data for verification
+
     printData();
   }
 
@@ -119,6 +122,72 @@ class _RegistrationApplicationReviewState
     print('Education Qualification: $educationQualification');
     print('Discipline: $discipline');
     print('Subject: $subject');
+    print('Passing Year: $passingYear');
+    print('Institute: $institute');
+    print('Result: $result');
+    print('Passing ID: $passingID');
+  }*/
+
+  void fetchDataAndPrint() async {
+    final combinedDataCubit = context.read<CombinedDataCubit>();
+
+    combinedDataCubit.getCombinedData();
+
+    Imagepath = combinedDataCubit.state.imagePath;
+    print(combinedDataCubit.state.imagePath);
+    venueID = combinedDataCubit.state.venueID;
+    venueName = combinedDataCubit.state.venueName;
+    courseCategoryID = combinedDataCubit.state.courseCategoryID;
+    courseCategory = combinedDataCubit.state.courseCategory;
+    courseTypeID = combinedDataCubit.state.courseTypeID;
+    courseType = combinedDataCubit.state.courseType;
+    examFee = combinedDataCubit.state.examFee;
+    examFeeID = combinedDataCubit.state.examFeeID;
+    savedBookNames = combinedDataCubit.state.savedBookNames;
+    bookID = combinedDataCubit.state.bookID;
+    bookprice = combinedDataCubit.state.bookPrice;
+    fullName = combinedDataCubit.state.fullName;
+    email = combinedDataCubit.state.email;
+    mobileNumber = combinedDataCubit.state.mobileNumber;
+    dateOfBirth = combinedDataCubit.state.dateOfBirth;
+    gender = combinedDataCubit.state.gender;
+    linkdin = combinedDataCubit.state.linkedin;
+    address = combinedDataCubit.state.address;
+    postCode = combinedDataCubit.state.postCode;
+    occupation = combinedDataCubit.state.occupation;
+    educationQualification = combinedDataCubit.state.educationQualification;
+    subject = combinedDataCubit.state.subject;
+    discipline = combinedDataCubit.state.discipline;
+    passingYear = combinedDataCubit.state.passingYear;
+    institute = combinedDataCubit.state.institute;
+    result = combinedDataCubit.state.result;
+    passingID = combinedDataCubit.state.passingID;
+    book = savedBookNames?.join(', ') ?? 'No books selected';
+
+    printData();
+  }
+
+  void printData() {
+    print('Image Path: $Imagepath');
+    print('Venue Name: $venueName');
+    print('Course Category: $courseCategory');
+    print('Course Type: $courseType');
+    print('Exam Fee: $examFee');
+    print('Exam Fee ID: $examFeeID');
+    print('Book: $book');
+    print('Book Price: $bookprice');
+    print('Full Name: $fullName');
+    print('Email: $email');
+    print('Mobile Number: $mobileNumber');
+    print('Date of Birth: $dateOfBirth');
+    print('Gender: $gender');
+    print('LinkedIn: $linkdin');
+    print('Address: $address');
+    print('Post Code: $postCode');
+    print('Occupation: $occupation');
+    print('Education Qualification: $educationQualification');
+    print('Subject: $subject');
+    print('Discipline: $discipline');
     print('Passing Year: $passingYear');
     print('Institute: $institute');
     print('Result: $result');
@@ -182,15 +251,15 @@ class _RegistrationApplicationReviewState
     );
   }
 
-  Map<String, String> _formData = {};
-
   @override
   void initState() {
     super.initState();
-    getDataFromSharedPreferences();
+    //getDataFromSharedPreferences();
+    Future.delayed(Duration(seconds: 2), () {
+      fetchDataAndPrint();
+    });
     Future.delayed(Duration(seconds: 5), () {
       if (widget.shouldRefresh) {
-        // Refresh logic here, e.g., fetch data again
         print('Page Loading Done!!');
         setState(() {
           print('Page Loading');
@@ -241,7 +310,6 @@ class _RegistrationApplicationReviewState
               body: SingleChildScrollView(
                   child: SafeArea(
                 child: Container(
-                  //height: screenHeight*1.35,
                   color: Colors.grey[100],
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
                   child: Column(
@@ -267,7 +335,6 @@ class _RegistrationApplicationReviewState
                           width: screenWidth * 0.3,
                           height: screenHeight * 0.17,
                           decoration: BoxDecoration(
-                            /*shape: BoxShape.square,*/
                             image: DecorationImage(
                               fit: BoxFit.cover,
                               image: FileImage(File(Imagepath)),
@@ -313,7 +380,7 @@ class _RegistrationApplicationReviewState
                                     _buildRow(
                                         'Exam Catagories', courseCategory),
                                     _buildRow('Exam Type', courseType),
-                                    _buildRow('Exam Fee', examFee),
+                                    _buildRow('Exam Fee', 'TK $examFee/-'),
                                     _buildRow('Book', book),
                                     _buildRow('Book Price', 'TK $bookprice/-'),
                                     _buildRow('Full Name', fullName),
@@ -370,7 +437,7 @@ class _RegistrationApplicationReviewState
                                           'SSC or Equivalent' ||
                                       educationQualification ==
                                           'HSC or Equivalent') ...[
-                                    _buildRow('Decipine', discipline),
+                                    _buildRow('discipline', discipline),
                                   ],
                                   if (educationQualification ==
                                           'BSc or Equivalent' ||
@@ -417,11 +484,25 @@ class _RegistrationApplicationReviewState
                               final apiService =
                                   await ExamRegistrationAPIService.create();
 
+                              final combinedDataCubit =
+                                  context.read<CombinedDataCubit>();
                               final registrationSuccessful = await apiService
-                                  .sendRegistrationDataFromSharedPreferences(
-                                      File(Imagepath));
+                                  .sendRegistrationDataFromCubit(
+                                      combinedDataCubit, File(Imagepath));
                               if (registrationSuccessful != null &&
                                   registrationSuccessful['status'] == true) {
+                                if (registrationSuccessful['records'] == 'Person is already registered for an exam previously.'){
+                                  setState(() {
+                                    buttonloading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'You are already registered for The Exam'),
+                                    ),
+                                  );
+                                }
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 int examRegistrationId =
@@ -432,24 +513,52 @@ class _RegistrationApplicationReviewState
                                 prefs.setInt(
                                     'exam_registration_id', examRegistrationId);
                                 String examineeID =
-                                registrationSuccessful['records']
-                                ['examine_id'];
-                                print(
-                                    'Examinee ID: $examineeID');
-                                prefs.setString(
-                                    'examinee_id', examineeID);
-                                // If registration was successful, navigate to the next screen
+                                    registrationSuccessful['records']
+                                        ['examine_id'];
+                                print('Examinee ID: $examineeID');
+                                prefs.setString('examinee_id', examineeID);
+
+                                print(registrationSuccessful['records']);
+
+                                await prefs.remove('selectedBookNames');
+                                await prefs.remove('image_path');
+                                await prefs.remove('Venue');
+                                await prefs.remove('Venue_Name');
+                                await prefs.remove('Exam Catagories');
+                                await prefs.remove('Exam Catagories_Name');
+                                await prefs.remove('Exam Type');
+                                await prefs.remove('Exam Type_Name');
+                                await prefs.remove('Exam Fee');
+                                await prefs.remove('Exam Fee ID');
+                                await prefs.remove('selectedBookIds');
+                                await prefs.remove('totalPrice');
+                                await prefs.remove('full_name');
+                                await prefs.remove('email');
+                                await prefs.remove('phone');
+                                await prefs.remove('date_of_birth');
+                                await prefs.remove('gender');
+                                await prefs.remove('linkedin');
+                                await prefs.remove('address');
+                                await prefs.remove('post_code');
+                                await prefs.remove('occupation');
+                                await prefs.remove('qualification');
+                                await prefs.remove('subject_name');
+                                await prefs.remove('passing_year');
+                                await prefs.remove('institute');
+                                await prefs.remove('result');
+                                await prefs.remove('passing_id');
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                           PaymentConfirmation(ExamineeID: examineeID,)),
+                                      builder: (context) => PaymentConfirmation(
+                                            ExamineeID: examineeID,
+                                          )),
                                 );
                               } else {
                                 setState(() {
                                   buttonloading = false;
                                 });
-                                // If registration failed, show a snackbar indicating the failure
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
@@ -477,325 +586,9 @@ class _RegistrationApplicationReviewState
                   ),
                 ),
               )),
-              bottomNavigationBar: Container(
-                height: screenHeight * 0.08,
-                color: const Color.fromRGBO(0, 162, 222, 1),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Dashboard(
-                                  shouldRefresh: true,
-                                )));
-                      },
-                      child: Container(
-                        width: screenWidth / 5,
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.home,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                fontFamily: 'default',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ITEEDetails()));
-                      },
-                      child: Container(
-                        width: screenWidth / 5,
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.info_outline,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'ITEE',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                fontFamily: 'default',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BJetDetails()));
-                      },
-                      child: Container(
-                        width: screenWidth / 5,
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Image(
-                              image: AssetImage(
-                                  'Assets/Images/Bjet-Small.png'),
-                              height: 30,
-                              width: 50,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'B-Jet',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                fontFamily: 'default',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ITEETrainingProgramDetails()));
-                      },
-                      child: Container(
-                        width: screenWidth / 5,
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Image(
-                              image: AssetImage(
-                                  'Assets/Images/ITEE-Small.png'),
-                              height: 30,
-                              width: 60,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'Training',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                fontFamily: 'default',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        showPhoneNumberDialog(context);
-                      },
-                      child: Container(
-                        width: screenWidth / 5,
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.phone,
-                              size: 30,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'Contact',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                fontFamily: 'default',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              bottomNavigationBar: CustomBottomNavigationBar(),
             ),
           );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
   }
 
   void showSliderAlert(BuildContext context) {
@@ -898,7 +691,9 @@ class _RegistrationApplicationReviewState
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Dashboard(shouldRefresh: true,)));
+                              builder: (context) => const Dashboard(
+                                    shouldRefresh: true,
+                                  )));
                     },
                     child: const Text('Confirm',
                         style: TextStyle(

@@ -9,7 +9,6 @@ import '../../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart'
 import '../../../Data/Models/profilemodel.dart';
 import '../../Bloc/auth_cubit.dart';
 import '../Login UI/loginUI.dart';
-import '../Sign Up UI/signupUI.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -44,6 +43,8 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         animationController.forward();
+        WidgetsBinding.instance.addObserver(this);
+        _checkAuthentication();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -53,9 +54,6 @@ class _SplashScreenState extends State<SplashScreen>
         );
       }
     });
-
-    WidgetsBinding.instance.addObserver(this);
-    _checkAuthentication();
   }
 
   @override
@@ -77,7 +75,6 @@ class _SplashScreenState extends State<SplashScreen>
     String? token = prefs.getString('token');
     print('Checking Auth Token :: ${token}');
     final authCubit = context.read<AuthCubit>();
-    final state = context.read<AuthCubit>().state;
 
     if (token != null) {
       final apiService = await DashboardAPIService.create();
@@ -98,19 +95,20 @@ class _SplashScreenState extends State<SplashScreen>
         final profileData = await APIProfileService().fetchUserProfile(token);
         final userProfile = UserProfile.fromJson(profileData);
 
-        // Emit Authenticated State
         authCubit.emit(AuthAuthenticated(
           userProfile: userProfile,
           token: token,
         ));
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Dashboard(
-                    shouldRefresh: true,
-                  )),
-        );
+        if (mounted) { // Check if the widget is still mounted
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                  shouldRefresh: true,
+                )),
+          );
+        }
       } else {
         await prefs.remove('token');
         Navigator.pushReplacement(
@@ -183,7 +181,6 @@ class _SplashScreenState extends State<SplashScreen>
               height: 50,
             ),
             Stack(
-              //fit: StackFit.expand,
               alignment: Alignment.bottomCenter,
               children: [
                 FadeTransition(
@@ -195,73 +192,6 @@ class _SplashScreenState extends State<SplashScreen>
                     alignment: Alignment.bottomCenter,
                   ),
                 ),
-                /* SlideTransition(
-                  position: SlideAnimation,
-                  */ /*CurvedAnimation(
-                    parent: animationController,
-                    curve: Curves.easeInOutCirc, // Adjust values for desired timing
-                  ).drive(Tween<Offset>(
-                    begin: Offset(0, 2), // Start beyond the bottom edge
-                    end: Offset(0, 0),
-                  )),*/ /*
-                  //position: SlideAnimation,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Login()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              //side: BorderSide(color: Colors.black, width: 2),
-                            ),
-                            //elevation: 3,
-                            fixedSize: Size(screenWidth*0.9, 70),
-                          ),
-                          child: const Text('Login',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontFamily: 'default',
-                              ))),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Signup()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(color: Colors.black, width: 2),
-                            ),
-                            //elevation: 3,
-                            fixedSize: Size(screenWidth*0.9, 70),
-                          ),
-                          child: const Text('Register',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontFamily: 'default',
-                              )))
-                    ],
-                  ),
-                ),*/
               ],
             ),
           ],

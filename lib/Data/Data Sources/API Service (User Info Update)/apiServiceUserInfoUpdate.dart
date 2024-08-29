@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 import 'package:http/http.dart' as http;
-
 import '../../Models/userInfoUpdateModel.dart';
 
 class APIServiceUpdateUser {
@@ -21,11 +17,6 @@ class APIServiceUpdateUser {
     return apiService;
   }
 
-/*  APIServiceUpdateUser() {
-    authToken = _loadAuthToken(); // Assigning the future here
-    print('triggered');
-  }*/
-
   Future<void> _loadAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
     authToken = prefs.getString('token') ?? '';
@@ -37,17 +28,14 @@ class APIServiceUpdateUser {
     final String token = await authToken;
     try {
       if (token.isEmpty) {
-        // Wait for authToken to be initialized
         await _loadAuthToken();
         throw Exception('Authentication token is empty.');
       }
 
-      // Create a POST request
       var response = await http.post(
         Uri.parse(URL),
         headers: <String, String>{
-          //'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token' // Use token here
+          'Authorization': 'Bearer $token'
         },
         body: {
           'userId': userData.userId,
@@ -55,14 +43,11 @@ class APIServiceUpdateUser {
         },
       );
 
-      // Check the status code of the response
       if (response.statusCode == 200) {
-        // Successful profile update
         var jsonResponse = jsonDecode(response.body);
         print('User profile updated successfully!');
         return jsonResponse['message'];
       } else {
-        // Handle profile update failure
         print('Failed to update user profile: ${response.body}');
         return 'Failed to update user profile. Please try again.';
       }
@@ -70,8 +55,7 @@ class APIServiceUpdateUser {
       var response = await http.post(
         Uri.parse(URL),
         headers: <String, String>{
-          //'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token' // Use token here
+          'Authorization': 'Bearer $token'
         },
         body: {
           'userId': userData.userId,
@@ -79,7 +63,6 @@ class APIServiceUpdateUser {
         },
       );
       print(response.body);
-      // Handle any exceptions
       print('Error occurred while updating user profile: $e');
       return 'Failed to update user profile. Please try again.';
     }

@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../Data/Data Sources/API Service (Admit Card)/apiserviceadmitcardview.dart';
 import '../../Widgets/admitcardCard.dart';
 import '../B-Jet Details UI/B-jetDetailsUI.dart';
@@ -27,8 +25,6 @@ class _AdmitCardState extends State<AdmitCard> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
-  bool _pageLoading = true;
-  late TextEditingController _idcontroller = TextEditingController();
   bool buttonClicked = false;
   bool _isFetched = false;
   List<Widget> _admitcardWidgets = [];
@@ -320,25 +316,6 @@ class _AdmitCardState extends State<AdmitCard> {
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   showPhoneNumberDialog(context);
-                  /* try {
-                                  await FlutterPhoneDirectCaller.callNumber(
-                                      '+8801857321122');
-                                  // Optionally, you could provide feedback if the call was initiated successfully
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Calling...')),
-                                  );
-                                } catch (e) {
-                                  print('Error: $e');
-                                  // Handle any errors that occur during the call attempt
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to make the call: $e')),
-                                  );
-                                }
-                                ;*/
-                  //_callNumber;
-                  /*_makePhoneCall(context, 'tel:+8801857321122');*/
                 },
                 child: Container(
                   width: screenWidth / 5,
@@ -479,25 +456,5 @@ class _AdmitCardState extends State<AdmitCard> {
         ),
       ),
     );
-  }
-
-  _callNumber() async {
-    const number = '+8801857321122'; //set the number here
-    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
-  }
-
-  // Function to make a phone call
-  Future<void> _makePhoneCall(BuildContext context, String url) async {
-    print('Attempting to launch: $url');
-
-    if (await canLaunch(url)) {
-      print('Launching: $url');
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not Call $url')),
-      );
-    }
   }
 }
