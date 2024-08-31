@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// A helper class to build a dropdown form field based on a map of options
+/// and a selected value. It provides a label text and an [onChanged] callback
+/// for handling changes in the selected value.
 class DropdownFormFieldBuilder {
   final Map<String, List<String>> options;
   final String labelText;

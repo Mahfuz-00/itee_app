@@ -1,3 +1,4 @@
+/// Represents a more complete user profile containing additional information.
 class UserProfileFull {
   final int id;
   final String name;

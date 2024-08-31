@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+//Del
+/// A custom text form field designed for entering a single-digit numeric value.
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController textController;
 
@@ -20,7 +22,7 @@ class CustomTextFormField extends StatelessWidget {
         controller: textController,
         keyboardType: TextInputType.number,
         inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly, // Allow only digits
+          FilteringTextInputFormatter.digitsOnly,
           LengthLimitingTextInputFormatter(1),
         ],
         style: const TextStyle(

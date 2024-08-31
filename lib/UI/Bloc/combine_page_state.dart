@@ -1,5 +1,6 @@
 part of 'combine_page_cubit.dart';
 
+/// Represents the combined state of data from multiple Cubits.
 class CombinedDataState extends Equatable {
   final String imagePath;
   final String venueName;

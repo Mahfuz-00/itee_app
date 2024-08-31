@@ -1,3 +1,4 @@
+/// Represents an image item with an URL and a label.
 class ImageItem {
   final String imageUrl;
   final String label;

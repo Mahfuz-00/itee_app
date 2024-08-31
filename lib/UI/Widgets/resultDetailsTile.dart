@@ -2,6 +2,9 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+//Del
+/// A widget that displays a card with an examinee's result information
+/// including [Name], [ExamName], and [Result].
 class ResultInfoCard extends StatelessWidget {
   final String Name;
   final String ExamName;
@@ -22,7 +25,6 @@ class ResultInfoCard extends StatelessWidget {
       elevation: 5,
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        //width: screenWidth*0.9,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
           color: Colors.white,

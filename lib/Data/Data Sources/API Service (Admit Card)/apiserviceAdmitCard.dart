@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for interacting with the Admit Card API.
 class AdmitCardAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;

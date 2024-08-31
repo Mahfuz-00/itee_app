@@ -1,3 +1,4 @@
+/// Represents the data for updating a user profile.
 class UserProfileUpdate {
   final String userId;
   final String name;

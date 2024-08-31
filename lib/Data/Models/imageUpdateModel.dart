@@ -1,3 +1,4 @@
+/// Represents the response from updating a profile picture.
 class ProfilePictureUpdateResponse {
   final bool status;
   final String message;

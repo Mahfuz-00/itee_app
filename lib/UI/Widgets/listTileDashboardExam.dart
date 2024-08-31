@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 //Convert
+/// A widget that displays an exam item template using a ListTile with
+/// important details like [name], [price], and an [image] url.
 class ExamItemTemplate extends StatelessWidget {
   final String image;
   final String name;

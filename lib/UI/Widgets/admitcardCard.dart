@@ -5,6 +5,8 @@ import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
 import '../../Data/Data Sources/API Service (Admit Card)/apiserviceAdmitCard.dart';
 
+/// A widget that displays an admit card for an exam containing
+/// examinee information and a button to download and print the admit card.
 class AdmitCardCard extends StatelessWidget {
   final String ExamineeID;
   final String ExamType;
@@ -231,108 +233,3 @@ Widget _buildRow(String label, String value) {
   );
 }
 
-Widget _buildRowApplicationID(String label, int value) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(
-        child: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: label,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  height: 1.6,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'default',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(
-          ":",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      Expanded(
-        child: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: value.toString(),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  height: 1.6,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'default',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _buildRowTime(String label, String value) {
-  //String formattedDateTime = DateFormat('dd/MM/yyyy hh:mm a').format(value); // 'a' for AM/PM
-
-  // Option 2: Using separate methods for date and time
-  DateTime date = DateTime.parse(value);
-  DateFormat dateFormat = DateFormat.yMMMMd('en_US');
-  DateFormat timeFormat = DateFormat.jm();
-  String formattedDate = dateFormat.format(date);
-  String formattedTime = timeFormat.format(date);
-  String formattedDateTime = '$formattedDate, $formattedTime';
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(
-        child: RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: label,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  height: 1.6,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'default',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Expanded(
-        child: Text(
-          formattedDateTime, // Format date as DD/MM/YYYY
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            height: 1.6,
-            letterSpacing: 1.3,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'default',
-          ),
-        ),
-      ),
-    ],
-  );
-}

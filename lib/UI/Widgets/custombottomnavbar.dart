@@ -7,6 +7,10 @@ import '../Pages/Dashboard UI/dashboardUI.dart';
 import '../Pages/ITEE Details UI/iteedetailsui.dart';
 import '../Pages/ITEE Training Program Details UI/trainingprogramdetails.dart';
 
+
+/// A custom widget that displays a navigation bar at the bottom of the screen
+/// with icons and labels for navigating to different parts of the app.
+/// It also includes a contact button that opens a dialog to call phone numbers.
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
 
@@ -103,7 +107,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   }
 
   Widget _buildNavItem({
-    required BuildContext context, // Add context as a parameter
+    required BuildContext context,
     required Widget icon,
     required String label,
     required VoidCallback onTap,
@@ -113,7 +117,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width /
-            5, // Use MediaQuery directly here
+            5,
         padding: const EdgeInsets.all(5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -243,11 +247,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
   }
 
   _callNumber() async {
-    const number = '+8801857321122'; //set the number here
+    const number = '+8801857321122';
     bool? res = await FlutterPhoneDirectCaller.callNumber(number);
   }
 
-  // Function to make a phone call
   Future<void> _makePhoneCall(BuildContext context, String url) async {
     print('Attempting to launch: $url');
 

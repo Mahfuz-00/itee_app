@@ -135,7 +135,7 @@ class _AccountOPTVerficationState extends State<AccountOPTVerfication> {
                                   children: List.generate(8, (index) {
                                     return Row(
                                       children: [
-                                        AccountCustomTextFormField(
+                                        CustomFocusedTextFormField(
                                           textController: _controllers[index],
                                           currentFocusNode: _focusNodes[index],
                                           nextFocusNode: index < 7 ? _focusNodes[index + 1] : null,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// A custom form field that represents a dropdown menu with a [hintText]
+/// and a list of selectable items. When an item is selected, the value
+/// is passed to a callback function [onChanged].
 class DropdownField<T> extends StatefulWidget {
   final String hintText;
   final List<DropdownMenuItem<T>> dropdownItems;

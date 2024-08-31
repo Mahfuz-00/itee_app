@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AccountCustomTextFormField extends StatelessWidget {
+/// A custom text form field designed for single-digit numeric input
+/// commonly used in account number fields.
+class CustomFocusedTextFormField extends StatelessWidget {
   final TextEditingController textController;
+  /// The FocusNode associated with this text field.
   final FocusNode currentFocusNode;
+  /// The optional FocusNode to automatically focus on when the
+  /// current field is filled.
   final FocusNode? nextFocusNode;
 
-  const AccountCustomTextFormField({
+  const CustomFocusedTextFormField({
     Key? key,
     required this.textController,
     required this.currentFocusNode,
@@ -25,7 +30,7 @@ class AccountCustomTextFormField extends StatelessWidget {
         focusNode: currentFocusNode,
         keyboardType: TextInputType.number,
         inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly, // Allow only digits
+          FilteringTextInputFormatter.digitsOnly,
           LengthLimitingTextInputFormatter(1),
         ],
         style: const TextStyle(

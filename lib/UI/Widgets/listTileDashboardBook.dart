@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//Convert
+/// A widget that displays a book template using a ListTile with title and price.
 class BookTemplate extends StatelessWidget {
   final String name;
   final String price;

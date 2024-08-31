@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// A widget that displays a text label with a red asterisk indicating a required field.
 class LabeledTextWithAsterisk extends StatelessWidget {
   final String text;
 

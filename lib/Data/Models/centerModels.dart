@@ -1,3 +1,4 @@
+/// Represents a venue for an exam.
 class Venue {
   final int id;
   final String name;
@@ -12,6 +13,7 @@ class Venue {
   }
 }
 
+/// Represents a category of exams.
 class ExamCategory {
   final int id;
   final String name;
@@ -26,6 +28,7 @@ class ExamCategory {
   }
 }
 
+/// Represents a type of exam within a category.
 class ExamType {
   final int id;
   final String name;
@@ -40,6 +43,7 @@ class ExamType {
   }
 }
 
+/// Represents a book related to an exam.
 class Book {
   final int id;
   final String name;

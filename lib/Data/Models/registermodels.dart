@@ -1,3 +1,4 @@
+/// Represents the response model from the registration API call.
 class RegisterResponseModel {
   String message;
   String status;

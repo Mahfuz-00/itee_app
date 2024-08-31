@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 //Convert
+/// A widget that displays an application item template using a ListTile with
+/// applicant [name], [ExamineeID], [Categories], [result], [payment], and [admitcard] status.
 class ApplicationItemTemplate extends StatelessWidget {
   final String name;
   final String ExamineeID;
-  final String Catagories;
+  final String Categories;
   final int result;
   final int payment;
   final int admitcard;
@@ -13,7 +14,7 @@ class ApplicationItemTemplate extends StatelessWidget {
   ApplicationItemTemplate({
     required this.name,
     required this.ExamineeID,
-    required this.Catagories,
+    required this.Categories,
     required this.result,
     required this.payment,
     required this.admitcard,
@@ -47,7 +48,7 @@ class ApplicationItemTemplate extends StatelessWidget {
           ),
           SizedBox(height: 5),
           Text(
-            Catagories,
+            Categories,
             textAlign: TextAlign.start,
             style: TextStyle(
               color: Color.fromRGBO(

@@ -117,7 +117,7 @@ class _DashboardState
           int index = applications.indexOf(item);
           return ApplicationItemTemplate(
             name: item['exam_type'],
-            Catagories: item['exam_category'],
+            Categories: item['exam_category'],
             result: item['result'],
             payment: item['payment'],
             admitcard: item['admit_card'],
@@ -819,7 +819,7 @@ class _DashboardState
                                                     .ExamineeID,
                                                 examCatagories:
                                                 Applicant
-                                                    .Catagories,
+                                                    .Categories,
                                                 Payment: Applicant
                                                     .payment,
                                                 AdmitCard: Applicant
@@ -1873,7 +1873,7 @@ class _DashboardState
                                                     .ExamineeID,
                                                 examCatagories:
                                                 Applicant
-                                                    .Catagories,
+                                                    .Categories,
                                                 Payment: Applicant
                                                     .payment,
                                                 AdmitCard: Applicant

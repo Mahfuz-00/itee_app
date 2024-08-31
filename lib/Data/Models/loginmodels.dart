@@ -1,3 +1,4 @@
+/// Represents the response model from the login API call.
 class LoginResponseModel {
   late final String token;
   late final String error;
@@ -14,6 +15,7 @@ class LoginResponseModel {
   }
 }
 
+/// Represents the request model for the login API call.
 class LoginRequestmodel {
   late String Email;
   late String Password;

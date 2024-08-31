@@ -6,6 +6,7 @@ import 'third_page_cubit.dart';
 
 part 'combine_page_state.dart';
 
+/// A Cubit class that combines data from 3(first, second, third page) Cubits for a single(combined) view.
 class CombinedDataCubit extends Cubit<CombinedDataState> {
   final FirstPageCubit firstPageCubit;
   final SecondPageCubit secondPageCubit;
@@ -53,11 +54,11 @@ class CombinedDataCubit extends Cubit<CombinedDataState> {
       passingID: thirdState.passingId,
     ));
 
-    printCombinedData(); // Call print function after emitting data
+    printCombinedData();
   }
 
   void printCombinedData() {
-    final data = state; // Get the current state
+    final data = state;
 
     print('Image Path: ${data.imagePath}');
     print('Venue Name: ${data.venueName}');

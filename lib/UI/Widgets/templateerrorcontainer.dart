@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Creates a widget that displays a message indicating there are no requests.
 Widget buildNoRequestsWidget(double screenWidth, String message) {
   return Container(
     height: 200,

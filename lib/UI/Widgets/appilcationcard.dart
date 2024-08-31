@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// A widget that displays an application card with information about an exam
+/// and buttons to trigger actions like [Payment], downloading [AdmitCard],
+/// and viewing [Result].
 class ApplicationCard extends StatelessWidget {
   final String examName;
   final String examineeID;

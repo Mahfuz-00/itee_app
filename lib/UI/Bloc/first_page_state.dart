@@ -1,5 +1,6 @@
 part of 'first_page_cubit.dart';
 
+/// Represents the state of the first page in the application.
 class FirstPageState extends Equatable {
   final String venueID;
   final String venueName;

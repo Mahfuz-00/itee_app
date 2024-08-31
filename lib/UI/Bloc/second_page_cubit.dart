@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 part 'second_page_state.dart';
 
+/// Represents the state of the second page in the exam registration.
 class SecondPageCubit extends Cubit<SecondPageState> {
   SecondPageCubit()
       : super(const SecondPageState(

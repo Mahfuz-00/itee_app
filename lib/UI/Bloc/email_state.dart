@@ -1,5 +1,6 @@
 part of 'email_cubit.dart';
 
+/// Represents the state of the email address managed by the EmailCubit.
 abstract class EmailState extends Equatable {
   const EmailState();
 

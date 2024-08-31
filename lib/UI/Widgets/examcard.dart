@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+/// A widget that displays an [ExamCard] with image, details, and action buttons.
 class ExamCard extends StatelessWidget {
   final String examImage;
   final String examName;
@@ -70,7 +71,7 @@ class ExamCard extends StatelessWidget {
                           },
                           errorWidget: (context, url, error) => Center(
                             child: Icon(Icons
-                                .error), // Error icon for image load failure
+                                .error),
                           ),
                         ),
                       ),

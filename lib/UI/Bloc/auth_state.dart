@@ -1,5 +1,6 @@
 part of 'auth_cubit.dart';
 
+/// Represents the authentication state of the application.
 abstract class AuthState extends Equatable {
   const AuthState();
 

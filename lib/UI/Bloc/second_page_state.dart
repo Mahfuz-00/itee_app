@@ -1,5 +1,6 @@
 part of 'second_page_cubit.dart';
 
+/// Represents the state of the second page in the application.
 class SecondPageState extends Equatable {
   final String fullName;
   final String email;

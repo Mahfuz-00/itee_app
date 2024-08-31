@@ -5,6 +5,9 @@ import '../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
 
 part 'auth_state.dart';
 
+/// A Cubit class responsible for managing user authentication state.
+/// It emits different states based on user actions like login, logout,
+/// and profile fetching/updating.
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
 
@@ -28,8 +31,6 @@ class AuthCubit extends Cubit<AuthState> {
         print('Name: ${userProfile.name}');
         print('Photo: ${userProfile.photo}');
 
-
-        //final userProfile = await APIProfileService.fetchUserProfile(currentState.token);
         emit(AuthAuthenticated(
           userProfile: userProfile,
           token: currentState.token,
@@ -38,7 +39,6 @@ class AuthCubit extends Cubit<AuthState> {
         print('User Profile: ${userProfile.Id}, ${userProfile.name}, ${userProfile.photo}');
       } catch (e) {
         print('Error fetching profile: $e');
-        // Optionally, handle the error, e.g., by emitting an error state
       }
     } else {
       print('User profile fetched in Cubit not Found');
@@ -57,7 +57,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Logs out the user by resetting the state.
   void logout() {
     if (state is AuthAuthenticated) {
       final currentState = state as AuthAuthenticated;
@@ -70,7 +69,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
     emit(AuthInitial());
 
-    // After resetting, confirm that the data has been removed
     if (state is AuthInitial) {
       print('User profile and token are now empty.');
     } else {

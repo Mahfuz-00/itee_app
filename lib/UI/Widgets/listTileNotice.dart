@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// A widget that displays a [notice] using a ListTile with centered content.
 class ItemTemplateNotice extends StatelessWidget {
   final String notice;
 

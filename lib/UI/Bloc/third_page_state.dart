@@ -1,5 +1,6 @@
 part of 'third_page_cubit.dart';
 
+/// Represents the state of the third page in the application.
 class ThirdPageState extends Equatable {
   final String qualification;
   final String subjectName;

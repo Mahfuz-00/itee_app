@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// A widget that displays a card representing a book with its name and price,
+/// and a button to buy the book.
 class BookCard extends StatelessWidget {
   final String bookName;
   final String bookPrice;
