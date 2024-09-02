@@ -1,7 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-/// A widget that displays an [ExamCard] with image, details, and action buttons.
+/// A widget that displays an [ExamCard] with an image, details, and action buttons.
+///
+/// The [ExamCard] takes the following parameters:
+/// - [examImage]: A string representing the URL of the exam image to display.
+/// - [examName]: A string representing the name of the exam.
+/// - [examCatagories]: A string representing the categories of the exam.
+/// - [examFee]: A string representing the fee for the exam.
+/// - [onDetailsPressed]: A callback function to be called when the details button is pressed.
+/// - [onSharePressed]: A callback function to be called when the share button is pressed.
+/// - [onRegistrationPressed]: A callback function to be called when the registration button is pressed.
 class ExamCard extends StatelessWidget {
   final String examImage;
   final String examName;

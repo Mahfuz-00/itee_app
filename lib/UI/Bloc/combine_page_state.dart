@@ -1,6 +1,10 @@
 part of 'combine_page_cubit.dart';
 
 /// Represents the combined state of data from multiple Cubits.
+///
+/// This class aggregates information from the [FirstPageCubit], [SecondPageCubit],
+/// and [ThirdPageCubit] into a single state for easier management and access
+/// across the application. It holds various user and course-related information.
 class CombinedDataState extends Equatable {
   final String imagePath;
   final String venueName;

@@ -6,7 +6,9 @@ import 'third_page_cubit.dart';
 
 part 'combine_page_state.dart';
 
-/// A Cubit class that combines data from 3(first, second, third page) Cubits for a single(combined) view.
+/// A Cubit class that combines data from three separate Cubits
+/// ([FirstPageCubit], [SecondPageCubit], and [ThirdPageCubit])
+/// to provide a unified view of the data for the application.
 class CombinedDataCubit extends Cubit<CombinedDataState> {
   final FirstPageCubit firstPageCubit;
   final SecondPageCubit secondPageCubit;

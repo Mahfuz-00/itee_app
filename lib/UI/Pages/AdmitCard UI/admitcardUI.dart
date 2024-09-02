@@ -2,16 +2,26 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Data/Data Sources/API Service (Admit Card)/apiserviceadmitcardview.dart';
 import '../../Widgets/admitcardCard.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
+import '../../Widgets/custombottomnavbar.dart';
 
+/// Represents the Admit Card screen where users can download their admit cards.
+///
+/// This widget fetches and displays the admit cards associated with the user.
+///
+/// **Variables:**
+/// - [shouldRefresh]: Indicates whether the screen should refresh.
+/// - [_isLoading]: Indicates if the admit card data is currently loading.
+/// - [name]: Holds the name of the user.
+/// - [isloaded]: Indicates whether the data has been loaded.
+/// - [buttonClicked]: Indicates if the button has been clicked.
+/// - [_isFetched]: Indicates if the data has been fetched from the API.
+/// - [_admitcardWidgets]: Holds a list of admit card widgets to be displayed on the screen.
+///
+/// **Actions:**
+/// - `fetchConnectionRequests()`: Fetches the admit cards from the API and updates the UI.
 class AdmitCard extends StatefulWidget {
   final bool shouldRefresh;
 
@@ -34,11 +44,9 @@ class _AdmitCardState extends State<AdmitCard> {
     try {
       final apiService = await AdmitCardViewAPIService.create();
 
-      // Fetch dashboard data
       final Map<String, dynamic>? dashboardData =
       await apiService.getallAdmitCard();
       if (dashboardData == null || dashboardData.isEmpty) {
-        // No data available or an error occurred
         print(
             'No data available or error occurred while fetching dashboard data');
         return;
@@ -59,7 +67,6 @@ class _AdmitCardState extends State<AdmitCard> {
         print('Admit Card at index $index: ${records[index]}\n');
       }
 
-      // Set isLoading to true while fetching data
       setState(() {
         _isLoading = true;
       });
@@ -164,296 +171,7 @@ class _AdmitCardState extends State<AdmitCard> {
             ),
           ),
         ),
-        bottomNavigationBar: Container(
-          height: screenHeight * 0.08,
-          color: const Color.fromRGBO(0, 162, 222, 1),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Dashboard(
-                            shouldRefresh: true,
-                          )));
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.home,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ITEEDetails()));
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.info_outline,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'ITEE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BJetDetails()));
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('Assets/Images/Bjet-Small.png'),
-                        height: 30,
-                        width: 50,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'B-Jet',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ITEETrainingProgramDetails()));
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Image(
-                        image: AssetImage('Assets/Images/ITEE-Small.png'),
-                        height: 30,
-                        width: 60,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Training',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () async {
-                  showPhoneNumberDialog(context);
-                },
-                child: Container(
-                  width: screenWidth / 5,
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.phone,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        'Contact',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          fontFamily: 'default',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
+        bottomNavigationBar: CustomBottomNavigationBar(),
       ),
     );
   }

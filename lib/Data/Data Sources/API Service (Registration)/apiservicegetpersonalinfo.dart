@@ -2,6 +2,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for handling **Personal Information Management** functionalities,
+/// specifically for fetching personal information from the API.
+///
+/// This class provides methods to manage authentication and retrieve
+/// the user's personal information.
+///
+/// ### Key Actions:
+/// - **getPersonalInfo()**:
+///   Sends a GET request to retrieve the user's personal information.
+///
+///   - **Returns**:
+///     A [Map<String, dynamic>?] representing the user's personal information,
+///     or throws an exception if the request fails.
+///
+///   - **Throws**:
+///     An exception if the [authToken] is empty or if an error occurs during
+///     the request, providing relevant error messages.
 class PersonalInfoAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
@@ -46,7 +63,7 @@ class PersonalInfoAPIService {
         throw Exception('Failed to get Personal Data');
       }
     } catch (e) {
-      throw Exception('Error fetching result: $e');
+      throw Exception('Error fetching Personal Data: $e');
     }
   }
 }

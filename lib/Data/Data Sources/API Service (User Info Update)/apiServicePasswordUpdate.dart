@@ -2,6 +2,31 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for updating the user's password through the API.
+///
+/// This class manages the process of updating the user's password,
+/// requiring the current password, a new password, and a confirmation
+/// of the new password. The class utilizes an authentication token
+/// stored in shared preferences to authorize the request.
+///
+/// ### Key Actions:
+/// - **updatePassword**:
+///   Updates the user's password by sending a JSON-formatted POST request
+///   to the password update endpoint.
+///
+///   - **Parameters**:
+///     - [currentPassword]: A [String] representing the user's current password.
+///     - [newPassword]: A [String] representing the new password to set.
+///     - [passwordConfirmation]: A [String] confirming the new password.
+///
+///   - **Returns**:
+///     A [String] containing the server's response message if the request
+///     is successful.
+///
+///   - **Throws**:
+///     An exception if the authentication token is empty, if the request
+///     fails, or if the server returns an error response, providing relevant
+///     error messages.
 class APIServicePasswordUpdate {
   String baseURL = 'https://bcc.touchandsolve.com/api';
   late final String authToken;

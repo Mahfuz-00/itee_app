@@ -7,6 +7,19 @@ import '../../../Data/Data Sources/API Service (Sign Up)/apiServiceAccountOTPVer
 import '../../Widgets/accountotpbox.dart';
 import 'AccountCreatedUI.dart';
 
+/// A screen for OTP (One Time Password) verification during account creation.
+///
+/// This widget prompts the user to enter the OTP sent to their email address.
+/// It handles the OTP input through eight separate text fields, verifies the OTP
+/// against the server, and provides feedback to the user about the verification status.
+///
+/// - **Fields:**
+///   - [_isLoading]: A boolean indicating whether the loading spinner is displayed.
+///   - [_controllers]: A list of [TextEditingController] for managing the OTP input fields.
+///   - [_focusNodes]: A list of [FocusNode] for managing the focus of the OTP input fields.
+///
+/// - **Methods:**
+///   - `_sendOTP(String email, String OTP)`: Sends the entered [OTP] to the server for verification.
 class AccountOPTVerfication extends StatefulWidget {
   const AccountOPTVerfication({super.key});
 

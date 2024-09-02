@@ -3,6 +3,15 @@ import 'package:flutter/services.dart';
 
 /// A custom text form field designed for single-digit numeric input
 /// commonly used in account number fields.
+///
+/// This widget is used to create a text field that restricts input to
+/// single digits and allows for automatic focus shifting to the
+/// next field when filled.
+///
+/// The [textController] controls the text displayed in the field,
+/// while [currentFocusNode] manages the focus state of this field.
+/// If [nextFocusNode] is provided, it will automatically receive focus
+/// when the current field is filled.
 class CustomFocusedTextFormField extends StatelessWidget {
   final TextEditingController textController;
   /// The FocusNode associated with this text field.

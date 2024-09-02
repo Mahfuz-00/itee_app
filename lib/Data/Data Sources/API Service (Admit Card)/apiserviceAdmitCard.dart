@@ -2,7 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// A service class for interacting with the Admit Card API.
+/// A service class for interacting with the **Admit Card API**.
+///
+/// This class provides methods to **load authentication tokens** from shared preferences
+/// and to **fetch admit card items** for a specific examinee using their **Examinee ID**.
+///
+/// ### Key Variables:
+/// - `baseUrl`: The base URL for the API endpoint.
+/// - `authToken`: The authentication token loaded from shared preferences.
+///
+/// ### Key Actions:
+/// - **create()**: A factory method to instantiate the service and load the authentication token.
+/// - **_loadAuthToken()**: A private method that retrieves the token from shared preferences.
+/// - **fetchAdmitCardItems()**: Fetches admit card data for a given [ExamineeID] from the API.
 class AdmitCardAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
@@ -46,7 +58,7 @@ class AdmitCardAPIService {
         throw Exception('Failed to load Admit Card');
       }
     } catch (e) {
-      throw Exception('Error fetching syllabus: $e');
+      throw Exception('Error fetching admit card: $e');
     }
   }
 }

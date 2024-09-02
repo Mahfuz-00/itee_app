@@ -1,6 +1,10 @@
 part of 'second_page_cubit.dart';
 
 /// Represents the state of the second page in the application.
+///
+/// Contains information about the user's [fullName], [email], [phone],
+/// [dateOfBirth], [gender], [linkedin], [address], [postCode],
+/// [occupation], and [imagePath].
 class SecondPageState extends Equatable {
   final String fullName;
   final String email;

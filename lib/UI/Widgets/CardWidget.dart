@@ -3,6 +3,14 @@ import 'templateerrorcontainer.dart';
 
 /// A custom widget that displays a list of requests or handles errors.
 /// It effectively manages loading states, errors, and empty list scenarios.
+///
+/// This widget contains the following parameters:
+///
+/// * [loading]: A boolean indicating whether the data is currently loading.
+/// * [fetch]: A boolean indicating whether data fetching is successful.
+/// * [errorText]: A string containing error messages to display.
+/// * [fetchData]: A Future representing the asynchronous data fetching operation.
+/// * [listWidget]: A list of widgets to display once data fetching is complete.
 class CardWidget extends StatelessWidget {
   final bool loading;
   final bool fetch;

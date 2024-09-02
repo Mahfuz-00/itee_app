@@ -8,7 +8,18 @@ import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 
-
+/// The [ITEETrainingProgramDetails] class represents the details of the ITEE
+/// Training Program. It provides information about the program, including
+/// its duration, course fee, and a link for further information. Users can
+/// also initiate phone calls to relevant contacts directly from this screen.
+///
+/// Implements an [InternetChecker] to ensure internet
+/// connectivity before displaying the content.
+///
+/// Key Features:
+/// - Displays program details, including title, objectives, duration, and course fee.
+/// - Provides a link to the official Facebook page for more information.
+/// - Allows users to call specific phone numbers from a dialog interface.
 class ITEETrainingProgramDetails extends StatefulWidget {
   const ITEETrainingProgramDetails({super.key});
 

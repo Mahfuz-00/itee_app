@@ -11,6 +11,27 @@ import '../Dashboard UI/dashboardUI.dart';
 import '../Forgot Password UI/forgotpasswordUI.dart';
 import '../Sign Up UI/signupUI.dart';
 
+/// The `Login` class represents the login screen of the application.
+/// It manages the user authentication process and allows users to log in
+/// using their email and password. This class is responsible for validating
+/// input fields, handling API calls for login, and navigating to different
+/// screens based on the user's login status.
+///
+/// Key components of this class:
+/// - [_loginRequest]: An instance of `LoginRequestmodel` that holds the
+///   user's email and password.
+/// - [TextEditingControllers]: Controllers for handling input from the
+///   email and password fields.
+/// - [_isObscured]: A boolean to toggle password visibility.
+/// - [_isLoading]: A boolean to indicate the loading state during
+///   authentication.
+/// - [_checkLoginRequest]: A method to validate the login request.
+/// - [validateAndSave]: A method to validate input fields and initiate
+///   the login API call.
+/// - [showTopToast]: A method to display error messages on the screen.
+///
+/// This class utilizes the `Bloc` pattern for state management and interacts
+/// with the `AuthCubit` to handle authentication-related actions.
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -36,8 +57,8 @@ class _LoginState extends State<Login> {
 
   void _checkLoginRequest() {
     if (_loginRequest != null) {
-      _loginRequest.Email; // no error
-      _loginRequest.Password; // no error
+      _loginRequest.Email;
+      _loginRequest.Password;
     }
   }
 
@@ -272,7 +293,7 @@ class _LoginState extends State<Login> {
                                 fixedSize: Size(screenWidth*0.9, 70),
                               ),
                               child: _isButtonClicked
-                                  ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                                  ? CircularProgressIndicator()
                                   : const Text('Login',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -383,7 +404,7 @@ class _LoginState extends State<Login> {
     OverlayEntry overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
         top: MediaQuery.of(context).padding.top +
-            10, // 10 is for a little margin from the top
+            10,
         left: 20,
         right: 20,
         child: Material(
@@ -405,7 +426,6 @@ class _LoginState extends State<Login> {
 
     overlayState?.insert(overlayEntry);
 
-    // Remove the overlay entry after some time (e.g., 3 seconds)
     Future.delayed(Duration(seconds: 3)).then((_) {
       overlayEntry.remove();
     });
@@ -425,7 +445,6 @@ class _LoginState extends State<Login> {
     try {
       final apiService = await APIProfileService();
 
-      // Check if the widget is still mounted
       if (!mounted) return;
 
       print('Mounted');

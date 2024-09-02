@@ -4,6 +4,10 @@ import 'package:equatable/equatable.dart';
 part 'second_page_state.dart';
 
 /// Represents the state of the second page in the exam registration.
+///
+/// Holds user information such as [fullName], [email], [phone],
+/// [dateOfBirth], [gender], [linkedin], [address], [postCode],
+/// [occupation], and [imagePath].
 class SecondPageCubit extends Cubit<SecondPageState> {
   SecondPageCubit()
       : super(const SecondPageState(

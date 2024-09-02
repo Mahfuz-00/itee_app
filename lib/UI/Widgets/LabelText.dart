@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// A widget that displays a text label with a red asterisk indicating a required field.
+///
+/// This widget is useful for form labels where certain fields are mandatory.
+/// The red asterisk visually indicates to the user that the associated field is required.
+///
+/// **Parameters:**
+/// - [text]: A String representing the label text to be displayed.
 class LabeledTextWithAsterisk extends StatelessWidget {
   final String text;
 

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 /// A custom form field that represents a dropdown menu with a [hintText]
 /// and a list of pre-defined [DropdownMenuItem] options. It includes validation
 /// to ensure a value is selected.
+///
+/// The [DropdownFormField] takes the following parameters:
+/// - [hintText]: A string to display as a hint in the dropdown.
+/// - [dropdownItems]: A list of [DropdownMenuItem<String>] representing the selectable items.
 class DropdownFormField extends StatefulWidget {
   late final String hintText;
   late final List<DropdownMenuItem<String>> dropdownItems;

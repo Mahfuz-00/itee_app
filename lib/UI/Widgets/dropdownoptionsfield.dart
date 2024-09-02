@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 /// A helper class to build a dropdown form field based on a map of options
 /// and a selected value. It provides a label text and an [onChanged] callback
 /// for handling changes in the selected value.
+///
+/// The [DropdownFormFieldBuilder] takes the following parameters:
+/// - [options]: A map where the key is a string representing the category,
+///   and the value is a list of strings representing the selectable options.
+/// - [labelText]: A string to display as the label for the dropdown.
+/// - [selectedValue]: The currently selected value, which can be null.
+/// - [onChanged]: A callback function that is triggered when the selected
+///   value changes.
 class DropdownFormFieldBuilder {
   final Map<String, List<String>> options;
   final String labelText;

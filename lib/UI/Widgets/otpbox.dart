@@ -3,6 +3,13 @@ import 'package:flutter/services.dart';
 
 //Del
 /// A custom text form field designed for entering a single-digit numeric value.
+///
+/// This widget provides a text field that restricts input to a single digit,
+/// allowing only numeric input. It is primarily used for entering codes or
+/// similar short numeric values.
+///
+/// **Parameters:**
+/// - [textController]: The controller that manages the text being edited.
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController textController;
 

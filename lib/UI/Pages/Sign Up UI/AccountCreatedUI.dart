@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../Login UI/loginUI.dart';
 
+/// A screen displayed after a successful account creation.
+/// It provides feedback to the user about the account creation
+/// and includes a button to navigate back to the login screen.
+///
+/// This widget uses [InternetChecker] to ensure a valid internet connection
+/// before showing the content.
+///
+/// - **Fields:**
+///   - [screenWidth]: The width of the screen for responsive design.
+///   - [screenHeight]: The height of the screen for responsive design.
 class AccountCreated extends StatefulWidget {
   const AccountCreated({super.key});
 

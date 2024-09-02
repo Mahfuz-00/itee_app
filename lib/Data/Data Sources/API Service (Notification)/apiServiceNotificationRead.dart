@@ -2,6 +2,22 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for handling **Notification Management** functionalities,
+/// specifically for marking notifications as read.
+///
+/// This class provides a method to read notifications by making a GET request
+/// to the designated API endpoint with the user's authentication token.
+///
+/// ### Key Actions:
+/// - **readNotification()**: Sends a GET request to the notifications
+///   endpoint to mark notifications as read.
+///
+///   - **Returns**: A `bool` indicating whether the notification was read
+///     successfully (`true`) or not (`false`).
+///
+///   - **Throws**: An exception if the authentication token is empty
+///     or if an error occurs during the request, providing relevant
+///     error messages.
 class NotificationReadApiService {
   static const String URL = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
@@ -28,7 +44,6 @@ class NotificationReadApiService {
     try {
       if (authToken.isEmpty) {
         print(authToken);
-        // Wait for authToken to be initialized
         await _loadAuthToken();
         throw Exception('Authentication token is empty.');
       }
@@ -42,13 +57,11 @@ class NotificationReadApiService {
       );
 
       if (response.statusCode == 200) {
-        // Request was successful, handle response accordingly
         print(response.body);
         print('Notification Read!!');
         return true;
       } else {
         print(response.body);
-        // Request failed, handle error accordingly
         print('Failed to read Notification: ${response.statusCode}');
         return false;
       }
@@ -61,7 +74,6 @@ class NotificationReadApiService {
         },
       );
       print(response.body);
-      // Exception occurred, handle error accordingly
       print('Exception While Reading Notification: $e');
       return false;
     }

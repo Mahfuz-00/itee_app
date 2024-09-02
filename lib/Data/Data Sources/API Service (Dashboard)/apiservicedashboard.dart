@@ -2,6 +2,22 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for interacting with the **Dashboard API**.
+///
+/// This class provides methods to **load authentication tokens** from shared preferences
+/// and to **fetch dashboard items**.
+///
+/// ### Key Variables:
+/// - `baseUrl`: The base URL for the API endpoint.
+/// - `authToken`: The authentication token loaded from shared preferences.
+///
+/// ### Key Actions:
+/// - **create()**: A factory method to instantiate the service and load the authentication token.
+/// - **_loadAuthToken()**: A private method that retrieves the token from shared preferences.
+/// - **fetchDashboardItems()**: Fetches the dashboard items from the API endpoint, with
+///   different headers depending on the presence of the authentication token. If the token
+///   is empty, a request is made without authorization. It handles different response
+///   status codes, including a fallback for 500 status code.
 class DashboardAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;

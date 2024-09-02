@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 //Convert
 /// A widget that displays an application item template using a ListTile with
 /// applicant [name], [ExamineeID], [Categories], [result], [payment], and [admitcard] status.
+///
+/// This widget is designed to present application details in a structured format,
+/// displaying the applicant's name, ID, and categories along with their result,
+/// payment, and admit card status.
+///
+/// **Parameters:**
+/// - [name]: The name of the applicant.
+/// - [ExamineeID]: The ID of the examinee.
+/// - [Categories]: The categories associated with the application.
+/// - [result]: The result status of the application.
+/// - [payment]: The payment status of the application.
+/// - [admitcard]: The admit card status of the application.
 class ApplicationItemTemplate extends StatelessWidget {
   final String name;
   final String ExamineeID;

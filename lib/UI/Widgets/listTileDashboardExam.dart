@@ -2,7 +2,20 @@ import 'package:flutter/material.dart';
 
 //Convert
 /// A widget that displays an exam item template using a ListTile with
-/// important details like [name], [price], and an [image] url.
+/// important details like [image], [name], [Catagories], and [price].
+///
+/// This widget is designed to present exam details in a structured format,
+/// displaying the exam's [image], [name], [Catagories], and [price].
+///
+/// **Parameters:**
+/// - [image]: The URL of the exam's image.
+/// - [name]: The name of the exam.
+/// - [Catagories]: The categories the exam belongs to.
+/// - [price]: The price of the exam.
+/// - [priceID]: The ID associated with the price.
+/// - [Details]: Additional details about the exam.
+/// - [typeID]: The ID representing the type of exam.
+/// - [CatagoryID]: The ID representing the category of the exam.
 class ExamItemTemplate extends StatelessWidget {
   final String image;
   final String name;

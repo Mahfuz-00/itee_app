@@ -8,7 +8,7 @@ import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceCent
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceFee.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicebook.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicetype.dart';
-import '../../../Data/Models/centerModels.dart';
+import '../../../Data/Models/examModels.dart';
 import '../../Bloc/first_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/custombottomnavbar.dart';

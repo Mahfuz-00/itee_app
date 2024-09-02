@@ -11,6 +11,9 @@ import '../Pages/ITEE Training Program Details UI/trainingprogramdetails.dart';
 /// A custom widget that displays a navigation bar at the bottom of the screen
 /// with icons and labels for navigating to different parts of the app.
 /// It also includes a contact button that opens a dialog to call phone numbers.
+///
+/// This widget does not require any parameters and provides a user-friendly
+/// interface for navigating to various sections of the application.
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
 

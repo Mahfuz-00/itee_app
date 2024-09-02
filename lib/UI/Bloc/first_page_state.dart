@@ -1,6 +1,10 @@
 part of 'first_page_cubit.dart';
 
 /// Represents the state of the first page in the application.
+///
+/// Contains information about the [venueID], [venueName], [courseCategoryID],
+/// [courseCategoryName], [courseTypeID], [courseTypeName], [examFee],
+/// [examFeeID], [selectedBookNames], [selectedBookIDs], and [bookPrice].
 class FirstPageState extends Equatable {
   final String venueID;
   final String venueName;

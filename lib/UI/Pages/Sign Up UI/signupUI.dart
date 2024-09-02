@@ -11,6 +11,18 @@ import '../../../Data/Data Sources/API Service (Sign Up)/apiserviceregister.dart
 import '../../../Data/Models/registermodels.dart';
 import '../Login UI/loginUI.dart';
 
+/// `Signup` is a StatefulWidget that represents the user registration screen.
+/// It contains a form for collecting user details such as full name, email,
+/// phone number, occupation, LinkedIn profile, and password. The form
+/// includes validation for each field and manages password visibility.
+///
+/// Key functionalities:
+/// - Allows users to input their details and register an account.
+/// - Validates user inputs (e.g., email phone, password).
+/// - Toggles password visibility for the password and confirm password fields.
+/// - Handles profile image selection and displays its dimensions.
+///
+/// It utilizes a `GlobalKey<FormState>` for form validation and management.
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -37,7 +49,6 @@ class _SignupState extends State<Signup> {
   double _imageHeight = 0;
   double _imageWidth = 0;
 
-  // Function to load image dimensions
   Future<void> _getImageDimensions() async {
     if (_imageFile != null) {
       final data = await _imageFile!.readAsBytes();
@@ -48,7 +59,6 @@ class _SignupState extends State<Signup> {
       });
     }
   }
-
 
   IconData _getIconPassword() {
     return _isObscuredPassword ? Icons.visibility_off : Icons.visibility;
@@ -92,7 +102,6 @@ class _SignupState extends State<Signup> {
     final screenHeight = MediaQuery.of(context).size.height;
     return InternetChecker(
       child: Scaffold(
-        //resizeToAvoidBottomInset: false,
         body: PopScope(
           canPop: false,
           child: SingleChildScrollView(
@@ -211,7 +220,6 @@ class _SignupState extends State<Signup> {
                                       keyboardType: TextInputType.phone,
                                       inputFormatters: [
                                         FilteringTextInputFormatter.digitsOnly,
-                                        // Only allow digits
                                         LengthLimitingTextInputFormatter(11),
                                       ],
                                       validator: (input) {
@@ -221,7 +229,7 @@ class _SignupState extends State<Signup> {
                                         if (input.length != 11) {
                                           return 'Mobile number must be 11 digits';
                                         }
-                                        return null; // Return null if the input is valid
+                                        return null;
                                       },
                                       style: const TextStyle(
                                         color: Color.fromRGBO(143, 150, 158, 1),
@@ -313,7 +321,6 @@ class _SignupState extends State<Signup> {
                                     height: 70,
                                     child: TextFormField(
                                       keyboardType: TextInputType.text,
-                                      //onSaved: (input) => _registerRequest.password = input!,
                                       validator: (input) => input!.length < 8
                                           ? "Password should be more than 8 characters"
                                           : null,
@@ -355,7 +362,6 @@ class _SignupState extends State<Signup> {
                                     height: 70,
                                     child: TextFormField(
                                       keyboardType: TextInputType.text,
-                                      //onSaved: (input)=> _registerRequest.Password = input!,
                                       validator: (input) => input!.length < 8 ? "Password should be more than 7 characters": null,
                                       controller: _confirmPasswordController,
                                       obscureText: _isObscuredConfirmPassword,
@@ -413,7 +419,7 @@ class _SignupState extends State<Signup> {
                                           errorBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                                 color: Colors
-                                                    .red), // Customize error border color
+                                                    .red),
                                           ),
                                         ),
                                         child: Row(
@@ -440,7 +446,6 @@ class _SignupState extends State<Signup> {
                                                   fontSize: 20,
                                                   fontFamily: 'default',
                                                 ),),
-                                            // Customize upload text style
                                           ],
                                         ),
                                       ),
@@ -460,7 +465,7 @@ class _SignupState extends State<Signup> {
                                   fixedSize: Size(screenWidth*0.9, 70),
                                 ),
                                 child:_isButtonLoading
-                                    ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                                    ? CircularProgressIndicator()
                                     : const Text('Register',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -552,7 +557,6 @@ class _SignupState extends State<Signup> {
       );
 
       final apiService = APIService();
-      // Call register method passing registerRequestModel, _imageFile, and authToken
       apiService.register(registerRequest, _imageFile).then((response) {
         print("Submitted");
         if (response != null && response == "User Registration Successfully. Verification is pending.") {
@@ -593,7 +597,6 @@ class _SignupState extends State<Signup> {
         setState(() {
           _isButtonLoading = false;
         });
-        // Handle registration error
         print(error);
         const snackBar = SnackBar(
           content: Text('Registration failed!'),
@@ -603,7 +606,7 @@ class _SignupState extends State<Signup> {
     } else {
       setState(() {
         _isButtonLoading =
-        false; // Validation complete, hide circular progress indicator
+        false;
       });
       if(_passwordController.text != _confirmPasswordController.text){
         const snackBar = SnackBar(

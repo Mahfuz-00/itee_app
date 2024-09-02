@@ -7,6 +7,18 @@ import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 
+/// A widget that displays details about the ITEE (Information Technology Engineers Examination).
+///
+/// This class creates a screen containing information about the ITEE, including:
+/// - An overview of the examination
+/// - Details of the four examination levels offered by ITPEC
+/// - Specifics about the implementation of ITEE in Bangladesh
+///
+/// The screen includes a back button, a navigation bar for easy access to other parts of the application,
+/// and a scrollable layout for displaying extensive text content.
+///
+/// The `InternetChecker` widget is used to ensure a stable internet connection is present before
+/// displaying the content.
 class ITEEDetails extends StatefulWidget {
   const ITEEDetails({super.key});
 

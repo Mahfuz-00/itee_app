@@ -2,6 +2,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for managing **Result View** functionalities,
+/// specifically for retrieving a list of results for the user.
+///
+/// This class provides methods to manage authentication and fetch
+/// the results from the API.
+///
+/// ### Key Actions:
+/// - **getallResult()**:
+///   Fetches all results associated with the authenticated user.
+///
+///   - **Returns**:
+///     A [Map<String, dynamic>?] containing the results data,
+///     or null if the request fails.
+///
+///   - **Throws**:
+///     An exception if the [authToken] is empty or if an error occurs
+///     during the request, providing relevant error messages.
 class ResultViewAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;

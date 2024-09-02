@@ -3,13 +3,29 @@ import 'package:flutter/animation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:itee_exam_app/UI/Pages/Dashboard%20UI/dashboardUI.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../Data/Data Sources/API Service (Dashboard)/apiservicedashboard.dart';
 import '../../../Data/Data Sources/API Service (Profile)/apiserviceprofile.dart';
 import '../../../Data/Models/profilemodel.dart';
 import '../../Bloc/auth_cubit.dart';
 import '../Login UI/loginUI.dart';
 
+/// A splash screen that handles the initial loading and authentication
+/// checking for the app. It displays a logo and transitions to the
+/// dashboard or login screen based on the authentication status of the user.
+///
+/// This widget uses [AnimationController] for fade and slide animations
+/// and listens for app lifecycle changes to re-check authentication
+/// when the app is resumed.
+///
+/// - **Fields:**
+///   - [animationController]: Controls the animations for the splash screen.
+///   - [FadeAnimation]: Controls the fade animation effect.
+///   - [SlideAnimation]: Controls the slide animation effect.
+///   - [animatedpadding]: Controls the padding animation effect.
+///
+/// - **Methods:**
+///   - `didChangeAppLifecycleState`: Checks authentication when the app is resumed.
+///   - `_checkAuthentication`: Checks if the user is authenticated and navigates accordingly.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -26,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1500));
@@ -66,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _checkAuthentication(); // Check token when app is resumed
+      _checkAuthentication();
     }
   }
 
@@ -100,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
           token: token,
         ));
 
-        if (mounted) { // Check if the widget is still mounted
+        if (mounted) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

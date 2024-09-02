@@ -2,6 +2,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for handling **Payment View Management** functionalities,
+/// specifically for fetching payment-related data from the API.
+///
+/// This class provides methods to manage authentication and retrieve
+/// a list of unpaid payments for the user.
+///
+/// ### Key Actions:
+/// - **getallPayment()**:
+///   Sends a GET request to retrieve the list of unpaid payments for the user.
+///
+///   - **Returns**:
+///     A `Map<String, dynamic>?` representing the JSON response
+///     containing payment details, or `null` if the request fails.
+///
+///   - **Throws**:
+///     An exception if the authentication token is empty or if an error
+///     occurs during the request, providing relevant error messages.
 class PaymentViewAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
@@ -43,10 +60,10 @@ class PaymentViewAPIService {
         print(jsonData);
         return jsonData;
       } else {
-        throw Exception('Failed to load result');
+        throw Exception('Failed to load payments');
       }
     } catch (e) {
-      throw Exception('Error fetching result: $e');
+      throw Exception('Error fetching payments: $e');
     }
   }
 }

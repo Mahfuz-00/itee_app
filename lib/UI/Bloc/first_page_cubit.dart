@@ -3,7 +3,17 @@ import 'package:equatable/equatable.dart';
 
 part 'first_page_state.dart';
 
-/// Represents the state of the first page in the exam registration.
+/// A Cubit class that manages the state of the first page
+/// in the exam registration process.
+///
+/// Initializes the state with default values for [venueID], [venueName],
+/// [courseCategoryID], [courseCategoryName], [courseTypeID], [courseTypeName],
+/// [examFee], [examFeeID], [selectedBookNames], [selectedBookIDs], and [bookPrice].
+///
+/// Updates the state with new data for the first page.
+/// Accepts parameters for [venue] and [course] details, [examFee],
+/// [selectedBookNames], [selectedBookIDs], and [bookPrice],
+/// then emits the updated state using the [copyWith] method.
 class FirstPageCubit extends Cubit<FirstPageState> {
   FirstPageCubit()
       : super(const FirstPageState(

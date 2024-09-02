@@ -3,6 +3,26 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for handling **Payment Management** functionalities,
+/// specifically for sending exam registration payment data to the API.
+///
+/// This class provides methods to manage authentication and send
+/// transaction and registration IDs to the server.
+///
+/// ### Key Actions:
+/// - **sendIdsFromSharedPreferences(String transactionId, int examRegistrationId)**:
+///   Sends a POST request with the transaction and exam registration IDs to
+///   the specified API endpoint.
+///
+///   - **Parameters**:
+///     - `transactionId`: The ID of the transaction to be sent.
+///     - `examRegistrationId`: The ID of the exam registration to be sent.
+///
+///   - **Returns**: A `bool` indicating whether the IDs were sent
+///     successfully (`true`) or not (`false`).
+///
+///   - **Throws**: An exception if an error occurs during the request,
+///     providing relevant error messages.
 class PaymentAPIService {
   static const String apiUrl = 'https://bcc.touchandsolve.com/api/itee/payment/exam/registration';
 
@@ -44,11 +64,11 @@ class PaymentAPIService {
         print('IDs sent successfully');
         return true;
       } else {
-        print('Failed to send IDs. Status code: ${response.statusCode}');
+        print('Failed to send payments. Status code: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('Error sending IDs: $e');
+      print('Error sending payments: $e');
       return false;
     }
   }

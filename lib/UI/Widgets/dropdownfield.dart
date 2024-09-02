@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 /// A custom form field that represents a dropdown menu with a [hintText]
 /// and a list of selectable items. When an item is selected, the value
 /// is passed to a callback function [onChanged].
+///
+/// The [DropdownFormField] takes the following parameters:
+/// - [hintText]: A string to display as a hint in the dropdown.
+/// - [dropdownItems]: A list of strings representing the selectable items.
+/// - [initialValue]: The initial value of the dropdown (optional).
+/// - [onChanged]: A callback function that is called when a new item is selected (optional).
 class DropdownFormField extends StatefulWidget {
   final String hintText;
   final List<String> dropdownItems;

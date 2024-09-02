@@ -1,20 +1,42 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
-
 import '../../Models/registermodels.dart';
 
+/// A service class for managing user registration functionalities.
+///
+/// This class provides a method to register a new user with
+/// the provided details and optional profile image.
+///
+/// ### Key Actions:
+/// - **register(RegisterRequestmodel registerRequestModel, File? imageFile)**:
+///   Registers a new user by sending their details and profile image.
+///
+///   - **Parameters**:
+///     - [registerRequestModel]: An instance of
+///       the `RegisterRequestmodel` containing user registration data.
+///     - [imageFile]: An optional file containing the user's profile image.
+///   - **Returns**:
+///     A [String] message indicating the result of the registration process.
+///
+///   - **Throws**:
+///     An exception if an error occurs during the request, providing
+///     relevant error messages.
+///
+/// ### Notes:
+/// - The method uses the `http` package to send a multipart POST request
+///   to the registration API endpoint.
+/// - The API response is logged for both successful and failed registrations.
+/// - In case of errors, the method checks for specific validation errors
+///   related to the email and phone fields and returns appropriate messages.
 class APIService {
   Future<String> register(
       RegisterRequestmodel registerRequestModel, File? imageFile) async {
     try {
       String url = "https://bcc.touchandsolve.com/api/registration";
 
-      // Create a multipart request
       var request = http.MultipartRequest('POST', Uri.parse(url));
 
-      // Add user data fields to the request
       request.fields['app_name'] = 'itee';
       request.fields['full_name'] = registerRequestModel.fullName;
       request.fields['email'] = registerRequestModel.email;
@@ -24,7 +46,6 @@ class APIService {
       request.fields['password'] = registerRequestModel.password;
       request.fields['password_confirmation'] = registerRequestModel.confirmPassword;
 
-      // Add the image file to the request
       var imageStream = http.ByteStream(imageFile!.openRead());
       var length = await imageFile.length();
       var multipartFile = http.MultipartFile('photo', imageStream, length,
@@ -32,12 +53,9 @@ class APIService {
 
       request.files.add(multipartFile);
 
-      // Send the request and await the response
       var response = await request.send();
 
-      // Check the status code of the response
       if (response.statusCode == 200) {
-        // Successful registration
         var responseBody = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseBody);
         print(responseBody);
@@ -67,7 +85,6 @@ class APIService {
         }
       }
     } catch (e) {
-      // Handle any exceptions
       print('Error occurred while registering user: $e');
       return 'Failed to register user. Please try again.';
     }

@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+
 /// A widget that displays a card with an examinee's result information
-/// including ID, name, date of birth, exam details, passing status,
+/// including their ID, name, date of birth, exam details, passing status,
 /// and (if passed) passing ID.
+///
+/// The [ResultCard] widget takes the following parameters:
+/// - [PasserID]: The ID assigned to the passer if they passed the exam.
+/// - [ExamineeID]: The ID of the examinee.
+/// - [Name]: The name of the examinee.
+/// - [DateOfBirth]: The date of birth of the examinee.
+/// - [MorningPasser]: Indicates if the examinee passed the morning session (1 for true, 0 for false).
+/// - [AfternoonPasser]: Indicates if the examinee passed the afternoon session (1 for true, 0 for false).
+/// - [PassingSession]: Indicates the session in which the examinee passed.
+/// - [ExamType]: The type of exam taken by the examinee.
 class ResultCard extends StatelessWidget {
   final String PasserID;
   final String ExamineeID;

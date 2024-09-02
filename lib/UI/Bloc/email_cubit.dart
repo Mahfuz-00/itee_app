@@ -3,7 +3,11 @@ import 'package:equatable/equatable.dart';
 
 part 'email_state.dart';
 
-/// A Cubit class for managing email state.
+/// A Cubit class for managing [email] state.
+///
+/// This Cubit is responsible for handling the [email] state within the application.
+/// It allows for saving and clearing the [email], emitting the appropriate states
+/// to notify listeners of changes.
 class EmailCubit extends Cubit<EmailState> {
   EmailCubit() : super(EmailInitial());
 

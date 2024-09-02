@@ -2,6 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// A service class for interacting with the **Exam Material API**.
+///
+/// This class provides methods to **load authentication tokens** from shared preferences
+/// and to **fetch exam material items** such as course outlines.
+///
+/// ### Key Variables:
+/// - `baseUrl`: The base URL for the API endpoint.
+/// - `authToken`: The authentication token loaded from shared preferences.
+///
+/// ### Key Actions:
+/// - **create()**: A factory method to instantiate the service and load the authentication token.
+/// - **_loadAuthToken()**: A private method that retrieves the token from shared preferences.
+/// - **fetchExamMaterialItems()**: Fetches the exam material items from the API endpoint.
 class ExamMaterialAPIService {
   final String baseUrl = 'https://bcc.touchandsolve.com/api';
   late final String authToken;

@@ -4,6 +4,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../Models/userInfoUpdateModel.dart';
 
+/// A service class for updating the user's profile information through the API.
+///
+/// This class manages the process of updating the user's profile,
+/// requiring the user's ID and the new name. The class utilizes an
+/// authentication token stored in shared preferences to authorize the
+/// request.
+///
+/// ### Key Actions:
+/// - **updateUserProfile**:
+///   Updates the user's profile by sending a POST request to the
+///   profile update endpoint.
+///
+///   - **Parameters**:
+///     - [userData]: An instance of [UserProfileUpdate] containing the
+///       user's ID and the new name to be updated.
+///
+///   - **Returns**:
+///     A [String] containing the server's response message if the request
+///     is successful.
+///
+///   - **Throws**:
+///     An exception if the authentication token is empty or if the
+///     request fails, providing a relevant error message.
 class APIServiceUpdateUser {
   late final String authToken;
   String URL = "https://bcc.touchandsolve.com/api/user/profile/update";

@@ -3,6 +3,12 @@ import 'package:intl/intl.dart';
 
 /// A widget that displays a payment card with applicant information,
 /// exam details, book fees, and a pay button.
+///
+/// **Parameters:**
+/// - [ExamineeID]: The ID of the examinee.
+/// - [ExamType]: The type of exam.
+/// - [ExamCatagory]: The category of the exam.
+/// - [Books]: A list of books associated with the exam, each containing details such as name and fees.
 class PaymentCard extends StatelessWidget {
   final String ExamineeID;
   final String ExamType;

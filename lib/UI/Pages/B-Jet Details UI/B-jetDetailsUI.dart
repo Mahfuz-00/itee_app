@@ -7,7 +7,17 @@ import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 
-
+/// BJetDetails is a StatefulWidget that provides information about the
+/// Bangladesh-Japan ICT Engineers' Training Program (B-JET). It displays
+/// detailed information about the program, including its purpose, history,
+/// and expected outcomes for participants.
+///
+/// This widget includes:
+/// - A title and description of the B-JET Program.
+/// - A bottom navigation bar for navigation to other sections of the app,
+///   including Home, ITEE details, Training details, and Contact options.
+/// - A dialog that allows users to select a phone number to call related
+///   to the B-JET Program.
 class BJetDetails extends StatefulWidget {
   const BJetDetails({super.key});
 

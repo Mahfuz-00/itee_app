@@ -3,7 +3,11 @@ import 'package:equatable/equatable.dart';
 
 part 'third_page_state.dart';
 
-/// Represents the state of the third page in the exam registration.
+/// Represents the state of the third page in the exam registration process.
+///
+/// Initializes the state with default values for [qualification], [subjectName],
+/// [disipline], [passingYear], [institute], [result], and [passingId].
+/// Updates the state with new data for the third page.
 class ThirdPageCubit extends Cubit<ThirdPageState> {
   ThirdPageCubit()
       : super(const ThirdPageState(

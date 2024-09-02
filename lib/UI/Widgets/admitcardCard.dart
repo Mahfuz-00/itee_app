@@ -7,6 +7,12 @@ import '../../Data/Data Sources/API Service (Admit Card)/apiserviceAdmitCard.dar
 
 /// A widget that displays an admit card for an exam containing
 /// examinee information and a button to download and print the admit card.
+///
+/// The [ExamineeID] represents the unique ID of the examinee.
+/// [ExamType] indicates the type of exam being taken.
+/// [ExamCatagory] specifies the category of the exam.
+/// [Name] is the name of the examinee.
+/// [URL] is the link to download the admit card.
 class AdmitCardCard extends StatelessWidget {
   final String ExamineeID;
   final String ExamType;

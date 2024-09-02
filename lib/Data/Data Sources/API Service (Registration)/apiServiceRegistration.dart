@@ -1,14 +1,34 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // Import for Cubit
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../UI/Bloc/combine_page_cubit.dart';
 
+/// A service class for handling **Exam Registration** functionalities,
+/// specifically for sending exam registration data to the API.
+///
+/// This class provides methods to manage authentication and send
+/// registration data along with any associated images.
+///
+/// ### Key Actions:
+/// - **sendRegistrationDataFromCubit()**:
+///   Sends a multipart POST request to register for an exam.
+///
+///   - **Parameters**:
+///     - [CombinedDataCubit combinedDataCubit]:
+///       The cubit containing the data necessary for registration.
+///     - [File? imageFile]:
+///       An optional image file to be uploaded with the registration data.
+///
+///   - **Returns**:
+///     A [Map<String, dynamic>?] representing the API response,
+///     or null if the request fails.
+///
+///   - **Throws**:
+///     An exception if the [authToken] is empty or if an error occurs
+///     during the request, providing relevant error messages.
 class ExamRegistrationAPIService {
   static const String apiUrl =
       'https://bcc.touchandsolve.com/api/itee/exam/registration';
@@ -43,7 +63,6 @@ class ExamRegistrationAPIService {
       'Authorization': 'Bearer $authToken',
     });
 
-    // Prepare the data
     String book = state.savedBookNames?.join('|') ?? 'No books selected';
     String bookID = state.bookID?.join('|') ?? 'No books selected';
 

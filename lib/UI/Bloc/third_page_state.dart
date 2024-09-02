@@ -1,6 +1,14 @@
 part of 'third_page_cubit.dart';
 
 /// Represents the state of the third page in the application.
+///
+/// Contains information about the [qualification], [subjectName],
+/// [disipline], [passingYear], [institute], [result], and [passingId].
+///
+/// The [copyWith] method allows creating a new instance of the state
+/// with updated values for [qualification], [subjectName], [disipline],
+/// [passingYear], [institute], [result], and [passingId]. If a parameter
+/// is not provided, the existing value is retained.
 class ThirdPageState extends Equatable {
   final String qualification;
   final String subjectName;
