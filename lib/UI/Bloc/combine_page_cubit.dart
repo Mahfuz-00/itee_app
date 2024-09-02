@@ -9,6 +9,7 @@ part 'combine_page_state.dart';
 /// A Cubit class that combines data from three separate Cubits
 /// ([FirstPageCubit], [SecondPageCubit], and [ThirdPageCubit])
 /// to provide a unified view of the data for the application.
+/// Resets the combined data and the individual page states.
 class CombinedDataCubit extends Cubit<CombinedDataState> {
   final FirstPageCubit firstPageCubit;
   final SecondPageCubit secondPageCubit;
@@ -89,5 +90,14 @@ class CombinedDataCubit extends Cubit<CombinedDataState> {
     print('Institute: ${data.institute}');
     print('Result: ${data.result}');
     print('Passing ID: ${data.passingID}');
+  }
+
+  void resetData() {
+    firstPageCubit.reset();
+    secondPageCubit.reset();
+    thirdPageCubit.reset();
+
+    emit(const CombinedDataState());
+    print('Combine Data Reset');
   }
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceCenterSelection.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceFee.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicebook.dart';
@@ -12,12 +10,22 @@ import '../../Bloc/first_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfield.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import 'registrationpersonalinfo.dart';
 
+/// A widget that represents the registration center form accessed from the exam widget.
+///
+/// This widget allows users to register for exams by displaying
+/// a registration form that collects necessary information such as:
+/// - Selected exam category
+/// - User personal details
+/// - Venue details
+///
+/// Actions included:
+/// - Submitting the registration form
+/// - Validating input fields
+///
+/// This widget integrates with the `ExamRegistrationCubit` to manage
+/// state and handle submissions.
 class RegistrationCenterFromPopularExam extends StatefulWidget {
   final String Catagory;
   final String Type;
@@ -85,11 +93,9 @@ class _RegistrationCenterFromPopularExamState
       print('Name I Want ${widget.Catagory}');
       final apiService = await CenterAPIService.create();
 
-      // Fetch dashboard data
       final Map<String, dynamic> dashboardData =
           await apiService.fetchCenterItems();
       if (dashboardData == null || dashboardData.isEmpty) {
-        // No data available or an error occurred
         print(
             'No data available or error occurred while fetching dashboard data');
         return;
@@ -99,7 +105,6 @@ class _RegistrationCenterFromPopularExamState
 
       final Map<String, dynamic> records = dashboardData['records'];
       if (records == null || records.isEmpty) {
-        // No records available
         print('No records available');
         return;
       }
@@ -119,7 +124,7 @@ class _RegistrationCenterFromPopularExamState
         setState(() {
           examFee = widget.Fee;
         });
-      } // Handle each section separately
+      }
 
       setState(() {
         _isFetched = true;
@@ -127,7 +132,6 @@ class _RegistrationCenterFromPopularExamState
     } catch (e) {
       print('Error fetching connection requests: $e');
       _isFetched = true;
-      // Handle error as needed
     }
   }
 
@@ -265,7 +269,6 @@ class _RegistrationCenterFromPopularExamState
       print('Fetching books for category: ${widget.Catagory}');
       final apiService = await BookAPIService.create();
 
-      // Fetch books data
       final Map<String, dynamic> dashboardData =
           await apiService.fetchBooks(widget.Catagory);
       if (dashboardData == null || dashboardData.isEmpty) {
@@ -280,7 +283,6 @@ class _RegistrationCenterFromPopularExamState
         return;
       }
 
-      // Handle the fetched books
       await handleBooks(records);
 
       setState(() {
@@ -300,8 +302,7 @@ class _RegistrationCenterFromPopularExamState
 
   double _calculateTotalPrice() {
     return _selectedBooks.fold(0.0, (sum, book) {
-      double price = double.tryParse(book.bookprice) ??
-          0.0; // Convert to double, default to 0.0 if null
+      double price = double.tryParse(book.bookprice) ?? 0.0;
       return sum + price;
     });
   }
@@ -524,7 +525,6 @@ class _RegistrationCenterFromPopularExamState
                       ? TextField(
                           controller: TextEditingController(text: widget.Type),
                           enabled: false,
-                          // Disable the text field if you want it to be read-only
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(25),
                             hintText: 'Exam Type',
@@ -551,7 +551,6 @@ class _RegistrationCenterFromPopularExamState
                               initialValue: selectedExamType,
                               onChanged: (newValue) {
                                 setState(() {
-                                  // Reset other selected values if needed
                                   selectedExamType = newValue!;
                                   isFetchFeeInvoked = true;
                                   if (newValue != null) {
@@ -560,10 +559,8 @@ class _RegistrationCenterFromPopularExamState
                                       (type) => type.name == newValue,
                                     );
                                     if (selectedTypeObject != null) {
-                                      //It Takes ID Int
                                       _ExamTypeID =
                                           selectedTypeObject.id.toString();
-
                                       fetchFee(_ExamCatagoriesID, _ExamTypeID,
                                           isFetchFeeInvoked);
                                     }
@@ -607,7 +604,6 @@ class _RegistrationCenterFromPopularExamState
                       ? TextField(
                           controller: TextEditingController(text: widget.Fee),
                           enabled: false,
-                          // Disable the text field if you want it to be read-only
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(25),
                             hintText: 'Exam Fee',
@@ -658,7 +654,6 @@ class _RegistrationCenterFromPopularExamState
               ),
               Column(
                 children: [
-                  // Checkbox list for selecting books
                   ...Books.map((book) {
                     return CheckboxListTile(
                       title: Text(
@@ -677,16 +672,12 @@ class _RegistrationCenterFromPopularExamState
                             _selectedBooks.remove(book);
                           }
                         });
-
-                        print('Selected Books: ${_selectedBooks.map((b) => b.name).join(', ')}');
+                        print(
+                            'Selected Books: ${_selectedBooks.map((b) => b.name).join(', ')}');
                       },
                     );
                   }).toList(),
-
                   SizedBox(height: 20),
-                  // Add some space before the selected books section
-
-                  // Section to show selected books and their prices
                   if (_selectedBooks.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,81 +735,7 @@ class _RegistrationCenterFromPopularExamState
                       ),
                     ),
                     onPressed: () async {
-                      if (_VenueID != null &&
-                          _ExamCatagoriesID != null &&
-                          _ExamTypeID != null &&
-                          _VenueID != '' &&
-                          _ExamCatagoriesID != '' &&
-                          _ExamTypeID != '' &&
-                          examFee != null) {
-              /*          final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('Venue', _VenueID);
-                        await prefs.setString(
-                            'Exam Catagories', _ExamCatagoriesID);
-                        await prefs.setString('Exam Type', _ExamTypeID);
-                        await prefs.setString('Exam Fee', widget.Fee);
-                        await prefs.setInt('Exam Fee ID', widget.FeeId);
-                        await prefs.setString('Book', _BookID);
-                        await prefs.setString('BookPrice', _BookPrice);
-                        await prefs.setString(
-                            'Venue_Name', selectedVenue.toString());
-
-                        if (widget.TypeId.isNotEmpty ?? false) {
-                          await prefs.setString('Exam Type_Name', widget.Type);
-                        } else {
-                          await prefs.setString(
-                              'Exam Type_Name', selectedExamType.toString());
-                        }
-                        if (widget.Fee.isNotEmpty ?? false) {
-                          await prefs.setInt('Exam Fee ID', widget.FeeId);
-                        } else {
-                          await prefs.setString('Exam Fee ID', examFee);
-                        }
-                        await prefs.setString(
-                            'Book_Name', selectedBook.toString());
-
-                        print('Catagory : $_ExamCatagoriesID');
-                        print('Type : $_ExamTypeID');
-                        print('Book: $_BookID');
-                        print('Fee ID : ${widget.FeeId}');
-
-                        final String? VenueSaved =
-                            await prefs.getString('Venue');
-                        final String? CatagoresSaved =
-                            await prefs.getString('Exam Catagories');
-                        final String? TypeSaved =
-                            await prefs.getString('Exam Type');
-                        final String? BookSaved = await prefs.getString('Book');
-                        final String? BookPriceSaved =
-                            await prefs.getString('BookPrice');
-                        final String? FeeSaved =
-                            await prefs.getString('Exam Fee');
-
-                        List<String> selectedBookIds = _selectedBooks
-                            .map((book) => book.id.toString())
-                            .toList();
-                        List<String> selectedBookNames =
-                            _selectedBooks.map((book) => book.name).toList();
-                        double totalPrice = _calculateTotalPrice();
-
-                        await prefs.setStringList(
-                            'selectedBookIds', selectedBookIds);
-                        await prefs.setStringList(
-                            'selectedBookNames', selectedBookNames);
-                        await prefs.setDouble('totalPrice', totalPrice);
-
-                        print('Selected Book IDs saved: $selectedBookIds');
-                        print('Selected Book Names saved: $selectedBookNames');
-                        print('Total Price saved: $totalPrice');
-
-                        print(VenueSaved);
-                        print('Exam Catagory : $CatagoresSaved');
-                        print('Exam Type : $TypeSaved');
-                        print(BookSaved);
-                        print(FeeSaved);
-                        print(BookPriceSaved);*/
-
-
+                      if (fieldChecker()) {
                         final firstPageCubit = context.read<FirstPageCubit>();
 
                         double totalBookPrice = _calculateTotalPrice();
@@ -827,28 +744,45 @@ class _RegistrationCenterFromPopularExamState
                           venueID: _VenueID,
                           venueName: selectedVenue.toString(),
                           courseCategoryID: _ExamCatagoriesID,
-                          courseCategoryName: widget.Catagory.isNotEmpty ? widget.Catagory : selectedExamCategory.toString(), // Category Name
+                          courseCategoryName: widget.Catagory.isNotEmpty
+                              ? widget.Catagory
+                              : selectedExamCategory.toString(),
                           courseTypeID: _ExamTypeID,
-                          courseTypeName: widget.TypeId.isNotEmpty ? widget.Type : selectedExamType.toString(), // Type Name
+                          courseTypeName: widget.TypeId.isNotEmpty
+                              ? widget.Type
+                              : selectedExamType.toString(),
                           examFee: widget.Fee,
                           examFeeID: widget.FeeId,
-                          selectedBookNames: _selectedBooks.map((book) => book.name).toList(),
-                          selectedBookIDs: _selectedBooks.map((book) => book.id.toString()).toList(),
+                          selectedBookNames:
+                              _selectedBooks.map((book) => book.name).toList(),
+                          selectedBookIDs: _selectedBooks
+                              .map((book) => book.id.toString())
+                              .toList(),
                           bookPrice: totalBookPrice,
                         );
 
-                        print('Venue ID from State: ${firstPageCubit.state.venueID}');
-                        print('Venue Name from State: ${firstPageCubit.state.venueName}');
-                        print('Category ID from State: ${firstPageCubit.state.courseCategoryID}');
-                        print('Category Name from State: ${firstPageCubit.state.courseCategoryName}');
-                        print('Type ID from State: ${firstPageCubit.state.courseTypeID}');
-                        print('Type Name from State: ${firstPageCubit.state.courseTypeName}');
-                        print('Exam Fee from State: ${firstPageCubit.state.examFee}');
-                        print('Exam Fee ID from State: ${firstPageCubit.state.examFeeID}');
-                        print('Selected Book Names from State: ${firstPageCubit.state.selectedBookNames}');
-                        print('Selected Book IDs from State: ${firstPageCubit.state.selectedBookIDs}');
-                        print('Total Book Price from State: ${firstPageCubit.state.bookPrice}');
-
+                        print(
+                            'Venue ID from State: ${firstPageCubit.state.venueID}');
+                        print(
+                            'Venue Name from State: ${firstPageCubit.state.venueName}');
+                        print(
+                            'Category ID from State: ${firstPageCubit.state.courseCategoryID}');
+                        print(
+                            'Category Name from State: ${firstPageCubit.state.courseCategoryName}');
+                        print(
+                            'Type ID from State: ${firstPageCubit.state.courseTypeID}');
+                        print(
+                            'Type Name from State: ${firstPageCubit.state.courseTypeName}');
+                        print(
+                            'Exam Fee from State: ${firstPageCubit.state.examFee}');
+                        print(
+                            'Exam Fee ID from State: ${firstPageCubit.state.examFeeID}');
+                        print(
+                            'Selected Book Names from State: ${firstPageCubit.state.selectedBookNames}');
+                        print(
+                            'Selected Book IDs from State: ${firstPageCubit.state.selectedBookIDs}');
+                        print(
+                            'Total Book Price from State: ${firstPageCubit.state.bookPrice}');
 
                         Navigator.push(
                             context,
@@ -880,5 +814,15 @@ class _RegistrationCenterFromPopularExamState
       )),
       bottomNavigationBar: CustomBottomNavigationBar(),
     );
+  }
+
+  bool fieldChecker() {
+    return _VenueID != null &&
+        _ExamCatagoriesID != null &&
+        _ExamTypeID != null &&
+        _VenueID != '' &&
+        _ExamCatagoriesID != '' &&
+        _ExamTypeID != '' &&
+        examFee != null;
   }
 }

@@ -8,20 +8,21 @@ part 'second_page_state.dart';
 /// Holds user information such as [fullName], [email], [phone],
 /// [dateOfBirth], [gender], [linkedin], [address], [postCode],
 /// [occupation], and [imagePath].
+/// Resets page states.
 class SecondPageCubit extends Cubit<SecondPageState> {
   SecondPageCubit()
       : super(const SecondPageState(
-    fullName: '',
-    email: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: '',
-    linkedin: '',
-    address: '',
-    postCode: '',
-    occupation: '',
-    imagePath: '',
-  ));
+          fullName: '',
+          email: '',
+          phone: '',
+          dateOfBirth: '',
+          gender: '',
+          linkedin: '',
+          address: '',
+          postCode: '',
+          occupation: '',
+          imagePath: '',
+        ));
 
   void updateUserInfo({
     required String fullName,
@@ -47,5 +48,21 @@ class SecondPageCubit extends Cubit<SecondPageState> {
       occupation: occupation,
       imagePath: imagePath,
     ));
+  }
+
+  void reset() {
+    emit(SecondPageState(
+      fullName: '',
+      email: '',
+      phone: '',
+      dateOfBirth: '',
+      gender: '',
+      linkedin: '',
+      address: '',
+      postCode: '',
+      occupation: '',
+      imagePath: '',
+    ));
+    print('Second Page Data Reset');
   }
 }

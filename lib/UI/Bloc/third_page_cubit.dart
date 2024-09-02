@@ -8,6 +8,7 @@ part 'third_page_state.dart';
 /// Initializes the state with default values for [qualification], [subjectName],
 /// [disipline], [passingYear], [institute], [result], and [passingId].
 /// Updates the state with new data for the third page.
+/// Resets page states.
 class ThirdPageCubit extends Cubit<ThirdPageState> {
   ThirdPageCubit()
       : super(const ThirdPageState(
@@ -38,5 +39,18 @@ class ThirdPageCubit extends Cubit<ThirdPageState> {
       result: result,
       passingId: passingId,
     ));
+  }
+
+  void reset() {
+    emit(ThirdPageState(
+      qualification: '',
+      subjectName: '',
+      disipline: '',
+      passingYear: '',
+      institute: '',
+      result: '',
+      passingId: '',
+    ));
+    print('Third Page Data Reset');
   }
 }

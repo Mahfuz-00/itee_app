@@ -1,13 +1,28 @@
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Data/Data Sources/API Service (User Info Update)/apiServicePasswordUpdate.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
-import 'profileUI.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import 'package:flutter/material.dart';
 
+/// A screen that allows users to change their password.
+///
+/// The `PasswordChange` screen provides fields for entering the current password,
+/// new password, and confirming the new password. It also includes password visibility
+/// toggles and validation to ensure that the passwords meet the required criteria.
+///
+/// ## Parameters:
+/// - [_currentPasswordController]: A controller for the current password field.
+/// - [_passwordController]: A controller for the new password field.
+/// - [_confirmPasswordController]: A controller for the confirm password field.
+/// - [_isObscuredCurrentPassword]: A boolean that controls the visibility of the current password field.
+/// - [_isObscuredPassword]: A boolean that controls the visibility of the new password field.
+/// - [_isObscuredConfirmPassword]: A boolean that controls the visibility of the confirm password field.
+/// - [_isButtonClicked]: A boolean that indicates whether the update button has been clicked.
+///
+/// ## Actions:
+/// - Toggles the visibility of the password fields using icon buttons.
+/// - Validates the passwords to ensure that they are at least 8 characters long and that the new password
+///   and confirm password fields match.
+/// - Submits the password update request to the API service when the update button is clicked.
+/// - Displays appropriate success or error messages based on the API response.
 class PasswordChange extends StatefulWidget {
   @override
   State<PasswordChange> createState() => _PasswordChangeState();
@@ -88,8 +103,6 @@ class _PasswordChangeState extends State<PasswordChange> {
               SizedBox(height: 10),
               TextFormField(
                 keyboardType: TextInputType.text,
-                /* onSaved: (input) =>
-                _registerRequest.password = input!,*/
                 validator: (input) =>
                 input!.length < 8
                     ? "Password should be more than 7 characters"
@@ -130,8 +143,6 @@ class _PasswordChangeState extends State<PasswordChange> {
               SizedBox(height: 10),
               TextFormField(
                 keyboardType: TextInputType.text,
-                /* onSaved: (input) =>
-                _registerRequest.password = input!,*/
                 validator: (input) =>
                 input!.length < 8
                     ? "Password should be more than 7 characters"
@@ -240,308 +251,7 @@ class _PasswordChangeState extends State<PasswordChange> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        height: screenHeight * 0.08,
-        color: const Color.fromRGBO(0, 162, 222, 1),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                          shouldRefresh: true,
-                        )));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.home,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Home',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ITEEDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.info_outline,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'ITEE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BJetDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage(
-                          'Assets/Images/Bjet-Small.png'),
-                      height: 30,
-                      width: 50,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'B-Jet',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ITEETrainingProgramDetails()));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Image(
-                      image: AssetImage(
-                          'Assets/Images/ITEE-Small.png'),
-                      height: 30,
-                      width: 60,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Training',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Dashboard(
-                          shouldRefresh: true,
-                        )));
-              },
-              child: Container(
-                width: screenWidth / 5,
-                padding: EdgeInsets.all(5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.phone,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Contact',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        fontFamily: 'default',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void showPhoneNumberDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'Select a Number to Call',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color.fromRGBO(0, 162, 222, 1),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              Divider()
-            ],
-          ),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                phoneNumberTile(context, '0255006847'),
-                Divider(),
-                phoneNumberTile(context, '028181032'),
-                Divider(),
-                phoneNumberTile(context, '028181033'),
-                Divider(),
-                phoneNumberTile(context, '+8801857321122'),
-                Divider(),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.05,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Color.fromRGBO(0, 162, 222, 1)),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default',
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget phoneNumberTile(BuildContext context, String phoneNumber) {
-    return ListTile(
-      title: Text(
-        phoneNumber,
-        style: TextStyle(
-          color: Colors.black,
-          fontFamily: 'default',
-        ),
-      ),
-      trailing: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 162, 222, 1),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: IconButton(
-          icon: Icon(
-            Icons.call,
-            color: Colors.white,
-          ),
-          onPressed: () async {
-            try {
-              await FlutterPhoneDirectCaller.callNumber(phoneNumber);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Calling $phoneNumber...')),
-              );
-            } catch (e) {
-              print('Error: $e');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to make the call: $e')),
-              );
-            }
-          },
-        ),
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 
@@ -549,22 +259,22 @@ class _PasswordChangeState extends State<PasswordChange> {
     if (_passwordController.text != _confirmPasswordController.text) {
       setState(() {
         _isButtonClicked =
-        false; // Validation complete, hide circular progress indicator
+        false;
       });
       const snackBar = SnackBar(
         content: Text('New Password and Confirm Password are not Matched!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return false;  // Return false if passwords do not match
+      return false;
     } else {
-      return true;  // Return true if passwords match
+      return true;
     }
   }
 
   void _updatePassword() async {
     setState(() {
       _isButtonClicked =
-      true; // Validation complete, hide circular progress indicator
+      true;
     });
    if(checkConfirmPassword()){
      String currentPassword = _currentPasswordController.text;
@@ -581,7 +291,7 @@ class _PasswordChangeState extends State<PasswordChange> {
        ).then((response) {
          setState(() {
            _isButtonClicked =
-           false; // Validation complete, hide circular progress indicator
+           false;
          });
          print("Submitted");
          print(response);
@@ -599,7 +309,6 @@ class _PasswordChangeState extends State<PasswordChange> {
            ScaffoldMessenger.of(context).showSnackBar(snackBar);
          }
        }).catchError((error) {
-         // Handle registration error
          print(error);
          const snackBar = SnackBar(
            content: Text('Password Change failed!'),

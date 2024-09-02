@@ -2,18 +2,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../Bloc/third_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfields.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import 'registrationapplicationreview.dart';
+
+/// A widget that represents the academic information section of a registration form.
+///
+/// This form collects various academic details from the user, including:
+/// - Education Qualification
+/// - Discipline (for certain qualifications)
+/// - Subject Name (for higher education qualifications)
+/// - Passing Year
+/// - Institute Name
+/// - Result
+/// - Previous Passing ID (if applicable)
+///
+/// The form includes dropdown fields for selecting educational qualifications and disciplines,
+/// as well as text fields for entering additional details. Upon submission, it validates the input
+/// fields to ensure all required information is provided before proceeding to the review screen.
+///
+/// Features:
+/// - Uses [Bloc] for state management.
+/// - Responsive layout that adjusts based on the screen size.
+/// - Displays relevant input fields based on selected qualifications.
 
 class RegistrationAcademicInformation extends StatefulWidget {
   const RegistrationAcademicInformation({super.key});
@@ -405,9 +418,9 @@ class _RegistrationAcademicInformationState
                               setState(() {
                                 isdelayed = true;
                               });
-                              saveData();
+                              CheckSubject();
                               if (validateInputs()) {
-                                saveData();
+                                CheckSubject();
                                 print('validated');
                                 await Future.delayed(Duration(seconds: 2));
                                 Navigator.push(
@@ -474,7 +487,7 @@ class _RegistrationAcademicInformationState
     return true;
   }
 
-  Future<void> saveData() async {
+  Future<void> CheckSubject() async {
     String discipline = '';
     String subjectName = '';
 
@@ -504,29 +517,5 @@ class _RegistrationAcademicInformationState
     print('Institute from State: ${thirdPageCubit.state.institute}');
     print('Result from State: ${thirdPageCubit.state.result}');
     print('Passing ID from State: ${thirdPageCubit.state.passingId}');
-
-    /* SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('qualification', _Qulificationcontroller.text);
-    if (Qualification == 'SSC or Equivalent' ||
-        Qualification == 'HSC or Equivalent') {
-      await prefs.setString('subject_name', _Deciplinecontroller.text);
-    }
-    if (Qualification == 'BSc or Equivalent' ||
-        Qualification == 'Diploma or Equivalent') {
-      await prefs.setString('subject_name', _SubjectNamecontroller.text);
-    }
-
-    await prefs.setString('passing_year', _PassingYearcontroller.text);
-    await prefs.setString('institute', _Institutecontroller.text);
-    await prefs.setString('result', _Resultcontroller.text);
-    await prefs.setString('passing_id', _PassingIDcontroller.text);
-
-    print(await prefs.getString('qualification'));
-    print(await prefs.getString('decipline'));
-    print(await prefs.getString('subject_name'));
-    print(await prefs.getString('passing_year'));
-    print(await prefs.getString('institute'));
-    print(await prefs.getString('result'));
-    print(await prefs.getString('passing_id'));*/
   }
 }

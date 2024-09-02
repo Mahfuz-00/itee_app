@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceCenterSelection.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiserviceFee.dart';
 import '../../../Data/Data Sources/API Service (Center Selection)/apiservicebook.dart';
@@ -13,12 +11,22 @@ import '../../Bloc/first_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfield.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import 'registrationpersonalinfo.dart';
 
+/// A widget that represents the registration center form accessed from the menu.
+///
+/// This widget allows users to register for exams by displaying
+/// a registration form that collects necessary information such as:
+/// - Selected exam category
+/// - User personal details
+/// - Venue details
+///
+/// Actions included:
+/// - Submitting the registration form
+/// - Validating input fields
+///
+/// This widget integrates with the `ExamRegistrationCubit` to manage
+/// state and handle submissions.
 class RegistrationCenterFromMenu extends StatefulWidget {
   const RegistrationCenterFromMenu({super.key});
 
@@ -70,12 +78,9 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     });
     try {
       final apiService = await CenterAPIService.create();
-
-      // Fetch dashboard data
       final Map<String, dynamic> dashboardData =
           await apiService.fetchCenterItems();
       if (dashboardData == null || dashboardData.isEmpty) {
-        // No data available or an error occurred
         print(
             'No data available or error occurred while fetching dashboard data');
         return;
@@ -83,11 +88,9 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
 
       final Map<String, dynamic> records = dashboardData['records'];
       if (records == null || records.isEmpty) {
-        // No records available
         print('No records available');
         return;
       }
-
       await handleRecords(records);
 
       setState(() {
@@ -96,7 +99,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     } catch (e) {
       print('Error fetching connection requests: $e');
       _isFetched = true;
-      // Handle error as needed
     }
   }
 
@@ -162,14 +164,13 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       if (CatagoriesID.isNotEmpty) {
         final apiService = await TypeAPIService.create();
 
-        // Fetch types data
-        final Map<String, dynamic> response = await apiService.fetchTypes(CatagoriesID);
+        final Map<String, dynamic> response =
+            await apiService.fetchTypes(CatagoriesID);
 
         if (response == null || response.isEmpty) {
           print('No data available or an error occurred while fetching types');
           return;
         }
-
         final dynamic records = response['records'];
 
         if (records == null || records.isEmpty) {
@@ -177,10 +178,8 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
           return;
         }
 
-        // Handle the fetched books
         await handleExamTypes(records);
 
-        // If records is a list, use an index to access elements
         if (records is List) {
           for (var record in records) {
             final String name = record['name'] as String;
@@ -191,9 +190,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
             print('Type ID: $id');
             print('Category ID: $categoryID');
           }
-        }
-        // If records is a map, access elements directly
-        else if (records is Map) {
+        } else if (records is Map) {
           final String name = records['name'] as String;
           final int id = records['id'] as int;
           final int categoryID = records['category_id'] as int;
@@ -206,7 +203,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         setState(() {
           _isFetchedType = true;
         });
-
       } else {
         print('Category ID is empty');
       }
@@ -218,8 +214,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     }
   }
 
-
-
   Future<void> handleExamTypes(List<dynamic> examTypes) async {
     List<ExamType> fetchedExamTypes = [];
     try {
@@ -228,7 +222,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         fetchedExamTypes.add(type);
         print('Exam Type Name: ${type.name}');
         print('Exam Type ID: ${type.id}');
-        // Further processing if needed
       }
       setState(() {
         isLoadingExamTypes = false;
@@ -298,7 +291,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
 
   Future<void> getBooks(String Catagory) async {
     if (_isBookFetched) return;
-
     setState(() {
       isLoadingBooks = true;
     });
@@ -306,7 +298,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
     try {
       final apiService = await BookAPIService.create();
 
-      // Fetch books data
       final Map<String, dynamic> dashboardData =
           await apiService.fetchBooks(Catagory);
       if (dashboardData == null || dashboardData.isEmpty) {
@@ -320,8 +311,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
         print('No records available');
         return;
       }
-
-      // Handle the fetched books
       await handleBooks(records);
 
       setState(() {
@@ -341,8 +330,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
 
   double _calculateTotalPrice() {
     return _selectedBooks.fold(0.0, (sum, book) {
-      double price = double.tryParse(book.bookprice) ??
-          0.0; // Convert to double, default to 0.0 if null
+      double price = double.tryParse(book.bookprice) ?? 0.0;
       return sum + price;
     });
   }
@@ -430,16 +418,13 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                         initialValue: selectedVenue,
                         onChanged: (newValue) {
                           setState(() {
-                            // Reset other selected values if needed
                             selectedVenue = newValue!;
-                            // Further logic if needed
                           });
                           if (newValue != null) {
                             Venue selectedVenueObject = Venues.firstWhere(
                               (type) => type.name == newValue,
                             );
                             if (selectedVenueObject != null) {
-                              //It Takes ID Int
                               _VenueID = selectedVenueObject.id.toString();
                               print(_VenueID);
                             }
@@ -480,7 +465,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                   ),
                   child: Stack(
                     children: [
-                      // Inside your build method or wherever appropriate
                       DropdownFormField(
                         hintText: 'Select Exam Category',
                         dropdownItems:
@@ -489,7 +473,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                         initialValue: selectedExamCategory,
                         onChanged: (newValue) {
                           setState(() {
-                            // Reset other selected values if needed
                             selectedExamCategory = newValue!;
                             isFetchFeeInvoked = true;
                             if (newValue != null) {
@@ -501,7 +484,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                               );
 
                               if (selectedCategoriesObject != null) {
-                                // It Takes ID Int
                                 _ExamCatagoriesID =
                                     selectedCategoriesObject.id.toString();
 
@@ -564,7 +546,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                         initialValue: selectedExamType,
                         onChanged: (newValue) {
                           setState(() {
-                            // Reset other selected values if needed
                             selectedExamType = newValue!;
                             isFetchFeeInvoked = true;
                             if (newValue != null) {
@@ -573,7 +554,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                                 (type) => type.name == newValue,
                               );
                               if (selectedTypeObject != null) {
-                                //It Takes ID Int
                                 _ExamTypeID = selectedTypeObject.id.toString();
                                 print(_ExamTypeID);
 
@@ -618,7 +598,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                 child: Container(
                   width: screenWidth * 0.9,
                   height: screenHeight * 0.075,
-                  //padding: EdgeInsets.only(left: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -643,7 +622,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
               SizedBox(
                 height: 15,
               ),
-              if(selectedExamCategory != null) ...[
+              if (selectedExamCategory != null) ...[
                 Text(
                   'Select a Book (If you want to)',
                   style: TextStyle(
@@ -659,7 +638,6 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
               ],
               Column(
                 children: [
-                  // Checkbox list for selecting books
                   ...Books.map((book) {
                     return CheckboxListTile(
                       title: Text(
@@ -678,17 +656,12 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                             _selectedBooks.remove(book);
                           }
                         });
-
                         print(
                             'Selected Books: ${_selectedBooks.map((b) => b.name).join(', ')}');
                       },
                     );
                   }).toList(),
-
                   SizedBox(height: 20),
-                  // Add some space before the selected books section
-
-                  // Section to show selected books and their prices
                   if (_selectedBooks.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,7 +673,9 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                               fontWeight: FontWeight.bold,
                               fontFamily: 'default'),
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         ..._selectedBooks.map((book) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -713,7 +688,9 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                             ),
                           );
                         }).toList(),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Text(
                           'Total Price: \$${_calculateTotalPrice().toStringAsFixed(2)}',
                           style: TextStyle(
@@ -747,74 +724,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                       print(_ExamTypeID);
                       print(_BookID);
                       print(examFee);
-                      if (_VenueID != null &&
-                          _ExamCatagoriesID != null &&
-                          _ExamTypeID != null &&
-                          _VenueID != '' &&
-                          _ExamCatagoriesID != '' &&
-                          _ExamTypeID != '' &&
-                          examFee != null &&
-                          examFee != null) {
-                  /*      final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('Venue', _VenueID);
-                        await prefs.setString(
-                            'Exam Catagories', _ExamCatagoriesID);
-                        await prefs.setString('Exam Type', _ExamTypeID);
-                        await prefs.setString('Exam Fee', examFee);
-                        // await prefs.setInt('Exam Fee ID', _);
-                        await prefs.setString('Book', _BookID);
-                        await prefs.setString('BookPrice', _BookPrice);
-                        await prefs.setString(
-                            'Venue_Name', selectedVenue.toString());
-                        await prefs.setString('Exam Catagories_Name',
-                            selectedExamCategory.toString());
-                        await prefs.setString(
-                            'Exam Type_Name', selectedExamType.toString());
-                        //await prefs.setString('Exam Fee ID', examFee);
-                        await prefs.setString(
-                            'Book_Name', selectedBook.toString());
-
-                        print('Catagory : $_ExamCatagoriesID');
-                        print('Type : $_ExamTypeID');
-                        print('Book: $_BookID');
-                        print('Fee ID : ${examFee}');
-
-                        final String? VenueSaved =
-                            await prefs.getString('Venue');
-                        final String? CatagoresSaved =
-                            await prefs.getString('Exam Catagories');
-                        final String? TypeSaved =
-                            await prefs.getString('Exam Type');
-                        final String? BookSaved = await prefs.getString('Book');
-                        final String? BookPriceSaved =
-                            await prefs.getString('BookPrice');
-                        final String? FeeSaved =
-                            await prefs.getString('Exam Fee');
-                        await prefs.setString(
-                            'Book_Name', selectedBook.toString());
-
-                        List<String> selectedBookIds =
-                        _selectedBooks.map((book) => book.id.toString()).toList();
-                        List<String> selectedBookNames =
-                        _selectedBooks.map((book) => book.name).toList();
-                        double totalPrice = _calculateTotalPrice();
-
-                        await prefs.setStringList('selectedBookIds', selectedBookIds);
-                        await prefs.setStringList('selectedBookNames', selectedBookNames);
-                        await prefs.setDouble('totalPrice', totalPrice);
-
-                        print('Selected Book IDs saved: $selectedBookIds');
-                        print('Selected Book Names saved: $selectedBookNames');
-                        print('Total Price saved: $totalPrice');
-
-                        print('Fee ID : $FeeID');
-                        print(VenueSaved);
-                        print('Exam Catagory : $CatagoresSaved');
-                        print('Exam Type : $TypeSaved');
-                        print(BookSaved);
-                        print(FeeSaved);
-                        print(BookPriceSaved);*/
-
+                      if (fieldChecker()) {
                         final firstPageCubit = context.read<FirstPageCubit>();
 
                         double totalBookPrice = _calculateTotalPrice();
@@ -828,22 +738,36 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                           courseTypeName: selectedExamType.toString(),
                           examFee: examFee,
                           examFeeID: FeeID,
-                          selectedBookNames: _selectedBooks.map((book) => book.name).toList(),
-                          selectedBookIDs: _selectedBooks.map((book) => book.id.toString()).toList(),
+                          selectedBookNames:
+                              _selectedBooks.map((book) => book.name).toList(),
+                          selectedBookIDs: _selectedBooks
+                              .map((book) => book.id.toString())
+                              .toList(),
                           bookPrice: totalBookPrice,
                         );
 
-                        print('Venue ID from State: ${firstPageCubit.state.venueID}');
-                        print('Venue Name from State: ${firstPageCubit.state.venueName}');
-                        print('Category ID from State: ${firstPageCubit.state.courseCategoryID}');
-                        print('Category Name from State: ${firstPageCubit.state.courseCategoryName}');
-                        print('Type ID from State: ${firstPageCubit.state.courseTypeID}');
-                        print('Type Name from State: ${firstPageCubit.state.courseTypeName}');
-                        print('Exam Fee from State: ${firstPageCubit.state.examFee}');
-                        print('Exam Fee ID from State: ${firstPageCubit.state.examFeeID}');
-                        print('Selected Book Names from State: ${firstPageCubit.state.selectedBookNames}');
-                        print('Selected Book IDs from State: ${firstPageCubit.state.selectedBookIDs}');
-                        print('Total Book Price from State: ${firstPageCubit.state.bookPrice}');
+                        print(
+                            'Venue ID from State: ${firstPageCubit.state.venueID}');
+                        print(
+                            'Venue Name from State: ${firstPageCubit.state.venueName}');
+                        print(
+                            'Category ID from State: ${firstPageCubit.state.courseCategoryID}');
+                        print(
+                            'Category Name from State: ${firstPageCubit.state.courseCategoryName}');
+                        print(
+                            'Type ID from State: ${firstPageCubit.state.courseTypeID}');
+                        print(
+                            'Type Name from State: ${firstPageCubit.state.courseTypeName}');
+                        print(
+                            'Exam Fee from State: ${firstPageCubit.state.examFee}');
+                        print(
+                            'Exam Fee ID from State: ${firstPageCubit.state.examFeeID}');
+                        print(
+                            'Selected Book Names from State: ${firstPageCubit.state.selectedBookNames}');
+                        print(
+                            'Selected Book IDs from State: ${firstPageCubit.state.selectedBookIDs}');
+                        print(
+                            'Total Book Price from State: ${firstPageCubit.state.bookPrice}');
 
                         Navigator.push(
                             context,
@@ -875,5 +799,16 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
       )),
       bottomNavigationBar: CustomBottomNavigationBar(),
     );
+  }
+
+  bool fieldChecker() {
+    return _VenueID != null &&
+        _ExamCatagoriesID != null &&
+        _ExamTypeID != null &&
+        _VenueID != '' &&
+        _ExamCatagoriesID != '' &&
+        _ExamTypeID != '' &&
+        examFee != null &&
+        examFee != null;
   }
 }

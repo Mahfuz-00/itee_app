@@ -3,23 +3,41 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Data/Data Sources/API Service (Registration)/apiservicegetpersonalinfo.dart';
 import '../../Bloc/second_page_cubit.dart';
 import '../../Widgets/LabelText.dart';
 import '../../Widgets/custombottomnavbar.dart';
 import '../../Widgets/dropdownfields.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 import 'registrationacademicinfo.dart';
-import 'registrationvenuefrompopularexam.dart';
 
+/// A widget that represents the personal information registration form.
+///
+/// This class provides a user interface for users to input their personal information,
+/// including full name, email, phone number, date of birth, gender, LinkedIn profile,
+/// address, and occupation. It fetches existing user data using an API service and allows
+/// users to update their information. It validates the email and phone number inputs
+/// and ensures required fields are filled in before submission. The UI is responsive
+/// and adapts to different screen sizes.
+///
+/// **State Variables:**
+/// - [_Datecontroller]: Controller for the date of birth field.
+/// - [_FullNamecontroller]: Controller for the full name field.
+/// - [_Emailcontroller]: Controller for the email address field.
+/// - [_Phonecontroller]: Controller for the mobile number field.
+/// - [_Addresscontroller]: Controller for the address field.
+/// - [_PostCodecontroller]: Controller for the postcode field.
+/// - [_Occupationcontroller]: Controller for the occupation field.
+/// - [_linkedincontroller]: Controller for the LinkedIn profile field.
+/// - [_Gendercontroller]: Controller for the gender field.
+/// - [_imageFile]: Holds the selected image file for profile picture.
+/// - [_isFetched]: Indicates whether the data has been fetched from the API.
+/// - [_isLoading]: Indicates whether data is currently being loaded.
+///
+/// **Methods:**
+/// - `fetchConnectionRequests`: Fetches personal information from the API and populates
+///   the corresponding text fields.
 class RegistrationPersonalInformation extends StatefulWidget {
   const RegistrationPersonalInformation({super.key});
 
@@ -65,11 +83,9 @@ class _RegistrationPersonalInformationState
     try {
       final apiService = await PersonalInfoAPIService.create();
 
-      // Fetch dashboard data
       final Map<String, dynamic>? dashboardData =
           await apiService.getPersonalInfo();
       if (dashboardData == null || dashboardData.isEmpty) {
-        // No data available or an error occurred
         print(
             'No data available or error occurred while fetching dashboard data');
         return;
@@ -77,7 +93,6 @@ class _RegistrationPersonalInformationState
 
       final Map<String, dynamic> records = dashboardData['records'];
       if (records == null || records.isEmpty) {
-        // No records available
         print('No records available');
         return;
       }
@@ -92,11 +107,6 @@ class _RegistrationPersonalInformationState
       phone = records['phone'];
       occupation = records['occupation'] ?? '';
       linkedin = records['linkedin'] ?? '';
-      print(name);
-      print(email);
-      print(phone);
-      print(occupation);
-      print(linkedin);
       _FullNamecontroller.text = name;
       _Emailcontroller.text = email;
       _Phonecontroller.text = phone;
@@ -545,7 +555,7 @@ class _RegistrationPersonalInformationState
                       errorMaxLines: null,
                       errorBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Colors.red), // Customize error border color
+                            color: Colors.red),
                       ),
                     ),
                     child: Row(
@@ -679,33 +689,6 @@ class _RegistrationPersonalInformationState
   }
 
   Future<void> saveData() async {
-/*    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('full_name', _FullNamecontroller.text);
-    await prefs.setString('email', _Emailcontroller.text);
-    await prefs.setString('phone', _Phonecontroller.text);
-    await prefs.setString('date_of_birth', _Datecontroller.text);
-    await prefs.setString('gender', _Gendercontroller.text);
-    await prefs.setString('linkedin', _linkedincontroller.text);
-    await prefs.setString('address', _Addresscontroller.text);
-    await prefs.setString('post_code', _PostCodecontroller.text);
-    await prefs.setString('occupation', _Occupationcontroller.text);
-    // You can save the image path instead of the whole image if needed
-    if (_imageFile != null) {
-      await prefs.setString('image_path', _imageFile!.path);
-    }
-
-    print(await prefs.getString('full_name'));
-    print(await prefs.getString('email'));
-    print(await prefs.getString('phone'));
-    print(await prefs.getString('date_of_birth'));
-    print(await prefs.getString('gender'));
-    print(await prefs.getString('linkedin'));
-    print(await prefs.getString('address'));
-    print(await prefs.getString('post_code'));
-    print(await prefs.getString('occupation'));
-    print(await prefs.getString('image_path'));
-  }*/
-
     final secondPageCubit = context.read<SecondPageCubit>();
 
     context.read<SecondPageCubit>().updateUserInfo(
@@ -804,7 +787,6 @@ class _RegistrationPersonalInformationState
   double _imageHeight = 0;
   double _imageWidth = 0;
 
-  // Function to load image dimensions
   Future<void> _getImageDimensions() async {
     if (_imageFile != null) {
       final data = await _imageFile!.readAsBytes();

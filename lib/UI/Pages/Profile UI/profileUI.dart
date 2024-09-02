@@ -15,13 +15,28 @@ import '../../../Data/Models/profileModelFull.dart';
 import '../../../Data/Models/profilemodel.dart';
 import '../../../Data/Models/userInfoUpdateModel.dart';
 import '../../Bloc/auth_cubit.dart';
-import '../B-Jet Details UI/B-jetDetailsUI.dart';
-import '../Dashboard UI/dashboardUI.dart';
-import '../ITEE Details UI/iteedetailsui.dart';
-import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
+import '../../Widgets/custombottomnavbar.dart';
 import '../Login UI/loginUI.dart';
 import 'passwordChange.dart';
 
+/// The Profile widget displays the user's profile overview, allowing
+/// users to view and edit their profile information. It includes
+/// features such as viewing the user's name, mobile number, email,
+/// and profile picture. Users can also change their password and
+/// log out from the application.
+///
+/// It interacts with various API services to fetch user data and
+/// update user information, including:
+/// - Fetching the user profile with [APIProfileService].
+/// - Updating user profile images with [APIServiceImageUpdate].
+/// - Logging out with [LogOutApiService].
+///
+/// The profile information is stored in a [SharedPreferences] token.
+/// This class utilizes the [Bloc] pattern through [AuthCubit] for
+/// state management of the user profile.
+///
+/// The profile screen is designed to be responsive, adapting its layout
+/// based on the screen size.
 class Profile extends StatefulWidget {
   final bool shouldRefresh;
 
@@ -56,21 +71,17 @@ class _ProfileState extends State<Profile> {
     print(userProfile!.id);
 
     setState(() {
-      // Map UserProfileFull to UserProfile or use directly if they match
       userProfileCubit = UserProfile(
         Id: userProfile!.id,
         name: userProfile!.name,
         photo: userProfile!.photo,
-        // Add other fields as needed
       );
     });
 
-    // Update the UserProfileCubit state using context.read
     context.read<AuthCubit>().updateProfile(UserProfile(
         Id: userProfile!.id,
         name: userProfile!.name,
         photo: userProfile!.photo)
-      // Add other fields as needed
     );
   }
 
@@ -106,7 +117,6 @@ class _ProfileState extends State<Profile> {
         ? Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        // Show circular loading indicator while waiting
         child: CircularProgressIndicator(),
       ),
     )
@@ -115,7 +125,6 @@ class _ProfileState extends State<Profile> {
         canPop: false,
         child: Scaffold(
           backgroundColor: Colors.grey[100],
-          //resizeToAvoidBottomInset: false,
           appBar: AppBar(
               backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
               title: Text(
@@ -171,8 +180,8 @@ class _ProfileState extends State<Profile> {
                         Stack(
                           children: [
                             Container(
-                              width: 120, // Adjust width as needed
-                              height: 120, // Adjust height as needed
+                              width: 120,
+                              height: 120,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
@@ -188,7 +197,6 @@ class _ProfileState extends State<Profile> {
                                     child: Container(
                                       height: 35,
                                       width: 35,
-                                      //padding: EdgeInsets.all(5),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         shape: BoxShape.circle,
@@ -365,202 +373,7 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          bottomNavigationBar: Container(
-            height: screenHeight * 0.08,
-            color: const Color.fromRGBO(0, 162, 222, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Dashboard(
-                              shouldRefresh: true,
-                            )));
-                  },
-                  child: Container(
-                    width: screenWidth / 5,
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.home,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Home',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ITEEDetails()));
-                  },
-                  child: Container(
-                    width: screenWidth / 5,
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.info_outline,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'ITEE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BJetDetails()));
-                  },
-                  child: Container(
-                    width: screenWidth / 5,
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Image(
-                          image: AssetImage(
-                              'Assets/Images/Bjet-Small.png'),
-                          height: 30,
-                          width: 50,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'B-Jet',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ITEETrainingProgramDetails()));
-                  },
-                  child: Container(
-                    width: screenWidth / 5,
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Image(
-                          image: AssetImage(
-                              'Assets/Images/ITEE-Small.png'),
-                          height: 30,
-                          width: 60,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Training',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Dashboard(
-                              shouldRefresh: true,
-                            )));
-                  },
-                  child: Container(
-                    width: screenWidth / 5,
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.phone,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Contact',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            fontFamily: 'default',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          bottomNavigationBar: CustomBottomNavigationBar(),
         ),
       ),
     );

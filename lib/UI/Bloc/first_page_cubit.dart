@@ -14,6 +14,7 @@ part 'first_page_state.dart';
 /// Accepts parameters for [venue] and [course] details, [examFee],
 /// [selectedBookNames], [selectedBookIDs], and [bookPrice],
 /// then emits the updated state using the [copyWith] method.
+/// Resets page states.
 class FirstPageCubit extends Cubit<FirstPageState> {
   FirstPageCubit()
       : super(const FirstPageState(
@@ -56,5 +57,22 @@ class FirstPageCubit extends Cubit<FirstPageState> {
       selectedBookIDs: selectedBookIDs,
       bookPrice: bookPrice,
     ));
+  }
+
+  void reset() {
+    emit(FirstPageState(
+      venueID: '',
+      venueName: '',
+      courseCategoryID: '',
+      courseCategoryName: '',
+      courseTypeID: '',
+      courseTypeName: '',
+      examFee: '',
+      examFeeID: 0,
+      selectedBookNames: [],
+      selectedBookIDs: [],
+      bookPrice: 0.0,
+    ));
+    print('First Page Data Reset');
   }
 }
