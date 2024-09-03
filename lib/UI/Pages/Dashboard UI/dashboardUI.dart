@@ -31,7 +31,7 @@ import '../Exam Material UI/ExamMaterialUI.dart';
 import '../Login UI/loginUI.dart';
 import '../PaymentUI/paymentUI.dart';
 import '../Profile UI/profileUI.dart';
-import '../Registation UI/registrationvenuefrompopularexam.dart';
+import '../Registation UI/registrationvenuefromexamcard.dart';
 import '../Result UI/resultUI.dart';
 import '../Syllabus UI/syllabusUI.dart';
 
@@ -57,16 +57,16 @@ import '../Syllabus UI/syllabusUI.dart';
 /// - [examList]: Navigates to the list of exams for user registration and viewing.
 /// - [registerView]: Directs users to the registration view for exams.
 /// - [appBar]: Provides navigation options for accessing syllabus and exam materials.
-class Dashboard extends StatefulWidget {
+class DashboardUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Dashboard({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const DashboardUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<DashboardUI> createState() => _DashboardUIState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardUIState extends State<DashboardUI> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late String userName = '';
@@ -83,9 +83,9 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> _applicationWidgets = [];
   List<Widget> _bookWidgets = [];
   List<Widget> _noticeWidgets = [];
-  late List<ImageItem> _eventWidgets = [];
-  late List<ImageItem> _programWidgets = [];
-  late List<ImageItem> _bjetWidgets = [];
+  late List<ImageModel> _eventWidgets = [];
+  late List<ImageModel> _programWidgets = [];
+  late List<ImageModel> _bjetWidgets = [];
   late int resultcheck = 2;
   late int admitcardcheck = 2;
   late int _currentapplicationpage = 0;
@@ -126,7 +126,7 @@ class _DashboardState extends State<Dashboard> {
         print('Applications: $applications');
         applicationWidgets = applications.map((item) {
           int index = applications.indexOf(item);
-          return ApplicationItemTemplate(
+          return ApplicationTemplate(
             name: item['exam_type'],
             Categories: item['exam_category'],
             result: item['result'],
@@ -161,13 +161,13 @@ class _DashboardState extends State<Dashboard> {
 
       final List<Widget> noticeWidgets = noticeData.map((item) {
         int index = examFeesData.indexOf(item);
-        return ItemTemplateNotice(
+        return NoticeTemplate(
           notice: item['message'],
         );
       }).toList();
       final List<Widget> examFeeWidgets = examFeesData.map((item) {
         int index = examFeesData.indexOf(item);
-        return ExamItemTemplate(
+        return ExamTemplate(
           name: item['exam_type'],
           Catagories: item['exam_category'],
           price: item['fees'],
@@ -194,21 +194,21 @@ class _DashboardState extends State<Dashboard> {
       }).toList();
 
       _eventWidgets = EventData.map((item) {
-        return ImageItem(
+        return ImageModel(
           imageUrl: item['image'],
           label: item['label'],
         );
       }).toList();
 
       _programWidgets = ProgramData.map((item) {
-        return ImageItem(
+        return ImageModel(
           imageUrl: item['image'],
           label: item['label'],
         );
       }).toList();
 
       _bjetWidgets = BjetData.map((item) {
-        return ImageItem(
+        return ImageModel(
           imageUrl: item['image'],
           label: item['label'],
         );
@@ -263,7 +263,7 @@ class _DashboardState extends State<Dashboard> {
             builder: (context, state) {
               if (state is AuthAuthenticated) {
                 final userProfile = state.userProfile;
-                return InternetChecker(
+                return InternetConnectionChecker(
                   child: PopScope(
                     canPop: false,
                     child: Scaffold(
@@ -366,7 +366,7 @@ class _DashboardState extends State<Dashboard> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Login(),
+                                          builder: (context) => LoginUI(),
                                         ),
                                       );
                                     },
@@ -429,7 +429,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Dashboard(
+                                        builder: (context) => const DashboardUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -448,7 +448,7 @@ class _DashboardState extends State<Dashboard> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const RegistrationCenterFromMenu()));
+                                            const RegistrationCenterUIFromMenu()));
                               },
                             ),
                             Divider(),
@@ -464,7 +464,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Payment(
+                                        builder: (context) => const PaymentUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -482,7 +482,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const AdmitCard(
+                                        builder: (context) => const AdmitCardUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -500,7 +500,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Result(
+                                        builder: (context) => const ResultUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -533,7 +533,7 @@ class _DashboardState extends State<Dashboard> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const Syllabus(shouldRefresh: true),
+                                            const SyllabusUI(shouldRefresh: true),
                                       ),
                                     );
                                   },
@@ -554,7 +554,7 @@ class _DashboardState extends State<Dashboard> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const ExamMaterial(
+                                            const ExamMaterialUI(
                                                 shouldRefresh: true),
                                       ),
                                     );
@@ -575,7 +575,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Profile(
+                                        builder: (context) => ProfileUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -615,7 +615,7 @@ class _DashboardState extends State<Dashboard> {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => Login()));
+                                          builder: (context) => LoginUI()));
                                 }
                               },
                             ),
@@ -794,11 +794,11 @@ class _DashboardState extends State<Dashboard> {
                                                         },
                                                         itemBuilder:
                                                             (context, index) {
-                                                          ApplicationItemTemplate
+                                                          ApplicationTemplate
                                                               Applicant =
                                                               _applicationWidgets[
                                                                       index]
-                                                                  as ApplicationItemTemplate;
+                                                                  as ApplicationTemplate;
                                                           return ApplicationCard(
                                                             examName:
                                                                 Applicant.name,
@@ -945,10 +945,10 @@ class _DashboardState extends State<Dashboard> {
                                                       },
                                                       itemBuilder:
                                                           (context, index) {
-                                                        ExamItemTemplate exam =
+                                                        ExamTemplate exam =
                                                             _examFeeWidgets[
                                                                     index]
-                                                                as ExamItemTemplate;
+                                                                as ExamTemplate;
                                                         return ExamCard(
                                                           examImage:
                                                               'https://www.bcc.touchandsolve.com' +
@@ -963,7 +963,7 @@ class _DashboardState extends State<Dashboard> {
                                                                 MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                            ExamDetails(
+                                                                            ExamDetailsUI(
                                                                               details: exam.Details,
                                                                             )));
                                                           },
@@ -991,7 +991,7 @@ class _DashboardState extends State<Dashboard> {
                                                                   context,
                                                                   MaterialPageRoute(
                                                                       builder: (context) =>
-                                                                          RegistrationCenterFromPopularExam(
+                                                                          RegistrationCenterUIFromExamCard(
                                                                             Catagory:
                                                                                 exam.Catagories,
                                                                             Type:
@@ -1022,7 +1022,7 @@ class _DashboardState extends State<Dashboard> {
                                                                   MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              Login()));
+                                                                              LoginUI()));
                                                             }
                                                           },
                                                         );
@@ -1366,7 +1366,7 @@ class _DashboardState extends State<Dashboard> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const Syllabus()));
+                                                      const SyllabusUI()));
                                         },
                                         child: const Text('Syllabus',
                                             style: TextStyle(
@@ -1408,7 +1408,7 @@ class _DashboardState extends State<Dashboard> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const ExamMaterial()));
+                                                      const ExamMaterialUI()));
                                         },
                                         child: const Text('Exam Material',
                                             style: TextStyle(
@@ -1460,12 +1460,12 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                       ),
-                      bottomNavigationBar: CustomBottomNavigationBar(),
+                      bottomNavigationBar: CustomBottomNavBar(),
                     ),
                   ),
                 );
               } else {
-                return InternetChecker(
+                return InternetConnectionChecker(
                   child: PopScope(
                     canPop: false,
                     child: Scaffold(
@@ -1568,7 +1568,7 @@ class _DashboardState extends State<Dashboard> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Login(),
+                                          builder: (context) => LoginUI(),
                                         ),
                                       );
                                     },
@@ -1631,7 +1631,7 @@ class _DashboardState extends State<Dashboard> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const Dashboard(
+                                        builder: (context) => const DashboardUI(
                                               shouldRefresh: true,
                                             )));
                               },
@@ -1650,7 +1650,7 @@ class _DashboardState extends State<Dashboard> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const Syllabus()));
+                                            const SyllabusUI()));
                               },
                             ),
                             Divider(),
@@ -1667,7 +1667,7 @@ class _DashboardState extends State<Dashboard> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const ExamMaterial()));
+                                            const ExamMaterialUI()));
                               },
                             ),
                             Divider(),
@@ -1702,7 +1702,7 @@ class _DashboardState extends State<Dashboard> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              Login()));
+                                              LoginUI()));
                                 }
                               },
                             ),
@@ -1837,11 +1837,11 @@ class _DashboardState extends State<Dashboard> {
                                                         },
                                                         itemBuilder:
                                                             (context, index) {
-                                                          ApplicationItemTemplate
+                                                          ApplicationTemplate
                                                               Applicant =
                                                               _applicationWidgets[
                                                                       index]
-                                                                  as ApplicationItemTemplate;
+                                                                  as ApplicationTemplate;
                                                           return ApplicationCard(
                                                             examName:
                                                                 Applicant.name,
@@ -2077,10 +2077,10 @@ class _DashboardState extends State<Dashboard> {
                                                       },
                                                       itemBuilder:
                                                           (context, index) {
-                                                        ExamItemTemplate exam =
+                                                        ExamTemplate exam =
                                                             _examFeeWidgets[
                                                                     index]
-                                                                as ExamItemTemplate;
+                                                                as ExamTemplate;
                                                         return ExamCard(
                                                           examImage:
                                                               'https://www.bcc.touchandsolve.com' +
@@ -2095,7 +2095,7 @@ class _DashboardState extends State<Dashboard> {
                                                                 MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                            ExamDetails(
+                                                                            ExamDetailsUI(
                                                                               details: exam.Details,
                                                                             )));
                                                           },
@@ -2123,7 +2123,7 @@ class _DashboardState extends State<Dashboard> {
                                                                   context,
                                                                   MaterialPageRoute(
                                                                       builder: (context) =>
-                                                                          RegistrationCenterFromPopularExam(
+                                                                          RegistrationCenterUIFromExamCard(
                                                                             Catagory:
                                                                                 exam.Catagories,
                                                                             Type:
@@ -2154,7 +2154,7 @@ class _DashboardState extends State<Dashboard> {
                                                                   MaterialPageRoute(
                                                                       builder:
                                                                           (context) =>
-                                                                              Login()));
+                                                                              LoginUI()));
                                                             }
                                                           },
                                                         );
@@ -2454,7 +2454,7 @@ class _DashboardState extends State<Dashboard> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const Syllabus()));
+                                                      const SyllabusUI()));
                                         },
                                         child: const Text('Syllabus',
                                             style: TextStyle(
@@ -2496,7 +2496,7 @@ class _DashboardState extends State<Dashboard> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const ExamMaterial()));
+                                                      const ExamMaterialUI()));
                                         },
                                         child: const Text('Exam Material',
                                             style: TextStyle(
@@ -2548,7 +2548,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                       ),
-                      bottomNavigationBar: CustomBottomNavigationBar(),
+                      bottomNavigationBar: CustomBottomNavBar(),
                     ),
                   ),
                 );
@@ -2600,7 +2600,7 @@ class _DashboardState extends State<Dashboard> {
 
   late int _currentPage = 0;
 
-  Widget _buildImageList(List<ImageItem> items) {
+  Widget _buildImageList(List<ImageModel> items) {
     return Container(
       height: 200,
       child: Stack(

@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 /// - [Details]: Additional details about the exam.
 /// - [typeID]: The ID representing the type of exam.
 /// - [CatagoryID]: The ID representing the category of the exam.
-class ExamItemTemplate extends StatelessWidget {
+class ExamTemplate extends StatelessWidget {
   final String image;
   final String name;
   final String Catagories;
@@ -26,7 +26,7 @@ class ExamItemTemplate extends StatelessWidget {
   final String typeID;
   final String CatagoryID;
 
-  ExamItemTemplate({
+  ExamTemplate({
     required this.image,
     required this.name,
     required this.Catagories,

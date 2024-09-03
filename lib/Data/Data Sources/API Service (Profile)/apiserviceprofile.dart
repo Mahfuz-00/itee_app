@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 ///   - **Throws**:
 ///     An exception if the [authToken] is empty or if an error occurs during
 ///     the request, providing relevant error messages.
-class APIProfileService {
+class ProfileAPIService {
   final String URL = 'https://bcc.touchandsolve.com/api';
 
   Future<Map<String, dynamic>> fetchUserProfile(String authToken) async {

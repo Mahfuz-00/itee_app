@@ -18,14 +18,14 @@ import 'package:http/http.dart' as http;
 ///   - **Throws**:
 ///     An exception if an error occurs during the request, providing
 ///     relevant error messages.
-class APIServiceAccountOTPVerification{
+class AccountOTPVerificationAPIService{
   final String url = 'https://bcc.touchandsolve.com/api/registration/confirm_otp';
   late final String authToken;
 
-  APIServiceAccountOTPVerification._();
+  AccountOTPVerificationAPIService._();
 
-  static Future<APIServiceAccountOTPVerification> create() async {
-    var apiService = APIServiceAccountOTPVerification._();
+  static Future<AccountOTPVerificationAPIService> create() async {
+    var apiService = AccountOTPVerificationAPIService._();
     return apiService;
   }
 

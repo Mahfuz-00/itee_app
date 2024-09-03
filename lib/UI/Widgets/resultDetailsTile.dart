@@ -6,16 +6,16 @@ import 'package:intl/intl.dart';
 /// A widget that displays a card with an examinee's result information
 /// including their [Name], [ExamName], and [Result].
 ///
-/// The [ResultInfoCard] widget takes the following parameters:
+/// The [ResultDetailsCard] widget takes the following parameters:
 /// - [Name]: The name of the examinee.
 /// - [ExamName]: The name of the exam taken by the examinee.
 /// - [Result]: The result of the exam.
-class ResultInfoCard extends StatelessWidget {
+class ResultDetailsCard extends StatelessWidget {
   final String Name;
   final String ExamName;
   final String Result;
 
-  const ResultInfoCard({
+  const ResultDetailsCard({
     Key? key,
     required this.Name,
     required this.ExamName,

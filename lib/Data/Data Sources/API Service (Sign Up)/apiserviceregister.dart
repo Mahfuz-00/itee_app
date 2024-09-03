@@ -29,7 +29,7 @@ import '../../Models/registermodels.dart';
 /// - The API response is logged for both successful and failed registrations.
 /// - In case of errors, the method checks for specific validation errors
 ///   related to the email and phone fields and returns appropriate messages.
-class APIService {
+class UserRegistrationAPIService {
   Future<String> register(
       RegisterRequestmodel registerRequestModel, File? imageFile) async {
     try {

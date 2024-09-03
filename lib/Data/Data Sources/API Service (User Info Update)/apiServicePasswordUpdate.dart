@@ -27,14 +27,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///     An exception if the authentication token is empty, if the request
 ///     fails, or if the server returns an error response, providing relevant
 ///     error messages.
-class APIServicePasswordUpdate {
+class PasswordUpdateAPIService {
   String baseURL = 'https://bcc.touchandsolve.com/api';
   late final String authToken;
 
-  APIServicePasswordUpdate._();
+  PasswordUpdateAPIService._();
 
-  static Future<APIServicePasswordUpdate> create() async {
-    var apiService = APIServicePasswordUpdate._();
+  static Future<PasswordUpdateAPIService> create() async {
+    var apiService = PasswordUpdateAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;

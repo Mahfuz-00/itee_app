@@ -15,16 +15,16 @@ import '../Dashboard UI/dashboardUI.dart';
 ///
 /// Parameters:
 /// - [ExamineeID]: The unique identifier for the examinee.
-class PaymentConfirmation extends StatefulWidget {
+class PaymentConfirmationUI extends StatefulWidget {
   final String ExamineeID;
-  const PaymentConfirmation({Key? key, required this.ExamineeID})
+  const PaymentConfirmationUI({Key? key, required this.ExamineeID})
       : super(key: key);
 
   @override
-  State<PaymentConfirmation> createState() => _PaymentConfirmationState();
+  State<PaymentConfirmationUI> createState() => _PaymentConfirmationUIState();
 }
 
-class _PaymentConfirmationState extends State<PaymentConfirmation>
+class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _paymentConfirmationController =
@@ -35,7 +35,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: PopScope(
         canPop: false,
         child: Scaffold(
@@ -140,7 +140,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation>
               ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(),
+          bottomNavigationBar: CustomBottomNavBar(),
         ),
       ),
     );
@@ -259,7 +259,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Dashboard(
+                              builder: (context) => const DashboardUI(
                                     shouldRefresh: true,
                                   )));
                     },

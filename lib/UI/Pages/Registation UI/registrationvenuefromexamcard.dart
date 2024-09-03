@@ -26,7 +26,7 @@ import 'registrationpersonalinfo.dart';
 ///
 /// This widget integrates with the `ExamRegistrationCubit` to manage
 /// state and handle submissions.
-class RegistrationCenterFromPopularExam extends StatefulWidget {
+class RegistrationCenterUIFromExamCard extends StatefulWidget {
   final String Catagory;
   final String Type;
   final String Fee;
@@ -34,7 +34,7 @@ class RegistrationCenterFromPopularExam extends StatefulWidget {
   final String CatagoryId;
   final String TypeId;
 
-  const RegistrationCenterFromPopularExam({
+  const RegistrationCenterUIFromExamCard({
     Key? key,
     required this.Catagory,
     required this.Type,
@@ -45,12 +45,12 @@ class RegistrationCenterFromPopularExam extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<RegistrationCenterFromPopularExam> createState() =>
-      _RegistrationCenterFromPopularExamState();
+  State<RegistrationCenterUIFromExamCard> createState() =>
+      _RegistrationCenterUIFromExamCardState();
 }
 
-class _RegistrationCenterFromPopularExamState
-    extends State<RegistrationCenterFromPopularExam>
+class _RegistrationCenterUIFromExamCardState
+    extends State<RegistrationCenterUIFromExamCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -788,7 +788,7 @@ class _RegistrationCenterFromPopularExamState
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const RegistrationPersonalInformation()));
+                                    const RegistrationPersonalInformationUI()));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -812,7 +812,7 @@ class _RegistrationCenterFromPopularExamState
           ),
         ),
       )),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 

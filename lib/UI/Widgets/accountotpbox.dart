@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 /// while [currentFocusNode] manages the focus state of this field.
 /// If [nextFocusNode] is provided, it will automatically receive focus
 /// when the current field is filled.
-class CustomFocusedTextFormField extends StatelessWidget {
+class CustomTextBox extends StatelessWidget {
   final TextEditingController textController;
   /// The FocusNode associated with this text field.
   final FocusNode currentFocusNode;
@@ -20,7 +20,7 @@ class CustomFocusedTextFormField extends StatelessWidget {
   /// current field is filled.
   final FocusNode? nextFocusNode;
 
-  const CustomFocusedTextFormField({
+  const CustomTextBox({
     Key? key,
     required this.textController,
     required this.currentFocusNode,

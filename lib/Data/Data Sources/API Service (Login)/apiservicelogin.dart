@@ -24,7 +24,7 @@ import '../../Models/loginmodels.dart';
 ///
 ///   - **Throws**: An exception if the login fails or if an error occurs
 ///     during the request, providing relevant error messages.
-class APIService {
+class LoginAPIService {
   Future<LoginResponseModel?> login(LoginRequestmodel loginRequestModel) async {
     try {
       String url = "https://bcc.touchandsolve.com/api/login";

@@ -31,7 +31,7 @@ class AuthCubit extends Cubit<AuthState> {
       print('State Token :${currentState.token}');
       try {
         print('State: $AuthAuthenticated');
-        final apiService = await APIProfileService();
+        final apiService = await ProfileAPIService();
         final profile = await apiService.fetchUserProfile(currentState.token);
         final UserProfile userProfile = UserProfile.fromJson(profile);
         print('Name: ${userProfile.name}');

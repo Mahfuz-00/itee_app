@@ -6,11 +6,11 @@
 /// ### Properties:
 /// - [imageUrl]: The URL that contains the image.
 /// - [label]: A descriptive label for the image.
-class ImageItem {
+class ImageModel {
   final String imageUrl;
   final String label;
 
-  ImageItem({
+  ImageModel({
     required this.imageUrl,
     required this.label,
   });

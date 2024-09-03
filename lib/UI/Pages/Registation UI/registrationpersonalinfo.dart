@@ -38,16 +38,16 @@ import 'registrationacademicinfo.dart';
 /// **Methods:**
 /// - `fetchConnectionRequests`: Fetches personal information from the API and populates
 ///   the corresponding text fields.
-class RegistrationPersonalInformation extends StatefulWidget {
-  const RegistrationPersonalInformation({super.key});
+class RegistrationPersonalInformationUI extends StatefulWidget {
+  const RegistrationPersonalInformationUI({super.key});
 
   @override
-  State<RegistrationPersonalInformation> createState() =>
-      _RegistrationPersonalInformationState();
+  State<RegistrationPersonalInformationUI> createState() =>
+      _RegistrationPersonalInformationUIState();
 }
 
-class _RegistrationPersonalInformationState
-    extends State<RegistrationPersonalInformation>
+class _RegistrationPersonalInformationUIState
+    extends State<RegistrationPersonalInformationUI>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _Datecontroller = TextEditingController();
@@ -644,7 +644,7 @@ class _RegistrationPersonalInformationState
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const RegistrationAcademicInformation()));
+                                      const RegistrationAcademicInformationUI()));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -669,7 +669,7 @@ class _RegistrationPersonalInformationState
           ),
         ),
       )),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 

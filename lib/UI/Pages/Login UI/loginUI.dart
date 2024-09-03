@@ -11,7 +11,7 @@ import '../Dashboard UI/dashboardUI.dart';
 import '../Forgot Password UI/forgotpasswordUI.dart';
 import '../Sign Up UI/signupUI.dart';
 
-/// The `Login` class represents the login screen of the application.
+/// The [LoginUI] class represents the login screen of the application.
 /// It manages the user authentication process and allows users to log in
 /// using their email and password. This class is responsible for validating
 /// input fields, handling API calls for login, and navigating to different
@@ -32,14 +32,14 @@ import '../Sign Up UI/signupUI.dart';
 ///
 /// This class utilizes the `Bloc` pattern for state management and interacts
 /// with the `AuthCubit` to handle authentication-related actions.
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginUI extends StatefulWidget {
+  const LoginUI({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginUI> createState() => _LoginUIState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginUIState extends State<LoginUI> {
   bool _isObscured = true;
   late TextEditingController _passwordController;
   late TextEditingController _emailController;
@@ -237,7 +237,7 @@ class _LoginState extends State<Login> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const ForgotPassword()));
+                                                const ForgotPasswordUI()));
                                   },
                                   child: const Text(
                                     'Forgot Password?',
@@ -271,7 +271,7 @@ class _LoginState extends State<Login> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                Dashboard(shouldRefresh: true)),
+                                                DashboardUI(shouldRefresh: true)),
                                       );
                                     } else{
                                       String errorMessage = 'Invalid User!, Please enter a valid email address.';
@@ -333,7 +333,7 @@ class _LoginState extends State<Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const Signup()));
+                                      builder: (context) => const SignupUI()));
                             },
                             child: const Text(
                               'Register now',
@@ -364,7 +364,7 @@ class _LoginState extends State<Login> {
     final form = formKey.currentState;
     if (form != null && form.validate()) {
       form.save();
-      final apiService = APIService();
+      final apiService = LoginAPIService();
       final loginRequestModel = LoginRequestmodel(
         Email: _emailController.text,
         Password: _passwordController.text,
@@ -443,7 +443,7 @@ class _LoginState extends State<Login> {
 
   Future<void> _fetchUserProfile(String token) async {
     try {
-      final apiService = await APIProfileService();
+      final apiService = await ProfileAPIService();
 
       if (!mounted) return;
 

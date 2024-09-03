@@ -6,25 +6,25 @@ import '../Login UI/loginUI.dart';
 /// It provides feedback to the user about the account creation
 /// and includes a button to navigate back to the login screen.
 ///
-/// This widget uses [InternetChecker] to ensure a valid internet connection
+/// This widget uses [InternetConnectionChecker] to ensure a valid internet connection
 /// before showing the content.
 ///
 /// - **Fields:**
 ///   - [screenWidth]: The width of the screen for responsive design.
 ///   - [screenHeight]: The height of the screen for responsive design.
-class AccountCreated extends StatefulWidget {
-  const AccountCreated({super.key});
+class AccountCreatedUI extends StatefulWidget {
+  const AccountCreatedUI({super.key});
 
   @override
-  State<AccountCreated> createState() => _AccountCreatedState();
+  State<AccountCreatedUI> createState() => _AccountCreatedUIState();
 }
 
-class _AccountCreatedState extends State<AccountCreated> {
+class _AccountCreatedUIState extends State<AccountCreatedUI> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: PopScope(
         canPop: false,
         child: Scaffold(
@@ -69,7 +69,7 @@ class _AccountCreatedState extends State<AccountCreated> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Login()));
+                          MaterialPageRoute(builder: (context) => LoginUI()));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(0, 162, 222, 1),

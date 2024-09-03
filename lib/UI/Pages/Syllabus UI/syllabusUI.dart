@@ -5,12 +5,11 @@ import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Syllabus)/apiserviceSyllabus.dart';
 import '../../Widgets/custombottomnavbar.dart';
 
-/// The Syllabus class represents the syllabus screen in the application.
+/// The [SyllabusUI] class represents the syllabus screen in the application.
 /// It fetches syllabus items from the API and displays them in a list,
 /// allowing users to download PDFs of the syllabus items.
 ///
@@ -26,16 +25,16 @@ import '../../Widgets/custombottomnavbar.dart';
 /// **Actions:**
 /// - 'fetchConnectionRequests': Fetches syllabus items from the API.
 /// - 'generatePDF': Generates a PDF from a given download link.
-class Syllabus extends StatefulWidget {
+class SyllabusUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Syllabus({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const SyllabusUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<Syllabus> createState() => _SyllabusState();
+  State<SyllabusUI> createState() => _SyllabusUIState();
 }
 
-class _SyllabusState extends State<Syllabus> {
+class _SyllabusUIState extends State<SyllabusUI> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
@@ -109,7 +108,7 @@ class _SyllabusState extends State<Syllabus> {
         child: CircularProgressIndicator(),
       ),
     )
-        : InternetChecker(
+        : InternetConnectionChecker(
       child: PopScope(
         canPop: true,
         child: Scaffold(
@@ -173,7 +172,7 @@ class _SyllabusState extends State<Syllabus> {
               ),
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(),
+          bottomNavigationBar: CustomBottomNavBar(),
         ),
       ),
     );

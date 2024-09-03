@@ -13,7 +13,7 @@ import '../../Data/Data Sources/API Service (Admit Card)/apiserviceAdmitCard.dar
 /// [ExamCatagory] specifies the category of the exam.
 /// [Name] is the name of the examinee.
 /// [URL] is the link to download the admit card.
-class AdmitCardCard extends StatelessWidget {
+class AdmitCardInfoCard extends StatelessWidget {
   final String ExamineeID;
   final String ExamType;
   final String ExamCatagory;
@@ -21,7 +21,7 @@ class AdmitCardCard extends StatelessWidget {
   final String URL;
 
 
-  AdmitCardCard({
+  AdmitCardInfoCard({
     Key? key,
     required this.ExamineeID,
     required this.ExamType,

@@ -9,7 +9,7 @@ import '../../../Data/Models/profilemodel.dart';
 import '../../Bloc/auth_cubit.dart';
 import '../Login UI/loginUI.dart';
 
-/// A splash screen that handles the initial loading and authentication
+/// A [SplashScreenUI] that handles the initial loading and authentication
 /// checking for the app. It displays a logo and transitions to the
 /// dashboard or login screen based on the authentication status of the user.
 ///
@@ -26,14 +26,14 @@ import '../Login UI/loginUI.dart';
 /// - **Methods:**
 ///   - `didChangeAppLifecycleState`: Checks authentication when the app is resumed.
 ///   - `_checkAuthentication`: Checks if the user is authenticated and navigates accordingly.
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class SplashScreenUI extends StatefulWidget {
+  const SplashScreenUI({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreenUI> createState() => _SplashScreenUIState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenUIState extends State<SplashScreenUI>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController animationController;
   late Animation<double> FadeAnimation;
@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => Dashboard(
+              builder: (context) => DashboardUI(
                     shouldRefresh: true,
                   )),
         );
@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
         await prefs.remove('token');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Login()),
+          MaterialPageRoute(builder: (context) => LoginUI()),
         );
       }
       bool auth = dashboardData['authenticated'];
@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
       bool isValid = auth;
 
       if (isValid) {
-        final profileData = await APIProfileService().fetchUserProfile(token);
+        final profileData = await ProfileAPIService().fetchUserProfile(token);
         final userProfile = UserProfile.fromJson(profileData);
 
         authCubit.emit(AuthAuthenticated(
@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => Dashboard(
+                builder: (context) => DashboardUI(
                   shouldRefresh: true,
                 )),
           );
@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen>
         await prefs.remove('token');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Login()),
+          MaterialPageRoute(builder: (context) => LoginUI()),
         );
       }
     } else {
@@ -136,7 +136,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => Dashboard(
+            builder: (context) => DashboardUI(
                   shouldRefresh: true,
                 )),
       );

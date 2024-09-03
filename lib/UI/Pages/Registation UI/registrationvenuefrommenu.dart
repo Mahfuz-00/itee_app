@@ -27,15 +27,15 @@ import 'registrationpersonalinfo.dart';
 ///
 /// This widget integrates with the `ExamRegistrationCubit` to manage
 /// state and handle submissions.
-class RegistrationCenterFromMenu extends StatefulWidget {
-  const RegistrationCenterFromMenu({super.key});
+class RegistrationCenterUIFromMenu extends StatefulWidget {
+  const RegistrationCenterUIFromMenu({super.key});
 
   @override
-  State<RegistrationCenterFromMenu> createState() =>
-      _RegistrationCenterFromMenuState();
+  State<RegistrationCenterUIFromMenu> createState() =>
+      _RegistrationCenterUIFromMenuState();
 }
 
-class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
+class _RegistrationCenterUIFromMenuState extends State<RegistrationCenterUIFromMenu>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -773,7 +773,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const RegistrationPersonalInformation()));
+                                    const RegistrationPersonalInformationUI()));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -797,7 +797,7 @@ class _RegistrationCenterFromMenuState extends State<RegistrationCenterFromMenu>
           ),
         ),
       )),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 

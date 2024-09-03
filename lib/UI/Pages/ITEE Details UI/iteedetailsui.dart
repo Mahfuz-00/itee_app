@@ -7,7 +7,7 @@ import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 
-/// A widget that displays details about the ITEE (Information Technology Engineers Examination).
+/// A widget that displays details about the ITEE.
 ///
 /// This class creates a screen containing information about the ITEE, including:
 /// - An overview of the examination
@@ -19,21 +19,21 @@ import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 ///
 /// The `InternetChecker` widget is used to ensure a stable internet connection is present before
 /// displaying the content.
-class ITEEDetails extends StatefulWidget {
-  const ITEEDetails({super.key});
+class ITEEDetailsUI extends StatefulWidget {
+  const ITEEDetailsUI({super.key});
 
   @override
-  State<ITEEDetails> createState() => _ITEEDetailsState();
+  State<ITEEDetailsUI> createState() => _ITEEDetailsUIState();
 }
 
-class _ITEEDetailsState extends State<ITEEDetails> with SingleTickerProviderStateMixin{
+class _ITEEDetailsUIState extends State<ITEEDetailsUI> with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -373,7 +373,7 @@ class _ITEEDetailsState extends State<ITEEDetails> with SingleTickerProviderStat
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Dashboard(
+                          builder: (context) => DashboardUI(
                             shouldRefresh: true,
                           )));
                 },
@@ -411,7 +411,7 @@ class _ITEEDetailsState extends State<ITEEDetails> with SingleTickerProviderStat
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BJetDetails()));
+                          builder: (context) => BJetDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,
@@ -449,7 +449,7 @@ class _ITEEDetailsState extends State<ITEEDetails> with SingleTickerProviderStat
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ITEETrainingProgramDetails()));
+                              TrainingProgramDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,

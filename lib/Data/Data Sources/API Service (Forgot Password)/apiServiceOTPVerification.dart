@@ -16,14 +16,14 @@ import 'package:http/http.dart' as http;
 ///   to verify the provided OTP for the specified email address. It constructs
 ///   the request body, handles the response, and returns the message from the
 ///   response. It also handles exceptions that may occur during the request.
-class APIServiceOTPVerification{
+class OTPVerificationAPIService{
   final String url = 'https://bcc.touchandsolve.com/api/verify/otp';
   late final String authToken;
 
-  APIServiceOTPVerification._();
+  OTPVerificationAPIService._();
 
-  static Future<APIServiceOTPVerification> create() async {
-    var apiService = APIServiceOTPVerification._();
+  static Future<OTPVerificationAPIService> create() async {
+    var apiService = OTPVerificationAPIService._();
     return apiService;
   }
 

@@ -22,16 +22,16 @@ import '../../Widgets/custombottomnavbar.dart';
 ///
 /// **Actions:**
 /// - `fetchConnectionRequests()`: Fetches the admit cards from the API and updates the UI.
-class AdmitCard extends StatefulWidget {
+class AdmitCardUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const AdmitCard({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const AdmitCardUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<AdmitCard> createState() => _AdmitCardState();
+  State<AdmitCardUI> createState() => _AdmitCardUIState();
 }
 
-class _AdmitCardState extends State<AdmitCard> {
+class _AdmitCardUIState extends State<AdmitCardUI> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
@@ -74,7 +74,7 @@ class _AdmitCardState extends State<AdmitCard> {
       final List<Widget> AdmitCardWidgets = records.map((item) {
         int index = records.indexOf(item);
         print(records[index]);
-        return AdmitCardCard(
+        return AdmitCardInfoCard(
           ExamineeID: item['examine_id'],
           ExamType: item['exam_type'],
           ExamCatagory: item['exam_category'],
@@ -171,7 +171,7 @@ class _AdmitCardState extends State<AdmitCard> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }

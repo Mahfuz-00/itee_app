@@ -26,15 +26,15 @@ import '../../Models/imageUpdateModel.dart';
 ///     An exception if the authentication token is empty, if the request
 ///     fails, or if the server returns an error response, providing relevant
 ///     error messages.
-class APIProfilePictureUpdate {
+class ProfilePictureUpdateAPIService {
   static const String URL =
       'https://bcc.touchandsolve.com/api/user/profile/photo/update';
   late final String authToken;
 
-  APIProfilePictureUpdate._();
+  ProfilePictureUpdateAPIService._();
 
-  static Future<APIProfilePictureUpdate> create() async {
-    var apiService = APIProfilePictureUpdate._();
+  static Future<ProfilePictureUpdateAPIService> create() async {
+    var apiService = ProfilePictureUpdateAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;

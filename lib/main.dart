@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
               seedColor: Color.fromRGBO(0, 162, 222, 1)),
           useMaterial3: true,
         ),
-        home: const SplashScreen(),
+        home: const SplashScreenUI(),
       ),
     );
   }

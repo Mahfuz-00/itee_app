@@ -29,16 +29,16 @@ import '../../Widgets/custombottomnavbar.dart';
 /// - `build`: Builds the UI for the Exam Material screen.
 /// - `_buildDotPointItem`: Creates a list item for each exam material with a download link.
 /// - `generatePDF`: Generates a PDF from the download link.
-class ExamMaterial extends StatefulWidget {
+class ExamMaterialUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const ExamMaterial({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const ExamMaterialUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<ExamMaterial> createState() => _ExamMaterialState();
+  State<ExamMaterialUI> createState() => _ExamMaterialUIState();
 }
 
-class _ExamMaterialState extends State<ExamMaterial> {
+class _ExamMaterialUIState extends State<ExamMaterialUI> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
@@ -111,7 +111,7 @@ class _ExamMaterialState extends State<ExamMaterial> {
         child: CircularProgressIndicator(),
       ),
     )
-        : InternetChecker(
+        : InternetConnectionChecker(
       child: PopScope(
         canPop: true,
         child: Scaffold(
@@ -175,7 +175,7 @@ class _ExamMaterialState extends State<ExamMaterial> {
               ),
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(),
+          bottomNavigationBar: CustomBottomNavBar(),
         ),
       ),
     );

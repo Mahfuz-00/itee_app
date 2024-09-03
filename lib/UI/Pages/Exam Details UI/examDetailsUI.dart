@@ -9,22 +9,22 @@ import '../../Widgets/custombottomnavbar.dart';
 ///
 /// **Variables:**
 /// - [details]: Contains the details of the exam to be displayed.
-class ExamDetails extends StatefulWidget {
+class ExamDetailsUI extends StatefulWidget {
   final String details;
-  const ExamDetails({Key? key, required this.details}) : super(key: key);
+  const ExamDetailsUI({Key? key, required this.details}) : super(key: key);
 
   @override
-  State<ExamDetails> createState() => _ExamDetailsState();
+  State<ExamDetailsUI> createState() => _ExamDetailsUIState();
 }
 
-class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStateMixin {
+class _ExamDetailsUIState extends State<ExamDetailsUI> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -68,7 +68,7 @@ class _ExamDetailsState extends State<ExamDetails> with SingleTickerProviderStat
             ),
           ),
         ),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }

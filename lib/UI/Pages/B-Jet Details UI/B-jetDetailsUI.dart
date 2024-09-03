@@ -7,7 +7,7 @@ import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 
-/// BJetDetails is a StatefulWidget that provides information about the
+/// [BJetDetailsUI] is a StatefulWidget that provides information about the
 /// Bangladesh-Japan ICT Engineers' Training Program (B-JET). It displays
 /// detailed information about the program, including its purpose, history,
 /// and expected outcomes for participants.
@@ -18,21 +18,21 @@ import '../ITEE Training Program Details UI/trainingprogramdetails.dart';
 ///   including Home, ITEE details, Training details, and Contact options.
 /// - A dialog that allows users to select a phone number to call related
 ///   to the B-JET Program.
-class BJetDetails extends StatefulWidget {
-  const BJetDetails({super.key});
+class BJetDetailsUI extends StatefulWidget {
+  const BJetDetailsUI({super.key});
 
   @override
-  State<BJetDetails> createState() => _BJetDetailsState();
+  State<BJetDetailsUI> createState() => _BJetDetailsUIState();
 }
 
-class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStateMixin{
+class _BJetDetailsUIState extends State<BJetDetailsUI> with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -98,7 +98,7 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Dashboard(
+                          builder: (context) => DashboardUI(
                             shouldRefresh: true,
                           )));
                 },
@@ -136,7 +136,7 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ITEEDetails()));
+                          builder: (context) => ITEEDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,
@@ -173,7 +173,7 @@ class _BJetDetailsState extends State<BJetDetails> with SingleTickerProviderStat
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ITEETrainingProgramDetails()));
+                              TrainingProgramDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,

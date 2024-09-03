@@ -7,7 +7,7 @@ import 'package:itee_exam_app/UI/Widgets/paymentCard.dart';
 import '../../../Data/Data Sources/API Service (Payment)/apiservicepaymentview.dart';
 import '../../Widgets/custombottomnavbar.dart';
 
-/// Payment is a StatefulWidget that manages the display of payment information
+/// [PaymentUI] is a StatefulWidget that manages the display of payment information
 /// for users. It fetches payment data from an API and presents it as a list
 /// of payment cards, each containing details about a specific payment.
 ///
@@ -17,16 +17,16 @@ import '../../Widgets/custombottomnavbar.dart';
 /// This widget allows users to view their payments and offers a user-friendly interface
 /// for displaying payment-related information. It includes loading indicators to manage
 /// the user experience while data is being fetched.
-class Payment extends StatefulWidget {
+class PaymentUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Payment({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const PaymentUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<Payment> createState() => _PaymentState();
+  State<PaymentUI> createState() => _PaymentUIState();
 }
 
-class _PaymentState extends State<Payment> {
+class _PaymentUIState extends State<PaymentUI> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
@@ -169,7 +169,7 @@ class _PaymentState extends State<Payment> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }

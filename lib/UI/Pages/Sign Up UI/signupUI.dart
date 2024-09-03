@@ -11,7 +11,7 @@ import '../../../Data/Data Sources/API Service (Sign Up)/apiserviceregister.dart
 import '../../../Data/Models/registermodels.dart';
 import '../Login UI/loginUI.dart';
 
-/// `Signup` is a StatefulWidget that represents the user registration screen.
+/// [SignupUI] is a StatefulWidget that represents the user registration screen.
 /// It contains a form for collecting user details such as full name, email,
 /// phone number, occupation, LinkedIn profile, and password. The form
 /// includes validation for each field and manages password visibility.
@@ -23,14 +23,14 @@ import '../Login UI/loginUI.dart';
 /// - Handles profile image selection and displays its dimensions.
 ///
 /// It utilizes a `GlobalKey<FormState>` for form validation and management.
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class SignupUI extends StatefulWidget {
+  const SignupUI({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<SignupUI> createState() => _SignupUIState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignupUIState extends State<SignupUI> {
   bool _isObscuredPassword = true;
   bool _isObscuredConfirmPassword = true;
   late RegisterRequestmodel _registerRequest;
@@ -100,7 +100,7 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: Scaffold(
         body: PopScope(
           canPop: false,
@@ -500,7 +500,7 @@ class _SignupState extends State<Signup> {
                                 InkWell(
                                   onTap: () {
                                     Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => Login()));
+                                        MaterialPageRoute(builder: (context) => LoginUI()));
                                   },
                                   child: const Text(
                                     'Login now',
@@ -556,7 +556,7 @@ class _SignupState extends State<Signup> {
         linkedin: _linkedinController.text,
       );
 
-      final apiService = APIService();
+      final apiService = UserRegistrationAPIService();
       apiService.register(registerRequest, _imageFile).then((response) {
         print("Submitted");
         if (response != null && response == "User Registration Successfully. Verification is pending.") {
@@ -566,7 +566,7 @@ class _SignupState extends State<Signup> {
           clearForm();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AccountOPTVerfication()),
+            MaterialPageRoute(builder: (context) => AccountOPTVerficationUI()),
           );
         } else if (response != null && response == "The email has already been taken."){
           setState(() {

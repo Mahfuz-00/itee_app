@@ -15,7 +15,7 @@ import 'package:flutter/material.dart';
 /// - [result]: The result status of the application.
 /// - [payment]: The payment status of the application.
 /// - [admitcard]: The admit card status of the application.
-class ApplicationItemTemplate extends StatelessWidget {
+class ApplicationTemplate extends StatelessWidget {
   final String name;
   final String ExamineeID;
   final String Categories;
@@ -23,7 +23,7 @@ class ApplicationItemTemplate extends StatelessWidget {
   final int payment;
   final int admitcard;
 
-  ApplicationItemTemplate({
+  ApplicationTemplate({
     required this.name,
     required this.ExamineeID,
     required this.Categories,

@@ -6,12 +6,12 @@
 /// ### Properties:
 /// - [userId]: A string representing the unique identifier for the user.
 /// - [name]: A string representing the user's name.
-class UserProfileUpdate {
+class UserProfileUpdateModel {
   final String userId;
   final String name;
 
 
-  UserProfileUpdate({
+  UserProfileUpdateModel({
     required this.userId,
     required this.name,
   });

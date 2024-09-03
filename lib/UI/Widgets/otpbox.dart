@@ -10,10 +10,10 @@ import 'package:flutter/services.dart';
 ///
 /// **Parameters:**
 /// - [textController]: The controller that manages the text being edited.
-class CustomTextFormField extends StatelessWidget {
+class CustomOTPBox extends StatelessWidget {
   final TextEditingController textController;
 
-  const CustomTextFormField({
+  const CustomOTPBox({
     Key? key,
     required this.textController,
   }) : super(key: key);

@@ -17,7 +17,7 @@ import '../../Models/userInfoUpdateModel.dart';
 ///   profile update endpoint.
 ///
 ///   - **Parameters**:
-///     - [userData]: An instance of [UserProfileUpdate] containing the
+///     - [userData]: An instance of [UserProfileUpdateModel] containing the
 ///       user's ID and the new name to be updated.
 ///
 ///   - **Returns**:
@@ -27,14 +27,14 @@ import '../../Models/userInfoUpdateModel.dart';
 ///   - **Throws**:
 ///     An exception if the authentication token is empty or if the
 ///     request fails, providing a relevant error message.
-class APIServiceUpdateUser {
+class UpdateUserAPIService {
   late final String authToken;
   String URL = "https://bcc.touchandsolve.com/api/user/profile/update";
 
-  APIServiceUpdateUser._();
+  UpdateUserAPIService._();
 
-  static Future<APIServiceUpdateUser> create() async {
-    var apiService = APIServiceUpdateUser._();
+  static Future<UpdateUserAPIService> create() async {
+    var apiService = UpdateUserAPIService._();
     await apiService._loadAuthToken();
     print('triggered API');
     return apiService;
@@ -47,7 +47,7 @@ class APIServiceUpdateUser {
     print(prefs.getString('token'));
   }
 
-  Future<String> updateUserProfile(UserProfileUpdate userData) async {
+  Future<String> updateUserProfile(UserProfileUpdateModel userData) async {
     final String token = await authToken;
     try {
       if (token.isEmpty) {

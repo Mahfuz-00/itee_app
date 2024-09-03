@@ -19,7 +19,7 @@ import '../../Widgets/custombottomnavbar.dart';
 import '../Login UI/loginUI.dart';
 import 'passwordChange.dart';
 
-/// The Profile widget displays the user's profile overview, allowing
+/// The [ProfileUI] widget displays the user's profile overview, allowing
 /// users to view and edit their profile information. It includes
 /// features such as viewing the user's name, mobile number, email,
 /// and profile picture. Users can also change their password and
@@ -27,7 +27,7 @@ import 'passwordChange.dart';
 ///
 /// It interacts with various API services to fetch user data and
 /// update user information, including:
-/// - Fetching the user profile with [APIProfileService].
+/// - Fetching the user profile with [ProfileAPIService].
 /// - Updating user profile images with [APIServiceImageUpdate].
 /// - Logging out with [LogOutApiService].
 ///
@@ -37,16 +37,16 @@ import 'passwordChange.dart';
 ///
 /// The profile screen is designed to be responsive, adapting its layout
 /// based on the screen size.
-class Profile extends StatefulWidget {
+class ProfileUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Profile({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const ProfileUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<ProfileUI> createState() => _ProfileUIState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileUIState extends State<ProfileUI> {
   var globalKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> globalfromkey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -63,7 +63,7 @@ class _ProfileState extends State<Profile> {
     print('Load Token');
     print(prefs.getString('token'));
 
-    final apiService = await APIProfileService();
+    final apiService = await ProfileAPIService();
     final profile = await apiService.fetchUserProfile(token);
     userProfile = UserProfileFull.fromJson(profile);
     name = userProfile!.name;
@@ -120,7 +120,7 @@ class _ProfileState extends State<Profile> {
         child: CircularProgressIndicator(),
       ),
     )
-        : InternetChecker(
+        : InternetConnectionChecker(
       child: PopScope(
         canPop: false,
         child: Scaffold(
@@ -258,7 +258,7 @@ class _ProfileState extends State<Profile> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => PasswordChange(),));
+                                                builder: (context) => PasswordChangeUI(),));
                                         },
                                         child: Container(
                                           padding: EdgeInsets.all(10),
@@ -373,7 +373,7 @@ class _ProfileState extends State<Profile> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          bottomNavigationBar: CustomBottomNavigationBar(),
+          bottomNavigationBar: CustomBottomNavBar(),
         ),
       ),
     );
@@ -513,7 +513,7 @@ class _ProfileState extends State<Profile> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  Login())); // Close the drawer
+                                  LoginUI())); // Close the drawer
                     }
                   },
                   child: Text(
@@ -620,12 +620,12 @@ class _ProfileState extends State<Profile> {
                       print(userProfile!.name);
                       print(userProfile!.phone);
 
-                      final userProfileUpdate = UserProfileUpdate(
+                      final userProfileUpdate = UserProfileUpdateModel(
                         userId: userProfile!.id.toString(),
                         // Provide the user ID here
                         name: _fullNameController.text,
                       );
-                      final apiService = await APIServiceUpdateUser.create();
+                      final apiService = await UpdateUserAPIService.create();
                       final result =
                       await apiService.updateUserProfile(userProfileUpdate);
                       Navigator.of(context).pop();
@@ -638,7 +638,7 @@ class _ProfileState extends State<Profile> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  Profile(
+                                  ProfileUI(
                                       shouldRefresh:
                                       true)));
                       // Handle the result as needed, e.g., show a toast message
@@ -784,7 +784,7 @@ class _ProfileState extends State<Profile> {
             'Profile Picture Updating ....'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      final apiService = await APIProfilePictureUpdate.create();
+      final apiService = await ProfilePictureUpdateAPIService.create();
       print(imageFile.path);
       print(imageFile);
       final response = await apiService.updateProfilePicture(image: imageFile);
@@ -799,7 +799,7 @@ class _ProfileState extends State<Profile> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  Profile(
+                  ProfileUI(
                       shouldRefresh:
                       true)));
     } catch (e) {

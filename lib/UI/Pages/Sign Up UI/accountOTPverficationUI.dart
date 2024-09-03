@@ -20,14 +20,14 @@ import 'AccountCreatedUI.dart';
 ///
 /// - **Methods:**
 ///   - `_sendOTP(String email, String OTP)`: Sends the entered [OTP] to the server for verification.
-class AccountOPTVerfication extends StatefulWidget {
-  const AccountOPTVerfication({super.key});
+class AccountOPTVerficationUI extends StatefulWidget {
+  const AccountOPTVerficationUI({super.key});
 
   @override
-  State<AccountOPTVerfication> createState() => _AccountOPTVerficationState();
+  State<AccountOPTVerficationUI> createState() => _AccountOPTVerficationUIState();
 }
 
-class _AccountOPTVerficationState extends State<AccountOPTVerfication> {
+class _AccountOPTVerficationUIState extends State<AccountOPTVerficationUI> {
   bool _isLoading = true;
 
   final List<TextEditingController> _controllers = List.generate(8, (index) => TextEditingController());
@@ -44,11 +44,11 @@ class _AccountOPTVerficationState extends State<AccountOPTVerfication> {
   }
 
   Future<void> _sendOTP(String email, String OTP) async {
-    final apiService = await APIServiceAccountOTPVerification.create();
+    final apiService = await AccountOTPVerificationAPIService.create();
     apiService.AccountOTPVerification(email, OTP).then((response) {
       if (response == 'User Registration Successfully') {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AccountCreated()));
+            context, MaterialPageRoute(builder: (context) => AccountCreatedUI()));
       } else if (response ==
           'Otp not match. Please resend forget password otp') {
         const snackBar = SnackBar(
@@ -75,7 +75,7 @@ class _AccountOPTVerficationState extends State<AccountOPTVerfication> {
         child: CircularProgressIndicator(),
       ),
     )
-        : InternetChecker(
+        : InternetConnectionChecker(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -148,7 +148,7 @@ class _AccountOPTVerficationState extends State<AccountOPTVerfication> {
                                   children: List.generate(8, (index) {
                                     return Row(
                                       children: [
-                                        CustomFocusedTextFormField(
+                                        CustomTextBox(
                                           textController: _controllers[index],
                                           currentFocusNode: _focusNodes[index],
                                           nextFocusNode: index < 7 ? _focusNodes[index + 1] : null,

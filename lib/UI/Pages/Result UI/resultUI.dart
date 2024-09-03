@@ -22,16 +22,16 @@ import '../../Widgets/resultcard.dart';
 ///
 /// **Actions:**
 /// - `fetchConnectionRequests`: Fetches the examination results from the API and updates the UI accordingly.
-class Result extends StatefulWidget {
+class ResultUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const Result({Key? key, this.shouldRefresh = false}) : super(key: key);
+  const ResultUI({Key? key, this.shouldRefresh = false}) : super(key: key);
 
   @override
-  State<Result> createState() => _ResultState();
+  State<ResultUI> createState() => _ResultUIState();
 }
 
-class _ResultState extends State<Result> {
+class _ResultUIState extends State<ResultUI> {
   bool _isLoading = false;
   late final String name;
   bool isloaded = false;
@@ -175,7 +175,7 @@ class _ResultState extends State<Result> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        bottomNavigationBar: CustomBottomNavBar(),
       ),
     );
   }

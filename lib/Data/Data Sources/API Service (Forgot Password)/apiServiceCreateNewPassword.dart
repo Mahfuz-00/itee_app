@@ -16,14 +16,14 @@ import 'package:http/http.dart' as http;
 ///   POST request to create a new password. It constructs the request body, handles
 ///   the response, and returns the message from the response. It also handles
 ///   exceptions that may occur during the request.
-class APIServiceCreateNewPassword{
+class CreateNewPasswordAPIService{
   final String url = 'https://bcc.touchandsolve.com/api/forget/password';
   late final String authToken;
 
-  APIServiceCreateNewPassword._();
+  CreateNewPasswordAPIService._();
 
-  static Future<APIServiceCreateNewPassword> create() async {
-    var apiService = APIServiceCreateNewPassword._();
+  static Future<CreateNewPasswordAPIService> create() async {
+    var apiService = CreateNewPasswordAPIService._();
     return apiService;
   }
 

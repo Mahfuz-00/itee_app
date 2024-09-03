@@ -17,15 +17,15 @@ import 'package:http/http.dart' as http;
 ///   an OTP to the specified email address. It constructs the request body,
 ///   handles the response, and returns the message from the response. It also
 ///   handles exceptions that may occur during the request.
-class APIServiceForgotPassword{
+class ForgotPasswordAPIService{
   final String url = 'https://bcc.touchandsolve.com/api/send/forget/password/otp';
   late final String authToken;
 
-  APIServiceForgotPassword();
-  APIServiceForgotPassword._();
+  ForgotPasswordAPIService();
+  ForgotPasswordAPIService._();
 
-  static Future<APIServiceForgotPassword> create() async {
-    var apiService = APIServiceForgotPassword._();
+  static Future<ForgotPasswordAPIService> create() async {
+    var apiService = ForgotPasswordAPIService._();
     return apiService;
   }
 

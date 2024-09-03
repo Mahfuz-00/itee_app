@@ -28,16 +28,16 @@ import 'registrationapplicationreview.dart';
 /// - Responsive layout that adjusts based on the screen size.
 /// - Displays relevant input fields based on selected qualifications.
 
-class RegistrationAcademicInformation extends StatefulWidget {
-  const RegistrationAcademicInformation({super.key});
+class RegistrationAcademicInformationUI extends StatefulWidget {
+  const RegistrationAcademicInformationUI({super.key});
 
   @override
-  State<RegistrationAcademicInformation> createState() =>
-      _RegistrationAcademicInformationState();
+  State<RegistrationAcademicInformationUI> createState() =>
+      _RegistrationAcademicInformationUIState();
 }
 
-class _RegistrationAcademicInformationState
-    extends State<RegistrationAcademicInformation>
+class _RegistrationAcademicInformationUIState
+    extends State<RegistrationAcademicInformationUI>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<DropdownMenuItem<String>> education = [
@@ -427,7 +427,7 @@ class _RegistrationAcademicInformationState
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const RegistrationApplicationReview(
+                                            const RegistrationApplicationReviewUI(
                                               shouldRefresh: true,
                                             )));
                                 isdelayed = false;
@@ -459,7 +459,7 @@ class _RegistrationAcademicInformationState
               ),
             ),
           )),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 

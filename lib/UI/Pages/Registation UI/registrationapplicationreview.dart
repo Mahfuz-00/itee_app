@@ -48,19 +48,19 @@ import 'paymentconfirmation.dart';
 ///   updates state variables with the retrieved values.
 /// - `_buildRow(String label, String value)`: Helper method to build a row
 ///   displaying a label and its corresponding value in the UI.
-class RegistrationApplicationReview extends StatefulWidget {
+class RegistrationApplicationReviewUI extends StatefulWidget {
   final bool shouldRefresh;
 
-  const RegistrationApplicationReview({Key? key, this.shouldRefresh = false})
+  const RegistrationApplicationReviewUI({Key? key, this.shouldRefresh = false})
       : super(key: key);
 
   @override
-  State<RegistrationApplicationReview> createState() =>
-      _RegistrationApplicationReviewState();
+  State<RegistrationApplicationReviewUI> createState() =>
+      _RegistrationApplicationReviewUIState();
 }
 
-class _RegistrationApplicationReviewState
-    extends State<RegistrationApplicationReview>
+class _RegistrationApplicationReviewUIState
+    extends State<RegistrationApplicationReviewUI>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late String Imagepath = "";
@@ -220,7 +220,7 @@ class _RegistrationApplicationReviewState
               child: CircularProgressIndicator(),
             ),
           )
-        : InternetChecker(
+        : InternetConnectionChecker(
             child: Scaffold(
               resizeToAvoidBottomInset: false,
               key: _scaffoldKey,
@@ -465,7 +465,7 @@ class _RegistrationApplicationReviewState
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PaymentConfirmation(
+                                      builder: (context) => PaymentConfirmationUI(
                                             ExamineeID: examineeID,
                                           )),
                                 );
@@ -500,7 +500,7 @@ class _RegistrationApplicationReviewState
                   ),
                 ),
               )),
-              bottomNavigationBar: CustomBottomNavigationBar(),
+              bottomNavigationBar: CustomBottomNavBar(),
             ),
           );
   }

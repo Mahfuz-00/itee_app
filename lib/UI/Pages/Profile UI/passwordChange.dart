@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 /// A screen that allows users to change their password.
 ///
-/// The `PasswordChange` screen provides fields for entering the current password,
+/// The [PasswordChangeUI] screen provides fields for entering the current password,
 /// new password, and confirming the new password. It also includes password visibility
 /// toggles and validation to ensure that the passwords meet the required criteria.
 ///
@@ -23,12 +23,12 @@ import 'package:flutter/material.dart';
 ///   and confirm password fields match.
 /// - Submits the password update request to the API service when the update button is clicked.
 /// - Displays appropriate success or error messages based on the API response.
-class PasswordChange extends StatefulWidget {
+class PasswordChangeUI extends StatefulWidget {
   @override
-  State<PasswordChange> createState() => _PasswordChangeState();
+  State<PasswordChangeUI> createState() => _PasswordChangeUIState();
 }
 
-class _PasswordChangeState extends State<PasswordChange> {
+class _PasswordChangeUIState extends State<PasswordChangeUI> {
   late TextEditingController _currentPasswordController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
@@ -251,7 +251,7 @@ class _PasswordChangeState extends State<PasswordChange> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 
@@ -282,7 +282,7 @@ class _PasswordChangeState extends State<PasswordChange> {
      String confirmPassword = _confirmPasswordController.text;
 
      try {
-       APIServicePasswordUpdate apiService = await APIServicePasswordUpdate
+       PasswordUpdateAPIService apiService = await PasswordUpdateAPIService
            .create();
        final response = await apiService.updatePassword(
          currentPassword: currentPassword,

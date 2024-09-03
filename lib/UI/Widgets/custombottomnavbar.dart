@@ -14,8 +14,8 @@ import '../Pages/ITEE Training Program Details UI/trainingprogramdetails.dart';
 ///
 /// This widget does not require any parameters and provides a user-friendly
 /// interface for navigating to various sections of the application.
-class CustomBottomNavigationBar extends StatelessWidget {
-  const CustomBottomNavigationBar({Key? key}) : super(key: key);
+class CustomBottomNavBar extends StatelessWidget {
+  const CustomBottomNavBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Dashboard(shouldRefresh: true),
+                  builder: (context) => DashboardUI(shouldRefresh: true),
                 ),
               );
             },
@@ -55,7 +55,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ITEEDetails()),
+                MaterialPageRoute(builder: (context) => ITEEDetailsUI()),
               );
             },
             context: context,
@@ -70,7 +70,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BJetDetails()),
+                MaterialPageRoute(builder: (context) => BJetDetailsUI()),
               );
             },
             context: context,
@@ -86,7 +86,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ITEETrainingProgramDetails(),
+                  builder: (context) => TrainingProgramDetailsUI(),
                 ),
               );
             },

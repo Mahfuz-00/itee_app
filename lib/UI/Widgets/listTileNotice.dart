@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 ///
 /// **Parameters:**
 /// - [notice]: The text content of the notice to be displayed.
-class ItemTemplateNotice extends StatelessWidget {
+class NoticeTemplate extends StatelessWidget {
   final String notice;
 
-  ItemTemplateNotice({
+  NoticeTemplate({
     required this.notice,
   });
 

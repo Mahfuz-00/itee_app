@@ -8,26 +8,26 @@ import '../B-Jet Details UI/B-jetDetailsUI.dart';
 import '../Dashboard UI/dashboardUI.dart';
 import '../ITEE Details UI/iteedetailsui.dart';
 
-/// The [ITEETrainingProgramDetails] class represents the details of the ITEE
+/// The [TrainingProgramDetailsUI] class represents the details of the ITEE
 /// Training Program. It provides information about the program, including
 /// its duration, course fee, and a link for further information. Users can
 /// also initiate phone calls to relevant contacts directly from this screen.
 ///
-/// Implements an [InternetChecker] to ensure internet
+/// Implements an [InternetConnectionChecker] to ensure internet
 /// connectivity before displaying the content.
 ///
 /// Key Features:
 /// - Displays program details, including title, objectives, duration, and course fee.
 /// - Provides a link to the official Facebook page for more information.
 /// - Allows users to call specific phone numbers from a dialog interface.
-class ITEETrainingProgramDetails extends StatefulWidget {
-  const ITEETrainingProgramDetails({super.key});
+class TrainingProgramDetailsUI extends StatefulWidget {
+  const TrainingProgramDetailsUI({super.key});
 
   @override
-  State<ITEETrainingProgramDetails> createState() => _ITEETrainingProgramDetailsState();
+  State<TrainingProgramDetailsUI> createState() => _TrainingProgramDetailsUIState();
 }
 
-class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails> with SingleTickerProviderStateMixin{
+class _TrainingProgramDetailsUIState extends State<TrainingProgramDetailsUI> with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final String url = 'https://www.facebook.com/bjet.org/';
@@ -44,7 +44,7 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return InternetChecker(
+    return InternetConnectionChecker(
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -184,7 +184,7 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Dashboard(
+                          builder: (context) => DashboardUI(
                             shouldRefresh: true,
                           )));
                 },
@@ -222,7 +222,7 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ITEEDetails()));
+                          builder: (context) => ITEEDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,
@@ -258,7 +258,7 @@ class _ITEETrainingProgramDetailsState extends State<ITEETrainingProgramDetails>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BJetDetails()));
+                          builder: (context) => BJetDetailsUI()));
                 },
                 child: Container(
                   width: screenWidth / 4,
