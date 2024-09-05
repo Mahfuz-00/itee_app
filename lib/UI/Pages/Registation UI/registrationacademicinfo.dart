@@ -100,7 +100,6 @@ class _RegistrationAcademicInformationUIState
           scrollDirection: Axis.vertical,
           child: SafeArea(
             child: Container(
-              //height: screenHeight + 40,
               color: Colors.grey[100],
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
               child: Column(
@@ -442,7 +441,7 @@ class _RegistrationAcademicInformationUIState
                               }
                             },
                             child: isdelayed
-                                ? CircularProgressIndicator() // Show circular progress indicator when button is clicked
+                                ? CircularProgressIndicator()
                                 : const Text('Next',
                                     style: TextStyle(
                                       color: Colors.white,

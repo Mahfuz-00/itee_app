@@ -21,7 +21,7 @@ import '../../Widgets/resultcard.dart';
 /// - [_resultWidgets]: Holds a list of result widgets to be displayed on the screen.
 ///
 /// **Actions:**
-/// - `fetchConnectionRequests`: Fetches the examination results from the API and updates the UI accordingly.
+/// - [fetchConnectionRequests]: Fetches the examination results from the API and updates the UI accordingly.
 class ResultUI extends StatefulWidget {
   final bool shouldRefresh;
 
