@@ -265,7 +265,7 @@ class _DashboardUIState extends State<DashboardUI> {
                 final userProfile = state.userProfile;
                 return InternetConnectionChecker(
                   child: PopScope(
-                    canPop: false,
+                 /*   canPop: false,*/
                     child: Scaffold(
                       key: _scaffoldKey,
                       appBar: auth
@@ -766,7 +766,7 @@ class _DashboardUIState extends State<DashboardUI> {
                                                     _applicationWidgets.isEmpty
                                                 ? Center(
                                                     child: Text(
-                                                      'You have made any Application',
+                                                      'You haven\'t made any Application',
                                                       style: TextStyle(
                                                         fontSize: 20,
                                                         color: Colors.black54,
@@ -1896,7 +1896,7 @@ class _DashboardUIState extends State<DashboardUI> {
                                                                   _applicationWidgets
                                                                           .length -
                                                                       1
-                                                              ? Colors.white
+                                                              ? Colors.transparent
                                                               : Colors.black,
                                                         ),
                                                       ),
@@ -2959,10 +2959,8 @@ class _DashboardUIState extends State<DashboardUI> {
       await Printing.layoutPdf(
           onLayout: (PdfPageFormat format) async => data.bodyBytes);
     } catch (e) {
-      // Handle any errors
       print('Error generating PDF: $e');
     } finally {
-      // Remove the loading indicator
       Navigator.of(context, rootNavigator: true).pop();
     }
   }

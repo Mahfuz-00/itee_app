@@ -225,6 +225,16 @@ class _SyllabusUIState extends State<SyllabusUI> {
       ScaffoldMessenger.of(context as BuildContext).showSnackBar(snackBar);
       print('Print Triggered!!');
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
       try {
         print('PDF generated successfully. Download URL: ${link}');
         final Uri url = Uri.parse(link);
@@ -233,6 +243,8 @@ class _SyllabusUIState extends State<SyllabusUI> {
             onLayout: (PdfPageFormat format) async => data.bodyBytes);
       } catch (e) {
         print('Error generating PDF: $e');
+      } finally {
+        Navigator.of(context, rootNavigator: true).pop();
       }
   }
 }

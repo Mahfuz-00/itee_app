@@ -267,11 +267,12 @@ class _LoginUIState extends State<LoginUI> {
                                   print('Checking $userType');
                                   if (userType != null) {
                                     if (userType == 'itee_student') {
-                                      Navigator.pushReplacement(
+                                      Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 DashboardUI(shouldRefresh: true)),
+                                              (route) => false
                                       );
                                     } else{
                                       String errorMessage = 'Invalid User!, Please enter a valid email address.';

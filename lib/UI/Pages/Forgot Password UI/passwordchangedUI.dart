@@ -78,8 +78,10 @@ class _PasswordChangedUIState extends State<PasswordChangedUI> {
                     onPressed: () {
                       final emailCubit = EmailCubit();
                       emailCubit.clearEmail();
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginUI()));
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginUI()),
+                          (route) => false);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(0, 162, 222, 1),

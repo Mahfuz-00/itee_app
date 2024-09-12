@@ -113,7 +113,6 @@ class _AdmitCardUIState extends State<AdmitCardUI> {
       canPop: true,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        //resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
           leading: IconButton(

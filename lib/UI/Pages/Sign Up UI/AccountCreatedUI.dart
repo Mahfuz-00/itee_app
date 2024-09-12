@@ -34,7 +34,7 @@ class _AccountCreatedUIState extends State<AccountCreatedUI> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:[
+                children: [
                   Center(
                     child: Image(
                       image: AssetImage('Assets/Images/Success-Mark.png'),
@@ -43,7 +43,9 @@ class _AccountCreatedUIState extends State<AccountCreatedUI> {
                       alignment: Alignment.center,
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Text(
                     'Account Created!',
                     textAlign: TextAlign.center,
@@ -65,18 +67,22 @@ class _AccountCreatedUIState extends State<AccountCreatedUI> {
                       fontFamily: 'default',
                     ),
                   ),
-                  SizedBox(height: 50,),
+                  SizedBox(
+                    height: 50,
+                  ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginUI()));
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginUI()),
+                          (route) => false);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(0, 162, 222, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      fixedSize: Size(screenWidth*0.9, 70),
+                      fixedSize: Size(screenWidth * 0.9, 70),
                     ),
                     child: Text(
                       'Back to Login',

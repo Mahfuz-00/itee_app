@@ -103,7 +103,7 @@ class _SignupUIState extends State<SignupUI> {
     return InternetConnectionChecker(
       child: Scaffold(
         body: PopScope(
-          canPop: false,
+    /*      canPop: false,*/
           child: SingleChildScrollView(
             child: SafeArea(
               child: Container(

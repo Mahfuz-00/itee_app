@@ -131,6 +131,7 @@ class _RegistrationApplicationReviewUIState
     result = combinedDataCubit.state.result;
     passingID = combinedDataCubit.state.passingID;
     book = savedBookNames?.join(', ') ?? 'No books selected';
+    print('Book : $book');
   }
 
   Widget _buildRow(String label, String value) {
@@ -298,7 +299,7 @@ class _RegistrationApplicationReviewUIState
                         child: Column(
                           children: [
                             Text(
-                              'Information Details',
+                              'Exam Information Details',
                               style: TextStyle(
                                 color: Color.fromRGBO(0, 162, 222, 1),
                                 letterSpacing: 1.2,
@@ -319,9 +320,11 @@ class _RegistrationApplicationReviewUIState
                                     _buildRow(
                                         'Exam Catagories', courseCategory),
                                     _buildRow('Exam Type', courseType),
-                                    _buildRow('Exam Fee', 'TK $examFee/-'),
-                                    _buildRow('Book', book),
-                                    _buildRow('Book Price', 'TK $bookprice/-'),
+                                    _buildRow('Exam Fee', examFee),
+                                    if( book.isNotEmpty) ...[
+                                      _buildRow('Book', book),
+                                      _buildRow('Book Price', 'TK $bookprice/-'),
+                                    ],
                                     _buildRow('Full Name', fullName),
                                     _buildRow('Email', email),
                                     _buildRow('Mobile Number', mobileNumber),
@@ -428,47 +431,59 @@ class _RegistrationApplicationReviewUIState
                               final registrationSuccessful = await apiService
                                   .sendRegistrationDataFromCubit(
                                       combinedDataCubit, File(Imagepath));
+                              print('Exam Registration: $registrationSuccessful');
                               if (registrationSuccessful != null &&
                                   registrationSuccessful['status'] == true) {
-                                if (registrationSuccessful['records'] ==
-                                    'Person is already registered for an exam previously.') {
+                                print('Status: ${registrationSuccessful['status']}');
+                                print('Records: ${registrationSuccessful['records']}');
+                                print(registrationSuccessful['records'][0]
+                                    ?.toString()
+                                    ?.trim()
+                                    ?.toLowerCase());
+                                if (registrationSuccessful['records'][0]
+                                    ?.toString()
+                                    ?.trim()
+                                    ?.toLowerCase() ==
+                                    'person is already registered for an exam previously.'.toLowerCase()) {
                                   setState(() {
                                     buttonloading = false;
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          'You are already registered for The Exam'),
+                                          'You are already registered for an Exam'),
                                     ),
                                   );
+                                } else if (registrationSuccessful['message'] == 'Exam Registration Successfully'){
+                                  SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                                  int examRegistrationId =
+                                  registrationSuccessful['records']
+                                  ['exam_registration_id'];
+                                  print(
+                                      'Saved exam registration ID: $examRegistrationId');
+                                  prefs.setInt(
+                                      'exam_registration_id', examRegistrationId);
+                                  String examineeID =
+                                  registrationSuccessful['records']
+                                  ['examine_id'];
+                                  print('Examinee ID: $examineeID');
+                                  prefs.setString('examinee_id', examineeID);
+
+                                  print(registrationSuccessful['records']);
+
+                                  final combineDataCubit = context.read<CombinedDataCubit>();
+                                  combineDataCubit.resetData();
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PaymentConfirmationUI(
+                                          ExamineeID: examineeID,
+                                        )),
+                                  );
                                 }
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                int examRegistrationId =
-                                    registrationSuccessful['records']
-                                        ['exam_registration_id'];
-                                print(
-                                    'Saved exam registration ID: $examRegistrationId');
-                                prefs.setInt(
-                                    'exam_registration_id', examRegistrationId);
-                                String examineeID =
-                                    registrationSuccessful['records']
-                                        ['examine_id'];
-                                print('Examinee ID: $examineeID');
-                                prefs.setString('examinee_id', examineeID);
 
-                                print(registrationSuccessful['records']);
-
-                                final combineDataCubit = context.read<CombinedDataCubit>();
-                                combineDataCubit.resetData();
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PaymentConfirmationUI(
-                                            ExamineeID: examineeID,
-                                          )),
-                                );
                               } else {
                                 setState(() {
                                   buttonloading = false;

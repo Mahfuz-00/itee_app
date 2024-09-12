@@ -655,7 +655,7 @@ class _RegistrationCenterUIFromExamCardState
               Column(
                 children: [
                   ...Books.map((book) {
-                    return CheckboxListTile(
+                    return CheckboxListTile.adaptive(
                       title: Text(
                         book.name,
                         style: TextStyle(
@@ -696,7 +696,7 @@ class _RegistrationCenterUIFromExamCardState
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             child: Text(
-                              '${book.name} - \$${(double.tryParse(book.bookprice) ?? 0.0).toStringAsFixed(2)}',
+                              '${book.name} - ${(double.tryParse(book.bookprice) ?? 0.0).toStringAsFixed(1)} TK',
                               style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -708,7 +708,7 @@ class _RegistrationCenterUIFromExamCardState
                           height: 10,
                         ),
                         Text(
-                          'Total Price: \$${_calculateTotalPrice().toStringAsFixed(2)}',
+                          'Total Price: ${_calculateTotalPrice().toStringAsFixed(1)} TK',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

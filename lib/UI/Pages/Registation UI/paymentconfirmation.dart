@@ -17,6 +17,7 @@ import '../Dashboard UI/dashboardUI.dart';
 /// - [ExamineeID]: The unique identifier for the examinee.
 class PaymentConfirmationUI extends StatefulWidget {
   final String ExamineeID;
+
   const PaymentConfirmationUI({Key? key, required this.ExamineeID})
       : super(key: key);
 
@@ -76,7 +77,9 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                           alignment: Alignment.center,
                         ),
                       ),
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Center(
                         child: Text(
                           'Congratulations, Your Registration Successfully Submitted',
@@ -113,7 +116,8 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                           borderRadius: BorderRadius.circular(5),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
+                              backgroundColor:
+                                  const Color.fromRGBO(0, 162, 222, 1),
                               fixedSize: Size(
                                   MediaQuery.of(context).size.width * 0.85,
                                   MediaQuery.of(context).size.height * 0.08),
@@ -256,12 +260,13 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                       final registrationSuccessful =
                           await apiService.sendIdsFromSharedPreferences(
                               _paymentConfirmationController.text, id);
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const DashboardUI(
                                     shouldRefresh: true,
-                                  )));
+                                  )),
+                          (route) => false);
                     },
                     child: buttonloading
                         ? CircularProgressIndicator()
