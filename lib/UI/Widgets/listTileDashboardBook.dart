@@ -11,10 +11,12 @@ import 'package:flutter/material.dart';
 /// - [name]: The title of the book.
 /// - [price]: The price of the book.
 class BookTemplate extends StatelessWidget {
+  final int id;
   final String name;
   final String price;
 
   BookTemplate({
+    required this.id,
     required this.name,
     required this.price,
   });

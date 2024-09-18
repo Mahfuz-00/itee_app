@@ -414,11 +414,11 @@ class _RegistrationAcademicInformationUIState
                               ),
                             ),
                             onPressed: () async {
-                              setState(() {
-                                isdelayed = true;
-                              });
-                              CheckSubject();
+                              await CheckSubject();
                               if (validateInputs()) {
+                                setState(() {
+                                  isdelayed = true;
+                                });
                                 CheckSubject();
                                 print('validated');
                                 await Future.delayed(Duration(seconds: 2));

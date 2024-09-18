@@ -321,9 +321,10 @@ class _RegistrationApplicationReviewUIState
                                         'Exam Catagories', courseCategory),
                                     _buildRow('Exam Type', courseType),
                                     _buildRow('Exam Fee', examFee),
-                                    if( book.isNotEmpty) ...[
+                                    if (book.isNotEmpty) ...[
                                       _buildRow('Book', book),
-                                      _buildRow('Book Price', 'TK $bookprice/-'),
+                                      _buildRow(
+                                          'Book Price', 'TK $bookprice/-'),
                                     ],
                                     _buildRow('Full Name', fullName),
                                     _buildRow('Email', email),
@@ -431,20 +432,24 @@ class _RegistrationApplicationReviewUIState
                               final registrationSuccessful = await apiService
                                   .sendRegistrationDataFromCubit(
                                       combinedDataCubit, File(Imagepath));
-                              print('Exam Registration: $registrationSuccessful');
+                              print(
+                                  'Exam Registration: $registrationSuccessful');
                               if (registrationSuccessful != null &&
                                   registrationSuccessful['status'] == true) {
-                                print('Status: ${registrationSuccessful['status']}');
-                                print('Records: ${registrationSuccessful['records']}');
+                                print(
+                                    'Status: ${registrationSuccessful['status']}');
+                                print(
+                                    'Records: ${registrationSuccessful['records']}');
                                 print(registrationSuccessful['records'][0]
                                     ?.toString()
                                     ?.trim()
                                     ?.toLowerCase());
                                 if (registrationSuccessful['records'][0]
-                                    ?.toString()
-                                    ?.trim()
-                                    ?.toLowerCase() ==
-                                    'person is already registered for an exam previously.'.toLowerCase()) {
+                                        ?.toString()
+                                        ?.trim()
+                                        ?.toLowerCase() ==
+                                    'person is already registered for an exam previously.'
+                                        .toLowerCase()) {
                                   setState(() {
                                     buttonloading = false;
                                   });
@@ -454,36 +459,47 @@ class _RegistrationApplicationReviewUIState
                                           'You are already registered for an Exam'),
                                     ),
                                   );
-                                } else if (registrationSuccessful['message'] == 'Exam Registration Successfully'){
+                                } else if (registrationSuccessful['message'] ==
+                                    'Exam Registration Successfully') {
                                   SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
+                                      await SharedPreferences.getInstance();
                                   int examRegistrationId =
-                                  registrationSuccessful['records']
-                                  ['exam_registration_id'];
+                                      registrationSuccessful['records']
+                                          ['exam_registration_id'];
                                   print(
                                       'Saved exam registration ID: $examRegistrationId');
-                                  prefs.setInt(
-                                      'exam_registration_id', examRegistrationId);
+                                  prefs.setInt('exam_registration_id',
+                                      examRegistrationId);
+                                  String ExamRegID =
+                                      examRegistrationId.toString();
                                   String examineeID =
-                                  registrationSuccessful['records']
-                                  ['examine_id'];
+                                      registrationSuccessful['records']
+                                          ['examine_id'];
                                   print('Examinee ID: $examineeID');
                                   prefs.setString('examinee_id', examineeID);
 
                                   print(registrationSuccessful['records']);
 
-                                  final combineDataCubit = context.read<CombinedDataCubit>();
+                                  final combineDataCubit =
+                                      context.read<CombinedDataCubit>();
                                   combineDataCubit.resetData();
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PaymentConfirmationUI(
-                                          ExamineeID: examineeID,
-                                        )),
-                                  );
-                                }
+                                  String cleanedExamFee = examFee.replaceAll(RegExp(r'[^\d.]'), '');
+                                  double examFeeParsed = double.parse(cleanedExamFee);
+                                  double totalAmount = examFeeParsed + bookprice!;
+                                  print('Tk ${totalAmount.toStringAsFixed(2)}');
 
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PaymentConfirmationUI(
+                                                ExamineeID: examineeID,
+                                                ExamRegID: ExamRegID,
+                                                price: '$totalAmount',
+                                              )),
+                                      (route) => false);
+                                }
                               } else {
                                 setState(() {
                                   buttonloading = false;
@@ -492,9 +508,7 @@ class _RegistrationApplicationReviewUIState
                                   SnackBar(
                                     content: Text(
                                         'Failed to submit registration data. Please try again.'),
-                                    duration: Duration(
-                                        seconds:
-                                            3),
+                                    duration: Duration(seconds: 3),
                                   ),
                                 );
                               }

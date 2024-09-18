@@ -77,6 +77,8 @@ class _PaymentUIState extends State<PaymentUI> {
           ExamType: item['exam_type'],
           ExamCatagory: item['exam_category'],
           Books: books,
+          ExamRegID: item['exam_registration_id'].toString(),
+          ExamFee: item['exam_fee'],
         );
       }).toList();
 
