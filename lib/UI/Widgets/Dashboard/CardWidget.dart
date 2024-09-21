@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'templateerrorcontainer.dart';
+import '../templateerrorcontainer.dart';
 
 /// A custom widget that displays a list of requests or handles errors.
 /// It effectively manages loading states, errors, and empty list scenarios.

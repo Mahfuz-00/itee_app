@@ -16,6 +16,7 @@ import '../../Data/Data Sources/API Service (Fetch Applicant Info)/apiServiceFet
 import '../../Data/Data Sources/API Service (Payment)/apiServiceSubmitTransaction.dart';
 import '../Pages/Dashboard UI/dashboardUI.dart';
 
+
 /// A widget that displays a payment card with applicant information,
 /// exam details, book fees, and a pay button.
 ///
@@ -31,6 +32,7 @@ class PaymentCard extends StatefulWidget {
   final String ExamType;
   final String ExamCatagory;
   final List<Map<String, dynamic>> Books;
+  final String city;
 
   const PaymentCard({
     Key? key,
@@ -40,6 +42,7 @@ class PaymentCard extends StatefulWidget {
     required this.ExamType,
     required this.ExamCatagory,
     required this.Books,
+    required this.city,
   }) : super(key: key);
 
   @override
@@ -242,9 +245,12 @@ class _PaymentCardState extends State<PaymentCard> {
     final totalBookFees = widget.Books.fold(
         0.0, (sum, book) => sum + (double.parse(book['book_fees'].toString())));
     final examfee = widget.ExamFee;
+    print(widget.ExamFee);
     String examfeeString = examfee.replaceAll(
         RegExp(r'[^\d.]'), '');
     final totalAmount = totalBookFees + double.parse(examfeeString);
+
+
 
     Sslcommerz sslcommerz = Sslcommerz(
       initializer: SSLCommerzInitialization(
@@ -263,11 +269,11 @@ class _PaymentCardState extends State<PaymentCard> {
     // Add customer information
     sslcommerz.addCustomerInfoInitializer(
       customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: "",
+        customerState: '',
         customerName: Name,
         customerEmail: Email,
         customerAddress1: Address,
-        customerCity: "",
+        customerCity: widget.city,
         customerPostCode: PostCode,
         customerCountry: "Bangladesh",
         customerPhone: Mobile,

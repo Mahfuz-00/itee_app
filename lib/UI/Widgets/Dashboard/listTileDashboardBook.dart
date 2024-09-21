@@ -14,11 +14,13 @@ class BookTemplate extends StatelessWidget {
   final int id;
   final String name;
   final String price;
+  final String city;
 
   BookTemplate({
     required this.id,
     required this.name,
     required this.price,
+    required this.city,
   });
 
   @override

@@ -10,9 +10,9 @@ import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitial
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import '../../Data/Data Sources/API Service (Fetch Applicant Info)/apiServiceFetchApplicantinfo.dart';
-import '../../Data/Data Sources/API Service (Payment)/apiServiceSubmitBookTransaction.dart';
-import '../Pages/Dashboard UI/dashboardUI.dart';
+import '../../../Data/Data Sources/API Service (Fetch Applicant Info)/apiServiceFetchApplicantinfo.dart';
+import '../../../Data/Data Sources/API Service (Payment)/apiServiceSubmitBookTransaction.dart';
+import '../../Pages/Dashboard UI/dashboardUI.dart';
 
 /// A widget that displays a card representing a book with its name and price,
 /// and a button to buy the book.
@@ -25,11 +25,13 @@ class BookCard extends StatefulWidget {
   final int bookId;
   final String bookName;
   final String bookPrice;
+  final String city;
 
   BookCard({
     required this.bookId,
     required this.bookName,
     required this.bookPrice,
+    required this.city,
   });
 
   @override
@@ -236,6 +238,9 @@ class _BookCardState extends State<BookCard> {
     transactionAmount = double.parse(bookPriceString);
     print(transactionAmount);
 
+    final city = widget.city;
+    print(city);
+
     Sslcommerz sslcommerz = Sslcommerz(
       initializer: SSLCommerzInitialization(
         multi_card_name: "visa,master,bkash,rocket,nagad",
@@ -256,8 +261,8 @@ class _BookCardState extends State<BookCard> {
         customerState: "",
         customerName: Name,
         customerEmail: Email,
-        customerAddress1: "",
-        customerCity: "",
+        customerAddress1: city,
+        customerCity: city,
         customerPostCode: "",
         customerCountry: "Bangladesh",
         customerPhone: Mobile,

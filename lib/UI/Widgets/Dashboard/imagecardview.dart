@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
-import '../../Data/Models/imagemodel.dart';
+import '../../../Data/Models/imagemodel.dart';
 
 class ImageCarousel extends StatefulWidget {
   final List<ImageModel> items;

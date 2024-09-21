@@ -46,6 +46,7 @@ class CombinedDataCubit extends Cubit<CombinedDataState> {
       gender: secondState.gender,
       linkedin: secondState.linkedin,
       address: secondState.address,
+      city: secondState.city,
       postCode: secondState.postCode,
       occupation: secondState.occupation,
       educationQualification: thirdState.qualification,
@@ -82,6 +83,7 @@ class CombinedDataCubit extends Cubit<CombinedDataState> {
     print('Gender: ${data.gender}');
     print('LinkedIn: ${data.linkedin}');
     print('Address: ${data.address}');
+    print('City: ${data.city}');
     print('Post Code: ${data.postCode}');
     print('Occupation: ${data.occupation}');
     print('Education Qualification: ${data.educationQualification}');

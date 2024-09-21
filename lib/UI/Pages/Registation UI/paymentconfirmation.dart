@@ -2,12 +2,19 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sslcommerz/model/SSLCAdditionalInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
+import 'package:flutter_sslcommerz/model/SSLCEMITransactionInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
+import 'package:flutter_sslcommerz/model/SSLCShipmentInfoInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
 import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/NonPhysicalGoods.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/PhysicalGoods.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/TelecomVertical.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/TravelVertical.dart';
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -30,12 +37,14 @@ class PaymentConfirmationUI extends StatefulWidget {
   final String ExamineeID;
   final String ExamRegID;
   final String price;
+  final String city;
 
   const PaymentConfirmationUI(
       {Key? key,
       required this.ExamineeID,
       required this.ExamRegID,
-      required this.price})
+      required this.price,
+      required this.city})
       : super(key: key);
 
   @override
@@ -332,13 +341,15 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
       String Mobile, String Address, String PostCode) async {
     String tranId = generateTransactionId();
 
+    List<String> parts = PostCode.split('-');
+    String city = parts[0];
+    String code = parts[1];
+
     Sslcommerz sslcommerz = Sslcommerz(
       initializer: SSLCommerzInitialization(
-        multi_card_name: "visa,master,bkash,rocket,nagad",
         currency: SSLCurrencyType.BDT,
         product_category: "Exam Fee",
         sdkType: SSLCSdkType.TESTBOX,
-        // Change to LIVE for production
         store_id: storeId,
         store_passwd: storePassword,
         total_amount: double.parse(widget.price),
@@ -349,32 +360,154 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     // Add customer information
     sslcommerz.addCustomerInfoInitializer(
       customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: "",
+        customerState: widget.city ?? "Unknown",
         customerName: Name,
         customerEmail: Email,
         customerAddress1: Address,
-        customerCity: "",
-        customerPostCode: PostCode,
+        customerCity: city ?? "Unknown",
+        customerPostCode: code ?? "Unknown",
         customerCountry: "Bangladesh",
         customerPhone: Mobile,
       ),
     );
 
-    // Add non-physical goods product information (Exam Registration and Book Fee)
     sslcommerz.addProductInitializer(
-      sslcProductInitializer:
-          SSLCProductInitializer.WithNonPhysicalGoodsProfile(
+      sslcProductInitializer: SSLCProductInitializer(
         productName: "Exam Registration and Book Fee",
         productCategory: "Education",
-        nonPhysicalGoods: NonPhysicalGoods(
+        general: General(
           productProfile: "Online Exam and Book Payment",
-          nonPhysicalGoods: "Exam Registration Fee, Book Purchase",
+          general: "Exam Registration Fee, Book Purchase",
         ),
       ),
     );
 
+    sslcommerz.addEMITransactionInitializer(
+      sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
+        emi_options: 0,
+      ),
+    );
+
+    sslcommerz.addShipmentInfoInitializer(
+      sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
+        shipmentMethod: "no",
+        numOfItems: 0,
+        shipmentDetails: ShipmentDetails(
+          shipAddress1: "N/A",
+          shipCity: "N/A",
+          shipCountry: "N/A",
+          shipName: "N/A",
+          shipPostCode: "N/A",
+        ),
+      ),
+    );
+
+    sslcommerz.addProductInitializer(
+        sslcProductInitializer:
+        SSLCProductInitializer.WithNonPhysicalGoodsProfile(
+            productName:  "N/A",
+            productCategory:"N/A",
+            nonPhysicalGoods:
+            NonPhysicalGoods(productProfile: "N/A",
+                nonPhysicalGoods:"N/A"
+            )));
+
+    sslcommerz.addProductInitializer(
+        sslcProductInitializer:
+        SSLCProductInitializer.WithTravelVerticalProfile(
+            productName:"N/A",
+            productCategory:"N/A",
+            travelVertical:TravelVertical(
+                productProfile: "N/A",
+                hotelName: "N/A",
+                lengthOfStay: "N/A",
+                checkInTime: "N/A",
+                hotelCity: "N/A"
+            )));
+
+    sslcommerz.addProductInitializer(
+        sslcProductInitializer:
+        SSLCProductInitializer.WithPhysicalGoodsProfile(
+            productName: "N/A",
+            productCategory: "N/A",
+            physicalGoods: PhysicalGoods(
+                productProfile: "N/A",
+                physicalGoods: "N/A"
+            )));
+
+    sslcommerz.addProductInitializer(
+        sslcProductInitializer:
+        SSLCProductInitializer.WithTelecomVerticalProfile(
+            productName: "N/A",
+            productCategory: "N/A",
+            telecomVertical: TelecomVertical(
+                productProfile: "N/A",
+                productType: "N/A",
+                topUpNumber: "N/A",
+                countryTopUp: "N/A"
+            )));
+
+    sslcommerz.addAdditionalInitializer(
+      sslcAdditionalInitializer: SSLCAdditionalInitializer(
+        valueA: "N/A",
+        valueB: "N/A",
+        valueC: "N/A",
+        valueD: "N/A",
+      ),
+    );
+
+    String snackbarContent = """
+    Initializing SSLCommerz with:
+    - Store ID: $storeId
+    - Store Password: $storePassword
+    - SDK Type: TESTBOX
+    - Currency: BDT
+    - Transaction ID: $tranId
+    - Total Amount: ${widget.price}
+    - Product Name: Exam Registration and Book Fee
+    - Customer State: ${widget.city}
+    - Customer Name: $Name
+    - Customer Email: $Email
+    - Customer Phone: $Mobile
+    - Customer Address: $Address
+    - Customer City: $city
+    - Customer PostCode: $code
+    - Customer Country: Bangladesh
+  """;
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(snackbarContent),
+      duration: Duration(seconds: 5), // Show for 5 seconds
+    ));
+
     try {
+      var ini = sslcommerz.initializer.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${ini}'), duration: Duration(seconds: 5)));
+      var cus = sslcommerz.customerInfoInitializer.toString();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${cus}'), duration: Duration(seconds: 5)));
+    var tans = sslcommerz.sslcemiTransactionInitializer.toString();
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${tans}'), duration: Duration(seconds: 5)));
+    var ship = sslcommerz.sslcShipmentInfoInitializer.toString();
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${ship}'), duration: Duration(seconds: 5)));
+    var prod = sslcommerz.sslcProductInitializer.toString();
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${prod}'), duration: Duration(seconds: 5)));
+    var add = sslcommerz.sslcAdditionalInitializer.toString();
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${add}'), duration: Duration(seconds: 5)));
+    var datas = await sslcommerz.toJson();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${datas}'), duration: Duration(seconds: 5)));
       var result = await sslcommerz.payNow();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${jsonEncode(result.toString())}'),
+          duration: Duration(seconds: 5)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('${result.status}'), duration: Duration(seconds: 5)));
       print("result :: ${jsonEncode(result)}");
       print("result status :: ${result.status ?? ""}");
       print(
@@ -459,352 +592,4 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     print(transactionId);
     return transactionId;
   }
-
-/*  void showPaymentModal(BuildContext context) {
-    // Define the available payment methods with images
-    List<Map<String, String>> paymentMethods = [
-      {
-        "name": "Visa",
-        "image": "Assets/Images/Visa_logo.png",
-        "type": "card",
-      },
-      {
-        "name": "MasterCard",
-        "image": "Assets/Images/MasterCard_logo.png",
-        "type": "card",
-      },
-      {
-        "name": "bKash",
-        "image": "Assets/Images/bKash_logo.png",
-        "type": "mobile",
-      },
-      {
-        "name": "Rocket",
-        "image": "Assets/Images/Rocket_Logo.png",
-        "type": "mobile",
-      },
-      {
-        "name": "Nagad",
-        "image": "Assets/Images/Nagad_logo.png",
-        "type": "mobile",
-      },
-    ];
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-          height: 1000,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 15,),
-              Center(
-                child: Text(
-                  'Proceed with Exam Payment',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'default'),
-                ),
-              ),
-              SizedBox(height: 20),
-              Text('Select Payment Method:',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'default')),
-              SizedBox(height: 10),
-              // Display payment method cards
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.5,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemCount: paymentMethods.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        // Show different modal based on payment type
-                        if (paymentMethods[index]["name"] == "bKash" ||
-                            paymentMethods[index]["name"] == "Rocket" ||
-                            paymentMethods[index]["name"] == "Nagad") {
-                          showMobilePaymentModal(
-                              context, paymentMethods[index]["name"]!, paymentMethods[index]["image"]!);
-                        } else {
-                          showCardPaymentModal(
-                              context, paymentMethods[index]["name"]!, paymentMethods[index]["image"]!);
-                        }
-                      },
-                      child: Card(
-                        elevation: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                paymentMethods[index]["image"]!,
-                                width: 70,
-                                height: 70,
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                paymentMethods[index]["name"]!,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'default'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void showMobilePaymentModal(BuildContext context, String paymentMethod, String logo) {
-    TextEditingController mobileController = TextEditingController();
-    TextEditingController amountController = TextEditingController();
-    TextEditingController securityController = TextEditingController();
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          //height: 1000,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 15),
-              Text('Mobile Payment: $paymentMethod',
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.w500)),
-              SizedBox(height: 15,),
-              Image.asset(logo, height: 100, width: 100),
-              const SizedBox(height: 30),
-              _buildTextField(
-                  mobileController, 'Mobile Number', TextInputType.phone),
-              const SizedBox(height: 10),
-              _buildTextField(amountController, 'Amount', TextInputType.number),
-              const SizedBox(height: 10),
-              _buildTextField(
-                  securityController, 'Security Code', TextInputType.number),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildPaymentButton('Confirm', () {
-                    String mobileNumber = mobileController.text;
-                    String amount = amountController.text;
-                    print('Mobile Payment: $mobileNumber, Amount: $amount');
-                    //Navigator.of(context).pop();
-                  }),
-                  const SizedBox(width: 10),
-                  _buildPaymentButton(
-                      'Cancel', () => Navigator.of(context).pop()),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void showCardPaymentModal(BuildContext context, String paymentMethod, String logo) {
-    TextEditingController cardNumberController = TextEditingController();
-    TextEditingController expiryDateController = TextEditingController();
-    TextEditingController nameController = TextEditingController();
-    TextEditingController securitycodeController = TextEditingController();
-    TextEditingController amountController = TextEditingController();
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.all(16.0),
-         // height: 1000,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 15),
-              Text(
-                'Card Payment: $paymentMethod',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'default',
-                    fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 15),
-              Image.asset(logo, height: 100, width: 100),
-              SizedBox(height: 30),
-              _buildTextField(cardNumberController, 'Card Number', TextInputType.number),
-              SizedBox(height: 10),
-              _buildTextField(expiryDateController, 'Expiry Date (MM/YY)', TextInputType.datetime),
-              SizedBox(height: 10),
-              _buildTextField(amountController, 'Amount', TextInputType.number),
-              SizedBox(height: 10),
-              _buildTextField(nameController, 'Name on Card', TextInputType.text),
-              SizedBox(height: 10),
-              _buildTextField(securitycodeController, 'CVV/CVC', TextInputType.number),
-              const SizedBox(height: 10),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildPaymentButton('Confirm', () {
-                    String cardNumber = cardNumberController.text;
-                    String expiryDate = expiryDateController.text;
-                    String amount = amountController.text;
-                    print('Card Payment: $cardNumber, Expiry: $expiryDate, Amount: $amount');
-                    Navigator.of(context).pop();
-                  }),
-                  SizedBox(width: 10),
-                  _buildPaymentButton('Cancel', () => Navigator.of(context).pop()),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String label,
-      TextInputType keyboardType) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      style: const TextStyle(
-        color: Color.fromRGBO(143, 150, 158, 1),
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'default',
-      ),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        labelText: label,
-        labelStyle: TextStyle(
-          color: Colors.black87,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          fontFamily: 'default',
-        ),
-        border: OutlineInputBorder(),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-      ),
-    );
-  }
-
-  Widget _buildPaymentButton(String label, VoidCallback onPressed) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromRGBO(0, 162, 222, 1),
-        fixedSize: Size(MediaQuery.of(context).size.width * 0.40, 60),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-      ),
-      child: Text(label,
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'default')),
-      onPressed: onPressed,
-    );
-  }
-
-  String generateTransactionId() {
-    const String chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    final Random random = Random();
-    String randomId = '';
-
-    for (int i = 0; i < 10; i++) {
-      randomId += chars[random.nextInt(chars.length)];
-    }
-
-    return 'tran_$randomId';
-  }
-
-  void startPayment(BuildContext context, String paymentMethod) async {
-    String tranId = generateTransactionId();
-
-    Sslcommerz sslcommerz = Sslcommerz(
-      initializer: SSLCommerzInitialization(
-        multi_card_name: "visa,master,bkash,rocket,nagad",
-        currency: SSLCurrencyType.BDT,
-        product_category: "Exam Fee",
-        sdkType: SSLCSdkType.TESTBOX,
-        // Change to LIVE for production
-        store_id: "rajsh6554638e006b6",
-        store_passwd: "rajsh6554638e006b6@ssl",
-        total_amount: 1000.00,
-        tran_id: tranId,
-      ),
-    );
-
-    // Add customer information
-    sslcommerz.addCustomerInfoInitializer(
-      customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: "Dhaka",
-        customerName: "Student Name",
-        customerEmail: "student_email@example.com",
-        customerAddress1: "Student Address",
-        customerCity: "Dhaka",
-        customerPostCode: "1230",
-        customerCountry: "Bangladesh",
-        customerPhone: "student_phone_number",
-      ),
-    );
-
-    // Add non-physical goods product information (Exam Fee)
-    sslcommerz.addProductInitializer(
-      sslcProductInitializer:
-          SSLCProductInitializer.WithNonPhysicalGoodsProfile(
-        productName: "Exam Registration Fee",
-        productCategory: "Education",
-        nonPhysicalGoods: NonPhysicalGoods(
-          productProfile: "Online Exam Payment",
-          nonPhysicalGoods: "Exam Registration Fee",
-        ),
-      ),
-    );
-
-    try {
-      var result = await sslcommerz.payNow();
-      print(result);
-      */ /* Navigator.pop(context); // Close the modal bottom sheet
-    if (result['status'] == 'SUCCESS') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Payment successful!'),
-      ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Payment failed!'),
-      ));
-    }*/ /*
-    } catch (e) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Payment error: $e'),
-      ));
-    }
-  }*/
 }

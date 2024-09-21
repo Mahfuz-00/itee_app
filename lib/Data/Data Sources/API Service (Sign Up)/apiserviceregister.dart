@@ -41,6 +41,7 @@ class UserRegistrationAPIService {
       request.fields['full_name'] = registerRequestModel.fullName;
       request.fields['email'] = registerRequestModel.email;
       request.fields['phone'] = registerRequestModel.phone;
+      request.fields['city'] = registerRequestModel.city;
       request.fields['occupation'] = registerRequestModel.occupation;
       request.fields['linkedin'] = registerRequestModel.linkedin;
       request.fields['password'] = registerRequestModel.password;

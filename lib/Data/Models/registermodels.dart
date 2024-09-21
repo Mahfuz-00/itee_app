@@ -35,6 +35,7 @@ class RegisterRequestmodel {
   late String email;
   late String phone;
   late String occupation;
+  late String city;
   late String linkedin;
   late String password;
   late String confirmPassword;
@@ -44,6 +45,7 @@ class RegisterRequestmodel {
     required this.email,
     required this.phone,
     required this.occupation,
+    required this.city,
     required this.linkedin,
     required this.password,
     required this.confirmPassword,
@@ -55,6 +57,7 @@ class RegisterRequestmodel {
       'email': email,
       'phone': phone,
       'occupation': occupation,
+      'city': city,
       'LinkedIn': linkedin,
       'password': password,
       'password_confirmation': confirmPassword,

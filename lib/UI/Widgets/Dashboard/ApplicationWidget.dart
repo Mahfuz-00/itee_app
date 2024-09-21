@@ -4,8 +4,8 @@ import 'package:printing/printing.dart';
 import 'package:http/http.dart' as http;
 import '../../../Data/Data Sources/API Service (Admit Card)/apiserviceAdmitCard.dart';
 import '../../../Data/Data Sources/API Service (Result)/apiserviceResult.dart';
-import '../../Widgets/appilcationcard.dart';
-import '../../Widgets/listTileDashboardApplication.dart';
+import 'appilcationcard.dart';
+import 'listTileDashboardApplication.dart';
 
 class ApplicationCarousel extends StatefulWidget {
   final List<Widget> applicationWidgets;
@@ -37,7 +37,7 @@ class _ApplicationCarouselState extends State<ApplicationCarousel> {
         child: Text(
           'You haven\'t made any Application',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             color: Colors.black54,
             fontFamily: 'default',
             fontWeight: FontWeight.bold,

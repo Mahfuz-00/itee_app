@@ -83,6 +83,7 @@ class _RegistrationApplicationReviewUIState
   late String gender = "";
   late String linkdin = "";
   late String address = "";
+  late String city = "";
   late String postCode = "";
   late String occupation = "";
   late String educationQualification = "";
@@ -121,6 +122,7 @@ class _RegistrationApplicationReviewUIState
     gender = combinedDataCubit.state.gender;
     linkdin = combinedDataCubit.state.linkedin;
     address = combinedDataCubit.state.address;
+    city = combinedDataCubit.state.city;
     postCode = combinedDataCubit.state.postCode;
     occupation = combinedDataCubit.state.occupation;
     educationQualification = combinedDataCubit.state.educationQualification;
@@ -333,6 +335,7 @@ class _RegistrationApplicationReviewUIState
                                     _buildRow('Gender', gender),
                                     _buildRow('Linkdin', linkdin),
                                     _buildRow('Address', address),
+                                    _buildRow('City', city),
                                     _buildRow('Post Code', postCode),
                                     _buildRow('Occupation', occupation),
                                   ],
@@ -482,11 +485,16 @@ class _RegistrationApplicationReviewUIState
 
                                   final combineDataCubit =
                                       context.read<CombinedDataCubit>();
+                                  final cityFromState =
+                                      combineDataCubit.state.city;
                                   combineDataCubit.resetData();
 
-                                  String cleanedExamFee = examFee.replaceAll(RegExp(r'[^\d.]'), '');
-                                  double examFeeParsed = double.parse(cleanedExamFee);
-                                  double totalAmount = examFeeParsed + bookprice!;
+                                  String cleanedExamFee =
+                                      examFee.replaceAll(RegExp(r'[^\d.]'), '');
+                                  double examFeeParsed =
+                                      double.parse(cleanedExamFee);
+                                  double totalAmount =
+                                      examFeeParsed + bookprice!;
                                   print('Tk ${totalAmount.toStringAsFixed(2)}');
 
                                   Navigator.pushAndRemoveUntil(
@@ -497,6 +505,7 @@ class _RegistrationApplicationReviewUIState
                                                 ExamineeID: examineeID,
                                                 ExamRegID: ExamRegID,
                                                 price: '$totalAmount',
+                                                city: cityFromState,
                                               )),
                                       (route) => false);
                                 }

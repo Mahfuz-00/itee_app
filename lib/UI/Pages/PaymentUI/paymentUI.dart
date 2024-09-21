@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/CardWidget.dart';
 import 'package:itee_exam_app/UI/Widgets/paymentCard.dart';
 import '../../../Data/Data Sources/API Service (Payment)/apiservicepaymentview.dart';
 import '../../Widgets/custombottomnavbar.dart';
@@ -71,7 +71,6 @@ class _PaymentUIState extends State<PaymentUI> {
         List<Map<String, dynamic>> books =
             List<Map<String, dynamic>>.from(item['books']);
         print('Book:: $books');
-        int index = records.indexOf(item);
         return PaymentCard(
           ExamineeID: item['examine_id'],
           ExamType: item['exam_type'],
@@ -79,6 +78,7 @@ class _PaymentUIState extends State<PaymentUI> {
           Books: books,
           ExamRegID: item['exam_registration_id'].toString(),
           ExamFee: item['exam_fee'],
+          city: item['city'],
         );
       }).toList();
 

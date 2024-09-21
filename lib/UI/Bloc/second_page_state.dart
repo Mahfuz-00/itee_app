@@ -13,6 +13,7 @@ class SecondPageState extends Equatable {
   final String gender;
   final String linkedin;
   final String address;
+  final String city;
   final String postCode;
   final String occupation;
   final String imagePath;
@@ -25,6 +26,7 @@ class SecondPageState extends Equatable {
     required this.gender,
     required this.linkedin,
     required this.address,
+    required this.city,
     required this.postCode,
     required this.occupation,
     required this.imagePath,
@@ -38,6 +40,7 @@ class SecondPageState extends Equatable {
     String? gender,
     String? linkedin,
     String? address,
+    String? city,
     String? postCode,
     String? occupation,
     String? imagePath,
@@ -50,6 +53,7 @@ class SecondPageState extends Equatable {
       gender: gender ?? this.gender,
       linkedin: linkedin ?? this.linkedin,
       address: address ?? this.address,
+      city: city ?? this.city,
       postCode: postCode ?? this.postCode,
       occupation: occupation ?? this.occupation,
       imagePath: imagePath ?? this.imagePath,
@@ -65,6 +69,7 @@ class SecondPageState extends Equatable {
     gender,
     linkedin,
     address,
+    city,
     postCode,
     occupation,
     imagePath,

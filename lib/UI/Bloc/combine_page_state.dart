@@ -25,6 +25,7 @@ class CombinedDataState extends Equatable {
   final String gender;
   final String linkedin;
   final String address;
+  final String city;
   final String postCode;
   final String occupation;
   final String educationQualification;
@@ -55,6 +56,7 @@ class CombinedDataState extends Equatable {
     this.gender = '',
     this.linkedin = '',
     this.address = '',
+    this.city = '',
     this.postCode = '',
     this.occupation = '',
     this.educationQualification = '',
@@ -87,6 +89,7 @@ class CombinedDataState extends Equatable {
     gender,
     linkedin,
     address,
+    city,
     postCode,
     occupation,
     educationQualification,

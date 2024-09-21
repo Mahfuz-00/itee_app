@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../Widgets/examcard.dart';
-import '../../Widgets/listTileDashboardExam.dart';
-import '../Exam Details UI/examDetailsUI.dart';
-import '../Login UI/loginUI.dart';
-import '../Registation UI/registrationvenuefromexamcard.dart';
+import '../../Pages/Exam Details UI/examDetailsUI.dart';
+import '../../Pages/Login UI/loginUI.dart';
+import '../../Pages/Registation UI/registrationvenuefromexamcard.dart';
+import 'examcard.dart';
+import 'listTileDashboardExam.dart';
 
 class ExamRegistrationCarousel extends StatefulWidget {
   final List<Widget> examFeeWidgets;

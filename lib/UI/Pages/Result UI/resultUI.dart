@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:itee_exam_app/UI/Widgets/CardWidget.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/CardWidget.dart';
 import '../../../Data/Data Sources/API Service (Result)/apiserviceresultview.dart';
 import '../../Widgets/custombottomnavbar.dart';
-import '../../Widgets/resultcard.dart';
+import '../../Widgets/Dashboard/resultcard.dart';
 
 /// Represents the result screen that displays examination results.
 ///

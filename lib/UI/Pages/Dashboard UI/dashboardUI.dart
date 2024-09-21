@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:itee_exam_app/Data/Models/imagemodel.dart';
-import 'package:itee_exam_app/UI/Pages/Dashboard%20UI/ApplicationSection.dart';
-import 'package:itee_exam_app/UI/Pages/Dashboard%20UI/ExamRegistrationSection.dart';
-import 'package:itee_exam_app/UI/Pages/Dashboard%20UI/NoticeSection.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/ApplicationSection.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/ExamRegistrationSection.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/NoticeSection.dart';
 import 'package:itee_exam_app/UI/Pages/Registation%20UI/registrationvenuefrommenu.dart';
-import 'package:itee_exam_app/UI/Widgets/listcardview.dart';
+import 'package:itee_exam_app/UI/Widgets/Dashboard/listcardview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Dashboard)/apiservicedashboard.dart';
@@ -16,12 +16,14 @@ import '../../../Data/Data Sources/API Service (Log Out)/apiServiceLogOut.dart';
 import '../../../Data/Data Sources/API Service (Notification)/apiServiceNotificationRead.dart';
 import '../../Bloc/auth_cubit.dart';
 import '../../Widgets/Buttontemplate.dart';
+import '../../Widgets/Dashboard/ExamRegistrationWidget.dart';
+import '../../Widgets/Dashboard/PartnerSection.dart';
+import '../../Widgets/Dashboard/imagecardview.dart';
 import '../../Widgets/custombottomnavbar.dart';
-import '../../Widgets/imagecardview.dart';
-import '../../Widgets/listTileDashboardBook.dart';
-import '../../Widgets/listTileDashboardApplication.dart';
-import '../../Widgets/listTileDashboardExam.dart';
-import '../../Widgets/listTileNotice.dart';
+import '../../Widgets/Dashboard/listTileDashboardBook.dart';
+import '../../Widgets/Dashboard/listTileDashboardApplication.dart';
+import '../../Widgets/Dashboard/listTileDashboardExam.dart';
+import '../../Widgets/Dashboard/listTileNotice.dart';
 import '../AdmitCard UI/admitcardUI.dart';
 import '../Exam Material UI/ExamMaterialUI.dart';
 import '../Login UI/loginUI.dart';
@@ -29,11 +31,9 @@ import '../PaymentUI/paymentUI.dart';
 import '../Profile UI/profileUI.dart';
 import '../Result UI/resultUI.dart';
 import '../Syllabus UI/syllabusUI.dart';
-import 'ApplicationWidget.dart';
-import 'BookSection.dart';
-import 'ExamRegistrationWidget.dart';
-import 'ImageSection.dart';
-import 'PartnerSection.dart';
+import '../../Widgets/Dashboard/ApplicationWidget.dart';
+import '../../Widgets/Dashboard/BookSection.dart';
+import '../../Widgets/Dashboard/ImageSection.dart';
 
 /// This class manages the [DashboardUI] functionality within the application.
 /// It serves as the central hub for users to access various features related to their exams,
@@ -186,6 +186,7 @@ class _DashboardUIState extends State<DashboardUI> {
                 id: item['id'],
                 name: item['name'],
                 price: item['price'],
+                city: item['city'],
               ))
           .toList();
 

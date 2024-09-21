@@ -64,6 +64,7 @@ class _RegistrationPersonalInformationUIState
   late TextEditingController _linkedincontroller =
       TextEditingController(text: linkedin);
   late TextEditingController _Gendercontroller = TextEditingController();
+  late TextEditingController _Citycontroller = TextEditingController();
   File? _imageFile;
   bool _isFetched = false;
   bool _isLoading = false;
@@ -462,6 +463,37 @@ class _RegistrationPersonalInformationUIState
               ),
               const SizedBox(height: 5),
               LabeledTextWithAsterisk(
+                text: 'City/District',
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                width: screenWidth * 0.9,
+                height: 70,
+                child: TextFormField(
+                  controller: _Citycontroller,
+                  style: const TextStyle(
+                    color: Color.fromRGBO(143, 150, 158, 1),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'default',
+                  ),
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(),
+                    labelText: 'City or District Name',
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontFamily: 'default',
+                    ),
+                  ),
+                ),
+              ),
+              LabeledTextWithAsterisk(
                 text: 'Your Area Post Code',
               ),
               SizedBox(
@@ -682,6 +714,7 @@ class _RegistrationPersonalInformationUIState
         _Addresscontroller.text.isEmpty ||
         _PostCodecontroller.text.isEmpty ||
         _Occupationcontroller.text.isEmpty ||
+        _Citycontroller.text.isEmpty ||
         _imageFile == null) {
       return false;
     }
@@ -699,6 +732,7 @@ class _RegistrationPersonalInformationUIState
       gender: _Gendercontroller.text,
       linkedin: _linkedincontroller.text,
       address: _Addresscontroller.text,
+      city: _Citycontroller.text,
       postCode: _PostCodecontroller.text,
       occupation: _Occupationcontroller.text,
       imagePath: _imageFile!.path ?? '',
@@ -711,6 +745,7 @@ class _RegistrationPersonalInformationUIState
     print('Gender from State: ${secondPageCubit.state.gender}');
     print('LinkedIn from State: ${secondPageCubit.state.linkedin}');
     print('Address from State: ${secondPageCubit.state.address}');
+    print('City from State: ${secondPageCubit.state.city}');
     print('Post Code from State: ${secondPageCubit.state.postCode}');
     print('Occupation from State: ${secondPageCubit.state.occupation}');
     print('Image Path from State: ${secondPageCubit.state.imagePath}');

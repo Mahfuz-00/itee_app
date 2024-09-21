@@ -82,6 +82,7 @@ class ExamRegistrationAPIService {
     request.fields['dob'] = state.dateOfBirth;
     request.fields['gender'] = state.gender;
     request.fields['address'] = state.address;
+    request.fields['city'] = state.city;
     request.fields['post_code'] = state.postCode;
     request.fields['occupation'] = state.occupation;
     request.fields['linkedin'] = state.linkedin;
