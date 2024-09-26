@@ -6,6 +6,7 @@ import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
 import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
 import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/NonPhysicalGoods.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
 import 'package:flutter_sslcommerz/sslcommerz.dart';
@@ -15,7 +16,6 @@ import 'package:intl/intl.dart';
 import '../../Data/Data Sources/API Service (Fetch Applicant Info)/apiServiceFetchApplicantinfo.dart';
 import '../../Data/Data Sources/API Service (Payment)/apiServiceSubmitTransaction.dart';
 import '../Pages/Dashboard UI/dashboardUI.dart';
-
 
 /// A widget that displays a payment card with applicant information,
 /// exam details, book fees, and a pay button.
@@ -48,8 +48,10 @@ class PaymentCard extends StatefulWidget {
   @override
   State<PaymentCard> createState() => _PaymentCardState();
 
-  static const String storeId = "mrtou66baeda11df08";
-  static const String storePassword = "mrtou66baeda11df08@ssl";
+ /* static const String storeId = "rajsh6554638e006b6";
+  static const String storePassword = "rajsh6554638e006b6@ssl"; */
+  static const String storeId = "alhadiexpresscombdlive";
+  static const String storePassword = "65799DFDC086795715";
   static const String apiUrl =
       "https://sandbox.sslcommerz.com/gwprocess/v3/api.php";
   static const String requestedUrl =
@@ -246,52 +248,54 @@ class _PaymentCardState extends State<PaymentCard> {
         0.0, (sum, book) => sum + (double.parse(book['book_fees'].toString())));
     final examfee = widget.ExamFee;
     print(widget.ExamFee);
-    String examfeeString = examfee.replaceAll(
-        RegExp(r'[^\d.]'), '');
+    String examfeeString = examfee.replaceAll(RegExp(r'[^\d.]'), '');
     final totalAmount = totalBookFees + double.parse(examfeeString);
-
-
 
     Sslcommerz sslcommerz = Sslcommerz(
       initializer: SSLCommerzInitialization(
         multi_card_name: "visa,master,bkash,rocket,nagad",
         currency: SSLCurrencyType.BDT,
         product_category: "Exam Fee",
-        sdkType: SSLCSdkType.TESTBOX,
-        // Change to LIVE for production
+        sdkType: SSLCSdkType.LIVE,
         store_id: PaymentCard.storeId,
         store_passwd: PaymentCard.storePassword,
         total_amount: totalAmount,
         tran_id: tranId,
       ),
-    );
-
-    // Add customer information
-    sslcommerz.addCustomerInfoInitializer(
-      customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: '',
-        customerName: Name,
-        customerEmail: Email,
-        customerAddress1: Address,
-        customerCity: widget.city,
-        customerPostCode: PostCode,
-        customerCountry: "Bangladesh",
-        customerPhone: Mobile,
-      ),
-    );
-
-    // Add non-physical goods product information (Exam Registration and Book Fee)
-    sslcommerz.addProductInitializer(
-      sslcProductInitializer:
-          SSLCProductInitializer.WithNonPhysicalGoodsProfile(
-        productName: "Exam Registration and Book Fee",
-        productCategory: "Education",
-        nonPhysicalGoods: NonPhysicalGoods(
-          productProfile: "Online Exam and Book Payment",
-          nonPhysicalGoods: "Exam Registration Fee, Book Purchase",
+    )
+      ..addCustomerInfoInitializer(
+        customerInfoInitializer: SSLCCustomerInfoInitializer(
+          customerState: widget.city,
+          customerName: Name,
+          customerEmail: Email,
+          customerAddress1: Address,
+          customerCity: widget.city,
+          customerPostCode: PostCode,
+          customerCountry: "Bangladesh",
+          customerPhone: Mobile,
         ),
-      ),
-    );
+      )
+      ..addProductInitializer(
+        sslcProductInitializer: SSLCProductInitializer(
+          productName: "Exam Registration and Book Fee",
+          productCategory: "Education",
+          general: General(
+            productProfile: "Online Exam and Book Payment",
+            general: "Exam Registration Fee, Book Purchase",
+          ),
+        ),
+      )
+      ..addProductInitializer(
+        sslcProductInitializer:
+            SSLCProductInitializer.WithNonPhysicalGoodsProfile(
+          productName: "Exam Registration and Book Fee",
+          productCategory: "Education",
+          nonPhysicalGoods: NonPhysicalGoods(
+            productProfile: "Online Exam and Book Payment",
+            nonPhysicalGoods: "Exam Registration Fee, Book Purchase",
+          ),
+        ),
+      );
 
     try {
       var result = await sslcommerz.payNow();
@@ -349,7 +353,6 @@ class _PaymentCardState extends State<PaymentCard> {
               (route) => false);
         });
 
-        // Optionally, show a snackbar for successful transactions
         if (result.status!.toLowerCase() == "valid") {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Payment successful!'),

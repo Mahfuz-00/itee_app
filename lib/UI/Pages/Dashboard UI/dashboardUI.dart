@@ -129,6 +129,9 @@ class _DashboardUIState extends State<DashboardUI> {
                   payment: item['payment'],
                   admitcard: item['admit_card'],
                   ExamineeID: item['examine_id'],
+                  applicationID: item['application_id'],
+                  examFee: item['exam_fee'],
+                  bookFee: item['book_fee'],
                 ))
             .toList();
 

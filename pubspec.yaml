@@ -58,6 +58,8 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   package_info_plus: ^5.0.1
   flutter_sslcommerz: ^2.3.6
+  path_provider: ^2.1.4
+  permission_handler:
 
 
 
@@ -106,11 +108,6 @@ flutter:
     - Assets/Images/Bjet-Small.png
     - Assets/Images/ITEC-Logo.png
     - Assets/Images/loading.gif
-    - Assets/Images/bKash_logo.png
-    - Assets/Images/Nagad_logo.png
-    - Assets/Images/Rocket_Logo.png
-    - Assets/Images/Visa_logo.png
-    - Assets/Images/MasterCard_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

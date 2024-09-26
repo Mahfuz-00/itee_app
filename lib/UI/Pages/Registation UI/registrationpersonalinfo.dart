@@ -586,8 +586,7 @@ class _RegistrationPersonalInformationUIState
                       ),
                       errorMaxLines: null,
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.red),
+                        borderSide: BorderSide(color: Colors.red),
                       ),
                     ),
                     child: Row(
@@ -725,18 +724,18 @@ class _RegistrationPersonalInformationUIState
     final secondPageCubit = context.read<SecondPageCubit>();
 
     context.read<SecondPageCubit>().updateUserInfo(
-      fullName: _FullNamecontroller.text,
-      email: _Emailcontroller.text,
-      phone: _Phonecontroller.text,
-      dateOfBirth: _Datecontroller.text,
-      gender: _Gendercontroller.text,
-      linkedin: _linkedincontroller.text,
-      address: _Addresscontroller.text,
-      city: _Citycontroller.text,
-      postCode: _PostCodecontroller.text,
-      occupation: _Occupationcontroller.text,
-      imagePath: _imageFile!.path ?? '',
-    );
+          fullName: _FullNamecontroller.text,
+          email: _Emailcontroller.text,
+          phone: _Phonecontroller.text,
+          dateOfBirth: _Datecontroller.text,
+          gender: _Gendercontroller.text,
+          linkedin: _linkedincontroller.text,
+          address: _Addresscontroller.text,
+          city: _Citycontroller.text,
+          postCode: _PostCodecontroller.text,
+          occupation: _Occupationcontroller.text,
+          imagePath: _imageFile!.path ?? '',
+        );
 
     print('Full Name from State: ${secondPageCubit.state.fullName}');
     print('Email from State: ${secondPageCubit.state.email}');
@@ -751,23 +750,25 @@ class _RegistrationPersonalInformationUIState
     print('Image Path from State: ${secondPageCubit.state.imagePath}');
   }
 
-
   Future<void> _selectImage() async {
     final picker = ImagePicker();
+    final maxFileSize = 5 * 1024 * 1024;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Text('Choose an option',
+            child: Text(
+              'Choose an option',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color.fromRGBO(0, 162, 222, 1),
-                fontWeight: FontWeight.bold,
-                fontFamily: 'default',
-                fontSize: 22,
-              ),),
+                  color: Color.fromRGBO(0, 162, 222, 1),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  fontFamily: 'default'),
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -775,40 +776,52 @@ class _RegistrationPersonalInformationUIState
               ListTile(
                 leading: Icon(Icons.photo_library),
                 title: Text('Gallery',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 18,
-                  ),),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'default')),
                 onTap: () async {
                   Navigator.pop(context);
-                  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                  final pickedFile =
+                      await picker.pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
-                    setState(() {
-                      _imageFile = File(pickedFile.path);
-                    });
-                    await _getImageDimensions();
+                    final file = File(pickedFile.path);
+                    final fileSize = await file.length();
+
+                    if (fileSize <= maxFileSize) {
+                      setState(() {
+                        _imageFile = file;
+                      });
+                      await _getImageDimensions();
+                    } else {
+                      _showError('Image must be less than 5 MB');
+                    }
                   }
                 },
               ),
               ListTile(
                 leading: Icon(Icons.camera_alt),
                 title: Text('Camera',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'default',
-                    fontSize: 18,
-                  ),),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'default')),
                 onTap: () async {
                   Navigator.pop(context);
-                  final pickedFile = await picker.pickImage(source: ImageSource.camera);
+                  final pickedFile =
+                      await picker.pickImage(source: ImageSource.camera);
                   if (pickedFile != null) {
-                    setState(() {
-                      _imageFile = File(pickedFile.path);
-                    });
-                    await _getImageDimensions();
+                    final file = File(pickedFile.path);
+                    final fileSize = await file.length();
+
+                    if (fileSize <= maxFileSize) {
+                      setState(() {
+                        _imageFile = file;
+                      });
+                      await _getImageDimensions();
+                    } else {
+                      _showError('Image must be less than 5 MB');
+                    }
                   }
                 },
               ),
@@ -817,6 +830,11 @@ class _RegistrationPersonalInformationUIState
         );
       },
     );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   double _imageHeight = 0;

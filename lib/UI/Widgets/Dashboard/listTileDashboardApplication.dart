@@ -19,6 +19,9 @@ class ApplicationTemplate extends StatelessWidget {
   final String name;
   final String ExamineeID;
   final String Categories;
+  final String examFee;
+  final String bookFee;
+  final int applicationID;
   final int result;
   final int payment;
   final int admitcard;
@@ -27,6 +30,9 @@ class ApplicationTemplate extends StatelessWidget {
     required this.name,
     required this.ExamineeID,
     required this.Categories,
+    required this.examFee,
+    required this.bookFee,
+    required this.applicationID,
     required this.result,
     required this.payment,
     required this.admitcard,

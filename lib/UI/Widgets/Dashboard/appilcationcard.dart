@@ -182,6 +182,31 @@ class ApplicationCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                Visibility(
+                  visible: AdmitCard == 0 && Result == 0 && Payment == 1,
+                  child: Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(0, 162, 222, 1),
+                        border: Border.all(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Awaiting Approval ...',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'default',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

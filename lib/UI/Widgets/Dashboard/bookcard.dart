@@ -5,6 +5,7 @@ import 'package:flutter_sslcommerz/model/SSLCCustomerInfoInitializer.dart';
 import 'package:flutter_sslcommerz/model/SSLCSdkType.dart';
 import 'package:flutter_sslcommerz/model/SSLCommerzInitialization.dart';
 import 'package:flutter_sslcommerz/model/SSLCurrencyType.dart';
+import 'package:flutter_sslcommerz/model/sslproductinitilizer/General.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/NonPhysicalGoods.dart';
 import 'package:flutter_sslcommerz/model/sslproductinitilizer/SSLCProductInitializer.dart';
 import 'package:flutter_sslcommerz/sslcommerz.dart';
@@ -37,8 +38,8 @@ class BookCard extends StatefulWidget {
   @override
   State<BookCard> createState() => _BookCardState();
 
-  static const String storeId = "mrtou66baeda11df08";
-  static const String storePassword = "mrtou66baeda11df08@ssl";
+  static const String storeId = "rajsh6554638e006b6";
+  static const String storePassword = "rajsh6554638e006b6@ssl";
   static const String apiUrl =
       "https://sandbox.sslcommerz.com/gwprocess/v3/api.php";
   static const String requestedUrl =
@@ -246,41 +247,46 @@ class _BookCardState extends State<BookCard> {
         multi_card_name: "visa,master,bkash,rocket,nagad",
         currency: SSLCurrencyType.BDT,
         product_category: "Exam Fee",
-        sdkType: SSLCSdkType.TESTBOX,
-        // Change to LIVE for production
+        sdkType: SSLCSdkType.LIVE,
         store_id: BookCard.storeId,
         store_passwd: BookCard.storePassword,
         total_amount: transactionAmount,
         tran_id: tranId,
       ),
-    );
-
-    // Add customer information
-    sslcommerz.addCustomerInfoInitializer(
-      customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: "",
-        customerName: Name,
-        customerEmail: Email,
-        customerAddress1: city,
-        customerCity: city,
-        customerPostCode: "",
-        customerCountry: "Bangladesh",
-        customerPhone: Mobile,
-      ),
-    );
-
-    // Add non-physical goods product information (Exam Registration and Book Fee)
-    sslcommerz.addProductInitializer(
-      sslcProductInitializer:
-          SSLCProductInitializer.WithNonPhysicalGoodsProfile(
-        productName: "Book Fee",
-        productCategory: "Education",
-        nonPhysicalGoods: NonPhysicalGoods(
-          productProfile: "Book Payment",
-          nonPhysicalGoods: "Book Purchase",
+    )
+      ..addCustomerInfoInitializer(
+        customerInfoInitializer: SSLCCustomerInfoInitializer(
+          customerState: city,
+          customerName: Name,
+          customerEmail: Email,
+          customerAddress1: city,
+          customerCity: city,
+          customerPostCode: "",
+          customerCountry: "Bangladesh",
+          customerPhone: Mobile,
         ),
-      ),
-    );
+      )
+      ..addProductInitializer(
+        sslcProductInitializer: SSLCProductInitializer(
+          productName: "Exam Registration and Book Fee",
+          productCategory: "Education",
+          general: General(
+            productProfile: "Online Exam and Book Payment",
+            general: "Exam Registration Fee, Book Purchase",
+          ),
+        ),
+      )
+      ..addProductInitializer(
+        sslcProductInitializer:
+            SSLCProductInitializer.WithNonPhysicalGoodsProfile(
+          productName: "Book Fee",
+          productCategory: "Education",
+          nonPhysicalGoods: NonPhysicalGoods(
+            productProfile: "Book Payment",
+            nonPhysicalGoods: "Book Purchase",
+          ),
+        ),
+      );
 
     try {
       var result = await sslcommerz.payNow();
@@ -329,7 +335,6 @@ class _BookCardState extends State<BookCard> {
           );
         });
 
-        // Optionally, show a snackbar for successful transactions
         if (result.status!.toLowerCase() == "valid") {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Payment successful!'),

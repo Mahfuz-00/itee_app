@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ import 'package:flutter_sslcommerz/model/sslproductinitilizer/TravelVertical.dar
 import 'package:flutter_sslcommerz/sslcommerz.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../Core/Connection Checker/internetconnectioncheck.dart';
 import '../../../Data/Data Sources/API Service (Fetch Applicant Info)/apiServiceFetchApplicantinfo.dart';
 import '../../../Data/Data Sources/API Service (Payment)/apiServiceSubmitTransaction.dart';
@@ -155,7 +158,9 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                                   ),
                                 ),
                                 onPressed: () {
-                                  fetchInfo();
+                                  Future.delayed(Duration(seconds: 2), () {
+                                    fetchInfo();
+                                  });
                                 },
                                 child: const Text('Click here for payment',
                                     style: TextStyle(
@@ -328,10 +333,10 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     }
   }
 
-  /* static const String storeId = "rajsh6554638e006b6";
-  static const String storePassword = "rajsh6554638e006b6@ssl";*/
-  static const String storeId = "mrtou66baeda11df08";
-  static const String storePassword = "mrtou66baeda11df08@ssl";
+   static const String storeId = "rajsh6554638e006b6";
+  static const String storePassword = "rajsh6554638e006b6@ssl";
+/*  static const String storeId = "mrtou66baeda11df08";
+  static const String storePassword = "mrtou66baeda11df08@ssl";*/
   static const String apiUrl =
       "https://sandbox.sslcommerz.com/gwprocess/v3/api.php";
   static const String requestedUrl =
@@ -339,175 +344,78 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
 
   void startPayment(BuildContext context, String Name, String Email,
       String Mobile, String Address, String PostCode) async {
+
     String tranId = generateTransactionId();
 
     List<String> parts = PostCode.split('-');
     String city = parts[0];
     String code = parts[1];
 
-    Sslcommerz sslcommerz = Sslcommerz(
+    Sslcommerz sslcommerz = await Sslcommerz(
       initializer: SSLCommerzInitialization(
+        ipn_url: "",
+        multi_card_name: "visa,master,bkash,nagad,rocket",
         currency: SSLCurrencyType.BDT,
-        product_category: "Exam Fee",
-        sdkType: SSLCSdkType.TESTBOX,
+        product_category: "Exam Registration Fee",
+        sdkType: SSLCSdkType.LIVE,
         store_id: storeId,
         store_passwd: storePassword,
         total_amount: double.parse(widget.price),
         tran_id: tranId,
       ),
-    );
-
-    // Add customer information
-    sslcommerz.addCustomerInfoInitializer(
-      customerInfoInitializer: SSLCCustomerInfoInitializer(
-        customerState: widget.city ?? "Unknown",
-        customerName: Name,
-        customerEmail: Email,
-        customerAddress1: Address,
-        customerCity: city ?? "Unknown",
-        customerPostCode: code ?? "Unknown",
-        customerCountry: "Bangladesh",
-        customerPhone: Mobile,
-      ),
-    );
-
-    sslcommerz.addProductInitializer(
-      sslcProductInitializer: SSLCProductInitializer(
-        productName: "Exam Registration and Book Fee",
-        productCategory: "Education",
-        general: General(
-          productProfile: "Online Exam and Book Payment",
-          general: "Exam Registration Fee, Book Purchase",
+    )
+      ..addCustomerInfoInitializer(
+        customerInfoInitializer: SSLCCustomerInfoInitializer(
+          customerState: widget.city ?? "Unknown",
+          customerName: Name,
+          customerEmail: Email,
+          customerAddress1: Address,
+          customerAddress2: "N/A",
+          customerCity: city ?? "Unknown",
+          customerPostCode: code ?? "Unknown",
+          customerCountry: "Bangladesh",
+          customerPhone: Mobile,
+          customerFax: 'N/A',
         ),
-      ),
-    );
-
-    sslcommerz.addEMITransactionInitializer(
-      sslcemiTransactionInitializer: SSLCEMITransactionInitializer(
-        emi_options: 0,
-      ),
-    );
-
-    sslcommerz.addShipmentInfoInitializer(
-      sslcShipmentInfoInitializer: SSLCShipmentInfoInitializer(
-        shipmentMethod: "no",
-        numOfItems: 0,
-        shipmentDetails: ShipmentDetails(
-          shipAddress1: "N/A",
-          shipCity: "N/A",
-          shipCountry: "N/A",
-          shipName: "N/A",
-          shipPostCode: "N/A",
+      )
+      ..addProductInitializer(
+        sslcProductInitializer: SSLCProductInitializer(
+          productName: "Exam Registration and Book Fee",
+          productCategory: "Education",
+          general: General(
+            productProfile: "Online Exam and Book Payment",
+            general: "Exam Registration Fee, Book Purchase",
+          ),
         ),
-      ),
-    );
-
-    sslcommerz.addProductInitializer(
-        sslcProductInitializer:
-        SSLCProductInitializer.WithNonPhysicalGoodsProfile(
-            productName:  "N/A",
-            productCategory:"N/A",
-            nonPhysicalGoods:
-            NonPhysicalGoods(productProfile: "N/A",
-                nonPhysicalGoods:"N/A"
-            )));
-
-    sslcommerz.addProductInitializer(
-        sslcProductInitializer:
-        SSLCProductInitializer.WithTravelVerticalProfile(
-            productName:"N/A",
-            productCategory:"N/A",
-            travelVertical:TravelVertical(
-                productProfile: "N/A",
-                hotelName: "N/A",
-                lengthOfStay: "N/A",
-                checkInTime: "N/A",
-                hotelCity: "N/A"
-            )));
-
-    sslcommerz.addProductInitializer(
-        sslcProductInitializer:
-        SSLCProductInitializer.WithPhysicalGoodsProfile(
-            productName: "N/A",
-            productCategory: "N/A",
-            physicalGoods: PhysicalGoods(
-                productProfile: "N/A",
-                physicalGoods: "N/A"
-            )));
-
-    sslcommerz.addProductInitializer(
-        sslcProductInitializer:
-        SSLCProductInitializer.WithTelecomVerticalProfile(
-            productName: "N/A",
-            productCategory: "N/A",
-            telecomVertical: TelecomVertical(
-                productProfile: "N/A",
-                productType: "N/A",
-                topUpNumber: "N/A",
-                countryTopUp: "N/A"
-            )));
-
-    sslcommerz.addAdditionalInitializer(
-      sslcAdditionalInitializer: SSLCAdditionalInitializer(
-        valueA: "N/A",
-        valueB: "N/A",
-        valueC: "N/A",
-        valueD: "N/A",
-      ),
-    );
-
-    String snackbarContent = """
-    Initializing SSLCommerz with:
-    - Store ID: $storeId
-    - Store Password: $storePassword
-    - SDK Type: TESTBOX
-    - Currency: BDT
-    - Transaction ID: $tranId
-    - Total Amount: ${widget.price}
-    - Product Name: Exam Registration and Book Fee
-    - Customer State: ${widget.city}
-    - Customer Name: $Name
-    - Customer Email: $Email
-    - Customer Phone: $Mobile
-    - Customer Address: $Address
-    - Customer City: $city
-    - Customer PostCode: $code
-    - Customer Country: Bangladesh
-  """;
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(snackbarContent),
-      duration: Duration(seconds: 5), // Show for 5 seconds
-    ));
+      )
+      ..addProductInitializer(
+          sslcProductInitializer:
+          SSLCProductInitializer.WithNonPhysicalGoodsProfile(
+              productName: "Exam Registration and Book Fee",
+              productCategory: "Education",
+              nonPhysicalGoods: NonPhysicalGoods(
+                productProfile: "Online Exam and Book Payment",
+                nonPhysicalGoods: "Exam Registration Fee, Book Purchase",
+              )))
+      ..addAdditionalInitializer(
+        sslcAdditionalInitializer: SSLCAdditionalInitializer(
+          valueA: "N/A",
+          valueB: "N/A",
+          valueC: "N/A",
+          valueD: "N/A",
+          campaign_code: 'N/A',
+          invoice_id: 'N/A',
+          bill_number: 'N/A',
+          no_offer: 0,
+          user_refer: 'N/A',
+          extras: {
+            'extraInfo': 'N/A',
+          },
+        ),
+      );
 
     try {
-      var ini = sslcommerz.initializer.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${ini}'), duration: Duration(seconds: 5)));
-      var cus = sslcommerz.customerInfoInitializer.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${cus}'), duration: Duration(seconds: 5)));
-    var tans = sslcommerz.sslcemiTransactionInitializer.toString();
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${tans}'), duration: Duration(seconds: 5)));
-    var ship = sslcommerz.sslcShipmentInfoInitializer.toString();
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${ship}'), duration: Duration(seconds: 5)));
-    var prod = sslcommerz.sslcProductInitializer.toString();
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${prod}'), duration: Duration(seconds: 5)));
-    var add = sslcommerz.sslcAdditionalInitializer.toString();
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${add}'), duration: Duration(seconds: 5)));
-    var datas = await sslcommerz.toJson();
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${datas}'), duration: Duration(seconds: 5)));
       var result = await sslcommerz.payNow();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${jsonEncode(result.toString())}'),
-          duration: Duration(seconds: 5)));
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${result.status}'), duration: Duration(seconds: 5)));
       print("result :: ${jsonEncode(result)}");
       print("result status :: ${result.status ?? ""}");
       print(
@@ -562,7 +470,6 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
               (route) => false);
         });
 
-        // Optionally, show a snackbar for successful transactions
         if (result.status!.toLowerCase() == "valid") {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Payment successful!'),
@@ -576,6 +483,7 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
       ));
     }
   }
+
 
   String generateTransactionId() {
     const String chars = '0123456789';
