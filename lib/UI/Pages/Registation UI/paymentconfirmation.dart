@@ -42,12 +42,11 @@ class PaymentConfirmationUI extends StatefulWidget {
   final String price;
   final String city;
 
-  const PaymentConfirmationUI(
-      {Key? key,
-      required this.ExamineeID,
-      required this.ExamRegID,
-      required this.price,
-      required this.city})
+  const PaymentConfirmationUI({Key? key,
+    required this.ExamineeID,
+    required this.ExamRegID,
+    required this.price,
+    required this.city})
       : super(key: key);
 
   @override
@@ -58,13 +57,19 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TextEditingController _paymentConfirmationController =
-      TextEditingController();
+  TextEditingController();
   bool buttonloading = false;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     return InternetConnectionChecker(
       child: PopScope(
         canPop: false,
@@ -148,10 +153,16 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(0, 162, 222, 1),
+                                  const Color.fromRGBO(0, 162, 222, 1),
                                   fixedSize: Size(
-                                      MediaQuery.of(context).size.width * 0.85,
-                                      MediaQuery.of(context).size.height *
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width * 0.85,
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height *
                                           0.08),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
@@ -182,10 +193,16 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromRGBO(0, 162, 222, 1),
+                                  const Color.fromRGBO(0, 162, 222, 1),
                                   fixedSize: Size(
-                                      MediaQuery.of(context).size.width * 0.85,
-                                      MediaQuery.of(context).size.height *
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .width * 0.85,
+                                      MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height *
                                           0.08),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5),
@@ -195,10 +212,11 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => DashboardUI(
+                                          builder: (context) =>
+                                              DashboardUI(
                                                 shouldRefresh: true,
                                               )),
-                                      (route) => false);
+                                          (route) => false);
                                 },
                                 child: const Text('Pay Later',
                                     style: TextStyle(
@@ -236,12 +254,12 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
       final apiService = await SubmitTransactionAPIService.create();
 
       final Map<String, dynamic>? dashboardData =
-          await apiService.submitTransaction(
-              examRegistrationId: RegID,
-              transactionId: TransID,
-              transactionDate: TransDate,
-              transactionType: TransType,
-              transactionAmount: Amount);
+      await apiService.submitTransaction(
+          examRegistrationId: RegID,
+          transactionId: TransID,
+          transactionDate: TransDate,
+          transactionType: TransType,
+          transactionAmount: Amount);
       if (dashboardData == null || dashboardData.isEmpty) {
         print(
             'No data available or error occurred while fetching dashboard data');
@@ -297,7 +315,7 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
       final apiService = await ApplicantInfoAPIService.create();
 
       final Map<String, dynamic>? dashboardData =
-          await apiService.FetchApplicantInfo(widget.ExamRegID);
+      await apiService.FetchApplicantInfo(widget.ExamRegID);
       if (dashboardData == null || dashboardData.isEmpty) {
         print(
             'No data available or error occurred while fetching dashboard data');
@@ -333,8 +351,9 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
     }
   }
 
-   static const String storeId = "rajsh6554638e006b6";
+  static const String storeId = "rajsh6554638e006b6";
   static const String storePassword = "rajsh6554638e006b6@ssl";
+
 /*  static const String storeId = "mrtou66baeda11df08";
   static const String storePassword = "mrtou66baeda11df08@ssl";*/
   static const String apiUrl =
@@ -344,7 +363,6 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
 
   void startPayment(BuildContext context, String Name, String Email,
       String Mobile, String Address, String PostCode) async {
-
     String tranId = generateTransactionId();
 
     List<String> parts = PostCode.split('-');
@@ -387,8 +405,7 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
             general: "Exam Registration Fee, Book Purchase",
           ),
         ),
-      )
-      ..addProductInitializer(
+      )..addProductInitializer(
           sslcProductInitializer:
           SSLCProductInitializer.WithNonPhysicalGoodsProfile(
               productName: "Exam Registration and Book Fee",
@@ -419,7 +436,8 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
       print("result :: ${jsonEncode(result)}");
       print("result status :: ${result.status ?? ""}");
       print(
-          "Transaction is ${result.status} and Amount is ${result.amount ?? 0}");
+          "Transaction is ${result.status} and Amount is ${result.amount ??
+              0}");
 
       var jsonData = result.toJson();
       String transactionId = jsonData['tran_id'] ?? 'N/A';
@@ -449,11 +467,12 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
         );
       } else {
         await submitTransaction(examRegistrationId, transactionId,
-                transactionDate, transactionType, widget.price)
+            transactionDate, transactionType, widget.price)
             .then((_) {
           Fluttertoast.showToast(
             msg:
-                "Transaction is ${result.status} and Amount is ${result.amount ?? 0}",
+            "Transaction is ${result.status} and Amount is ${result.amount ??
+                0}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -464,10 +483,11 @@ class _PaymentConfirmationUIState extends State<PaymentConfirmationUI>
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => DashboardUI(
+                  builder: (context) =>
+                      DashboardUI(
                         shouldRefresh: true,
                       )),
-              (route) => false);
+                  (route) => false);
         });
 
         if (result.status!.toLowerCase() == "valid") {

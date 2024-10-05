@@ -354,9 +354,14 @@ class _SignupUIState extends State<SignupUI> {
                                 height: 70,
                                 child: TextFormField(
                                   keyboardType: TextInputType.text,
-                                  validator: (input) => input!.length < 8
-                                      ? "Password should be more than 8 characters"
-                                      : null,
+                                  validator: (input) {
+                                    if (input!.length < 8) {
+                                      return "Password should be more than 7 characters";
+                                    } else if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]').hasMatch(input)) {
+                                      return "Password must contain uppercase, lowercase, number, and special character";
+                                    }
+                                    return null;
+                                  },
                                   controller: _passwordController,
                                   obscureText: _isObscuredPassword,
                                   style: const TextStyle(
@@ -396,9 +401,14 @@ class _SignupUIState extends State<SignupUI> {
                                 height: 70,
                                 child: TextFormField(
                                   keyboardType: TextInputType.text,
-                                  validator: (input) => input!.length < 8
-                                      ? "Password should be more than 7 characters"
-                                      : null,
+                                  validator: (input) {
+                                    if (input!.length < 8) {
+                                      return "Password should be more than 7 characters";
+                                    } else if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]').hasMatch(input)) {
+                                      return "Password must contain uppercase, lowercase, number, and special character";
+                                    }
+                                    return null;
+                                  },
                                   controller: _confirmPasswordController,
                                   obscureText: _isObscuredConfirmPassword,
                                   style: const TextStyle(

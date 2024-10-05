@@ -48,10 +48,10 @@ class PaymentCard extends StatefulWidget {
   @override
   State<PaymentCard> createState() => _PaymentCardState();
 
- /* static const String storeId = "rajsh6554638e006b6";
-  static const String storePassword = "rajsh6554638e006b6@ssl"; */
-  static const String storeId = "alhadiexpresscombdlive";
-  static const String storePassword = "65799DFDC086795715";
+  static const String storeId = "rajsh6554638e006b6";
+  static const String storePassword = "rajsh6554638e006b6@ssl";
+/*  static const String storeId = "alhadiexpresscombdlive";
+  static const String storePassword = "65799DFDC086795715";*/
   static const String apiUrl =
       "https://sandbox.sslcommerz.com/gwprocess/v3/api.php";
   static const String requestedUrl =
